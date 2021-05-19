@@ -25,7 +25,7 @@ import static java.sql.Types.NULL;
 
 public class ContactDBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "identifier";
+    private static final String DATABASE_NAME = "identifier.sqlite";
 
     public ContactDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
