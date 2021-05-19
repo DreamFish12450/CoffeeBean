@@ -1,0 +1,105 @@
+package com.example.coffeebean;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import com.example.coffeebean.adapter.MainViewPagerAdapter;
+import com.example.coffeebean.model.UserInfo;
+import com.example.coffeebean.util.UserManage;
+import com.example.coffeebean.util.ViewPager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
+
+public class HomeActivity extends AppCompatActivity {
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
+        fragmentArrayList.add(new PhoneBookFragment());
+        fragmentArrayList.add(new HomeFragment());
+        fragmentArrayList.add(new PersonFragment());
+        MainViewPagerAdapter mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), fragmentArrayList);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view1);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+
+        viewPager.setAdapter(mainViewPagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float v, int i1) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+//                Log.d("ViewPagerID", );
+                bottomNavigationView.setSelectedItemId(bottomNavigationView.getMenu().getItem(position).getItemId());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int position) {
+
+            }
+        });
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
+            Log.d("ViewPageId", (String.valueOf(menuItem.getItemId())));
+            switch (menuItem.getItemId()) {
+                case R.id.phone_book_button:
+                    viewPager.setCurrentItem(0);
+                    Log.d("ViewPageId", "0");
+                    return true;
+                case R.id.home_button:
+                    Log.d("ViewPageId", "1");
+                    viewPager.setCurrentItem(1);
+                    return true;
+
+                case R.id.person_button:
+                    Log.d("ViewPageId", "2");
+                    viewPager.setCurrentItem(2);
+                    return true;
+            }
+            return true;
+        });
+        viewPager.setCurrentItem(1);
+        bottomNavigationView.setSelectedItemId(R.id.home_button);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}
