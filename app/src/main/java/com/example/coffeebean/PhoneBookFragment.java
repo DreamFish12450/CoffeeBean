@@ -69,10 +69,13 @@ public class PhoneBookFragment extends Fragment {
         View root =  inflater.inflate(R.layout.fragment_phone_book, container, false);
         ContactInfoAdapter contactInfoAdapter = new ContactInfoAdapter(root.findViewById(R.id.phone_book_view));
         ArrayList<ContactInfo> contactInfos = new ArrayList<>();
-        contactInfos.add(new ContactInfo("soso"));
-        contactInfos.add(new ContactInfo("陈桂君"));
-        contactInfos.add(new ContactInfo("农宣宣"));
-        contactInfoAdapter.setItems(contactInfos);
+        ContactDBHelper.SelectALLContactAsyncTask selectALLContactAsyncTask=new ContactDBHelper.SelectALLContactAsyncTask(getContext(),contactInfoAdapter);
+        selectALLContactAsyncTask.execute();
+//        contactInfos.add(new ContactInfo("soso"));
+//        contactInfos.add(new ContactInfo("陈桂君"));
+//        contactInfos.add(new ContactInfo("农宣宣"));
+//        contactInfoAdapter.setItems(contactInfos);
+
         return root;
     }
 
