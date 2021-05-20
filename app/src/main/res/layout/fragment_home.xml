@@ -9,10 +9,10 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/menu_detail_tab"
-        app:tabTextColor="@color/black"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:tabTextColor="@color/black">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -25,15 +25,50 @@
             android:text="未接来电" />
 
 
-
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/menu_detail_pager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
-    </androidx.viewpager2.widget.ViewPager2>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/menu_detail_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+        </androidx.viewpager2.widget.ViewPager2>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone" />
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/processing_fab_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:fab_addButtonColorNormal="#CCBA68C8"
+
+            app:fab_labelsPosition="left"
+            tools:ignore="RelativeOverlap">
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/white"
+                app:fab_colorNormal="#CC81C784"
+                app:fab_icon="@drawable/ic_call"
+                app:fab_title="123" />
+
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </RelativeLayout>
 </LinearLayout>
