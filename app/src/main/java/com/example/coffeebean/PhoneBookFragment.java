@@ -1,19 +1,28 @@
 package com.example.coffeebean;
 
+import android.app.ActionBar;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.daimajia.swipe.util.Attributes;
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
 import com.example.coffeebean.adapter.ContactInfoAdapter;
+import com.example.coffeebean.adapter.RecyclerViewAdapter;
 import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
+import com.example.coffeebean.util.DividerItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +35,10 @@ public class PhoneBookFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -67,14 +80,45 @@ public class PhoneBookFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root =  inflater.inflate(R.layout.fragment_phone_book, container, false);
-        ContactInfoAdapter contactInfoAdapter = new ContactInfoAdapter(root.findViewById(R.id.phone_book_view));
+        recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//            ActionBar actionBar = getActionBar();
+//            if (actionBar != null) {
+//                actionBar.setTitle("RecyclerView");
+//            }
+//        }
+
+        // Layout Managers:
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        // Item Decorator:
+        recyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
+//        recyclerView.setItemAnimator(new FadeInLeftAnimator());
         ArrayList<ContactInfo> contactInfos = new ArrayList<>();
         contactInfos.add(new ContactInfo("soso"));
         contactInfos.add(new ContactInfo("陈桂君"));
         contactInfos.add(new ContactInfo("农宣宣"));
-        contactInfoAdapter.setItems(contactInfos);
+        // Adapter:
+        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+        recyclerView.setAdapter(mAdapter);
+
+        /* Listeners */
+        recyclerView.setOnScrollListener(onScrollListener);
         return root;
     }
+    RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            Log.e("ListView", "onScrollStateChanged");
+        }
 
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            // Could hide open views here if you wanted. //
+        }
+    };
 
 }

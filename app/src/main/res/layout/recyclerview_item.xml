@@ -1,22 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/contact_info_item_linear"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/tools"
+    app:ignore="NamespaceTypo"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.daimajia.swipe.SwipeLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        swipe:leftEdgeSwipeOffset="0dp"
+        swipe:rightEdgeSwipeOffset="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="80dp"
+            android:background="#FF5534"
+            android:gravity="center"
+            android:tag="Bottom3"
+            android:weightSum="10">
 
+            <ImageView
+                android:id="@+id/trash"
+                android:layout_width="27dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:src="@drawable/trash" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="Delete Item?"
+                android:textColor="#fff"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/item_selector"
+            android:elevation="5dp"
+            android:padding="10dp"
+            android:orientation="horizontal">
             <com.example.coffeebean.util.RoundAngleImageView
                 android:id="@+id/contact_info__item_avater"
                 android:layout_width="48dp"
@@ -44,27 +72,13 @@
                 android:text="soso"
 
                 android:textSize="32sp" />
-
-        </LinearLayout>
-
-        <!-- 屏幕右侧外边部分，正常时在屏幕中处于不可见 -->
-        <LinearLayout
-            android:visibility="visible"
-            android:id="@+id/ll_hidden"
-            android:layout_width="50dp"
-            android:layout_height="62dp"
-            android:background="@color/qmui_config_color_red"
-            android:gravity="center">
-
             <TextView
-                android:id="@+id/tv_item_delete"
+                android:id="@+id/position"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="删除"
-                android:textColor="@color/qmui_config_color_red"
-                android:textSize="16sp" />
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
-    </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
