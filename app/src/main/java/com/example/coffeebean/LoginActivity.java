@@ -50,7 +50,6 @@ public class LoginActivity extends Activity {
 
 
     private LoginDBHelper loginDBHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +57,7 @@ public class LoginActivity extends Activity {
         initViews();
 //        UserManage.getInstance().delUserInfo(LoginActivity.this);
         Log.d("UserManage", String.valueOf(UserManage.getInstance().hasUserInfo(LoginActivity.this)));
-        if (UserManage.getInstance().hasUserInfo(LoginActivity.this)) {
+        if(UserManage.getInstance().hasUserInfo(LoginActivity.this)){
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);//跳转到主页
             startActivity(intent);
         }
@@ -85,12 +84,14 @@ public class LoginActivity extends Activity {
                 case R.id.btn_login://登录
                     String username = edt_username.getText().toString();
                     String userpwd = edt_password.getText().toString();
-                    boolean ischecked = false;
-                    if (whether_save_auto.isChecked()) ischecked = true;
+                    boolean ischecked=false;
+                    if(whether_save_auto.isChecked())ischecked=true;
                     Log.d("登陆判定", "start");
-                    UserInfo userInfo = new UserInfo();
-                    LoginAsyncTask loginAsyncTask = new LoginAsyncTask(LoginActivity.this, username, userpwd, ischecked);
+                    UserInfo userInfo=new UserInfo();
+                    LoginAsyncTask loginAsyncTask=new LoginAsyncTask(LoginActivity.this,username,userpwd ,ischecked);
                     loginAsyncTask.execute();
+
+
 
 
 //
@@ -155,18 +156,17 @@ public class LoginActivity extends Activity {
 
         }
     };
-
     private class LoginAsyncTask extends AsyncTask<String, Void, UserInfo> {
         private String username;
         private String password;
         boolean isChecked;
         private WeakReference<Context> contextWeakReference;
 
-        LoginAsyncTask(Context context, String username, String password, boolean ischecked) {
+        LoginAsyncTask(Context context,String username,String password,boolean ischecked) {
             contextWeakReference = new WeakReference<>(context);
-            this.username = username;
-            this.password = password;
-            isChecked = ischecked;
+            this.username=username;
+            this.password=password;
+            isChecked=ischecked;
         }
 
         @Override
@@ -174,32 +174,31 @@ public class LoginActivity extends Activity {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    loginDBHelper = new LoginDBHelper(context);
+                    loginDBHelper=new LoginDBHelper(context);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                UserInfo userInfo = loginDBHelper.getUserInfoQueryByName(username);
+                UserInfo userInfo=loginDBHelper.getUserInfoQueryByName(username);
                 return userInfo;
 
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(UserInfo userInfo) {
             super.onPostExecute(userInfo);
             Context context = contextWeakReference.get();
-            Log.d("登陆判定AsyncTask", userInfo.getPassword());
-            if (userInfo != null)
-                if (userInfo.getPassword().equals(password)) {
-                    if (isChecked) {
-                        UserManage.getInstance().saveUserInfo(context, null, null);
+
+            if (userInfo!=null)
+                if(userInfo.getPassword().equals(password)){
+                    if(isChecked){
+                        UserManage.getInstance().saveUserInfo(context,null,null);
                         UserManage.getInstance().saveUserInfo(context, username, password);
                     }
                     Intent intent = new Intent(context, HomeActivity.class);//跳转到主页
                     startActivity(intent);
                     finish();
-                } else {
+                }else {
                     Toast.makeText(context, "登录失败，密码错误", Toast.LENGTH_SHORT).show();
                 }
             else {
