@@ -28,7 +28,7 @@
             android:layout_height="50dp"
             android:layout_margin="5dp"
             android:visibility="gone"
-            android:background="@drawable/ic___del"/>
+            android:background="@drawable/ic_del"/>
     </LinearLayout>
 
     <LinearLayout
