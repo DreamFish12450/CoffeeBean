@@ -62,6 +62,7 @@
                 android:text="修改密码"
                 android:textSize="24sp" />
             <ImageView
+                android:id="@+id/change_password"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
                 android:layout_width="30dp"
@@ -88,6 +89,7 @@
                 android:text="账号管理"
                 android:textSize="24sp" />
             <ImageView
+                android:id="@+id/account_management"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
                 android:layout_width="30dp"

@@ -197,12 +197,12 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         myInput.close();
 
     }
-    public void openDataBase() throws SQLException {
+    public SQLiteDatabase openDataBase() throws SQLException {
 
         //Open the database
         String myPath =DATABASE_PATH + "/" + DATABASE_FILENAME;;
         mDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
+        return mDatabase;
     }
 
     @Override
@@ -222,21 +222,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
      */
     public UserInfo getUserInfoQueryByName(String searchName) {
         UserInfo UserInfo = new UserInfo();
-//        try {
-//            createDataBase();
-//        } catch (IOException ioe) {
-//            throw new Error("Unable to create database");
-//        }
-//
-//        try {
-//            openDataBase();
-//        }catch(SQLException sqle){
-//            throw sqle;
-//        }
-        mDatabase=this.getWritableDatabase();
-//        mDatabase.execSQL(ContactInfo.CREATE_TABLE);
-//        mDatabase.execSQL(UserInfo.CREATE_TABLE);
-//        mDatabase.execSQL(PhoneRecord.CREATE_TABLE);
+        mDatabase=this.getReadableDatabase();
         String[] columnArray = new String[]{
                 UserInfo.COLUMN_USERID,
                 UserInfo.COLUMN_USERNAME,
@@ -254,18 +240,24 @@ public class LoginDBHelper extends SQLiteOpenHelper {
             String password=cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_PASSWORD));
             int vip_level=cursor.getInt(cursor.getColumnIndex(UserInfo.COLUMN_VIP_LEVEL));
             double amount = cursor.getDouble(cursor.getColumnIndex(UserInfo.COLUMN_AMOUNT));
-
             UserInfo.setId(id);
             UserInfo.setUsername(username);
             UserInfo.setPassword(password);
             UserInfo.setVip_level(vip_level);
             UserInfo.setAmount(amount);
-
             cursor.close();
             close();
             return UserInfo;
         }
         return null;
+    }
+
+    public void changePassword(String username,String password){
+        mDatabase=this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password",password);
+        mDatabase.update(UserInfo.TABLE_NAME,values,"username=?",new String[]{username});
+        close();
     }
 
 

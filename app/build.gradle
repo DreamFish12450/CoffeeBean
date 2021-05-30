@@ -44,7 +44,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.3'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'    //swipelayout侧滑
-
+    implementation 'com.github.getActivity:XXPermissions:11.2'
     implementation 'com.daimajia.easing:library:1.0.1@aar'
     implementation 'com.daimajia.androidanimations:library:1.1.2@aar'
     implementation 'com.nineoldandroids:library:2.4.0'
@@ -65,6 +65,7 @@ dependencies {
     implementation 'com.qmuiteam:qmui:1.0.4'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
     debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
     releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'
 }
 repositories {
