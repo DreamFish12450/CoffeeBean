@@ -105,6 +105,7 @@ public class PhoneBookFragment extends Fragment {
 
         /* Listeners */
         recyclerView.setOnScrollListener(onScrollListener);
+
         return root;
     }
     RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
