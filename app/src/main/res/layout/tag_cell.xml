@@ -23,9 +23,9 @@
                 android:layout_height="32dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
+                
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
+                
                 android:scaleType="centerCrop"
                 android:src="@drawable/mom" />
 
@@ -35,9 +35,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                
                 android:layout_toEndOf="@id/tag_cell_icon"
-                android:layout_toRightOf="@id/tag_cell_icon"
+                
                 android:gravity="center_vertical"
                 android:text="妈妈"
                 android:textColor="@color/black"
@@ -49,9 +49,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                
                 android:layout_toStartOf="@id/more"
-                android:layout_toLeftOf="@id/more"
+                
                 android:text="04/09"
                 android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
                 android:layout_height="32dp"
 
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
+                
                 android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_more" />
@@ -89,9 +89,9 @@
                 android:layout_height="32dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
+                
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
+                
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_no_get"
                 />

@@ -100,4 +100,8 @@ public class ContactInfo {
     public void setAvaterUri(String avaterUri) {
         this.avaterUri = avaterUri;
     }
+    //获取首字母
+    public String getLetter(){
+        return noteName.substring(0,1);
+    }
 }

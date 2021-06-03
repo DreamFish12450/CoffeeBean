@@ -7,12 +7,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ContactInfoActivity">
 
+        tools:context=".ContactInfoActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/returnbook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:clickable="true"
+        android:orientation="horizontal">
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_return"/>
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="通讯录"
+            android:textColor="#00CD00"/>
+    </LinearLayout>
+        <TextView
+            android:id="@+id/edit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="编辑"
+            android:clickable="true"
+            android:textColor="#00CD00"/>
+    </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@drawable/side_nav_bar"
+            android:layout_height="270dp"
             android:gravity="bottom"
             android:orientation="vertical">
 
@@ -32,13 +62,15 @@
                     app:roundHeight="80dp"
                     app:roundWidth="80dp" />
 
-                <TextView
+                <EditText
                     android:id="@+id/contact_note_name"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="6dp"
                     android:text="soso"
+                    android:background="@null"
+                    android:enabled="false"
                     android:textSize="32sp" />
 
             </LinearLayout>
@@ -48,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
 
-            <TextView
+            <EditText
                 android:id="@+id/contact_phone_number"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -56,10 +88,13 @@
                 android:layout_weight="5"
                 android:gravity="center|left"
                 android:text="19967309203"
+                android:background="@null"
+                android:enabled="false"
                 android:textSize="20sp"
                 tools:ignore="RtlHardcoded" />
 
             <ImageView
+                android:id="@+id/Info_call"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
@@ -88,13 +123,15 @@
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
-            <TextView
+            <EditText
                 android:id="@+id/contact_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center|left"
                 android:text="张琼予"
+                android:background="@null"
+                android:enabled="false"
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
@@ -110,13 +147,15 @@
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
-            <TextView
+            <EditText
                 android:id="@+id/contact_career"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center|left"
                 android:text="无"
+                android:background="@null"
+                android:enabled="false"
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>
@@ -142,13 +181,15 @@
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
-            <TextView
+            <EditText
                 android:id="@+id/contact_workplace"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center|left"
                 android:text="广州丝芭文化传媒有限公司"
+                android:enabled="false"
+                android:background="@null"
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>
@@ -174,13 +215,15 @@
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
 
-            <TextView
+            <EditText
                 android:id="@+id/contact_home_address"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center|left"
                 android:text="广州市天河区林和西路中泰国际广场"
+                android:enabled="false"
+                android:background="@null"
                 android:textSize="16sp"
                 tools:ignore="RtlHardcoded" />
         </LinearLayout>

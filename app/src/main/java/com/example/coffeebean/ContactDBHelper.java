@@ -20,6 +20,9 @@ import com.example.coffeebean.model.ContactInfo;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.sql.Types.NULL;
 
@@ -67,7 +70,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
 
     /**
      *
-     * @param searchName query database by name
+     * @param searchName query database by notename
      * @return ContactInfo
      */
     public ContactInfo getContactInfoQueryByName(String searchName) {
@@ -84,7 +87,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
                 ContactInfo.COLUMN_AVATERURL};
         Cursor cursor = db.query(ContactInfo.TABLE_NAME,
                 columnArray,
-                ContactInfo.COLUMN_NAME + "=? ",
+                ContactInfo.COLUMN_NOTENAME + "=? ",
                 new String[]{searchName},
                 null, null, null);
         if (cursor != null && cursor.moveToNext()) {
@@ -164,6 +167,39 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         int count = cursor.getCount();
         cursor.close();
         return count;
+    }
+    /**
+     *模糊查找
+     * @return 返回对象list
+     */
+    public List<Map<String,Object>> getLikeContactInfos(String str){
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+        String selectQuery = "SELECT ContactInfo.COLUMN_NOTENAME,ContactInfo.COLUMN_PHONENUMBER FROM " + ContactInfo.TABLE_NAME
+                +"where "+ContactInfo.COLUMN_NOTENAME+"like%"+str+ "% ORDER BY " + ContactInfo.COLUMN_NOTENAME + " ASC";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                ContactInfo ContactInfo = new ContactInfo();
+
+
+                String noteName=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_NOTENAME));
+                String telephone = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_PHONENUMBER));
+
+
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("title", noteName);
+                map.put("info", telephone);
+                list.add(map);
+
+
+
+            }
+        }
+        cursor.close();
+        db.close();
+        return list;
     }
 
     /**
@@ -247,7 +283,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         }
     }
     /**
-     * 联系人INFO界面初始化代码未写，还在考虑如何设计，和其他一样的话也行就是笨笨的，传参太多了
+     * 联系人INFO界面初始化代码暂时未写
      * */
 
 }

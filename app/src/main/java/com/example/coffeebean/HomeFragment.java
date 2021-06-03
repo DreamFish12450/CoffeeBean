@@ -119,24 +119,7 @@ public class HomeFragment extends BaseFragment {
         floatingActionsMenu=root.findViewById(R.id.processing_fab_add);
         del=root.findViewById(R.id.bt_delete);
         tv_text=root.findViewById(R.id.tv_text2);
-//        phoneCard_out.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                if(main_phoneCard.getVisibility()==View.VISIBLE) {
-//                    main_phoneCard.setVisibility(View.GONE);
-//                    floatingActionsMenu.setVisibility(View.VISIBLE);
-//                }
-//            }
-//                                         });
-//        action_call.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if(main_phoneCard.getVisibility()==View.GONE) {
-//                    main_phoneCard.setVisibility(View.VISIBLE);
-//                    floatingActionsMenu.setVisibility(View.INVISIBLE);
-//                }
-//            }
-//        });
+
 
         return root;
     }
@@ -158,7 +141,7 @@ public class HomeFragment extends BaseFragment {
                     floatingActionsMenu.setVisibility(View.VISIBLE);
                     all="";
                     tv_text.setText(all);
-                    del.setVisibility(View.VISIBLE);
+                    del.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.bt_one:

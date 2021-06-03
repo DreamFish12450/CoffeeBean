@@ -45,7 +45,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Log.d(getClass().getSimpleName(), "onItemSelected: " + textViewData.getText().toString());
+                    Log.d(getClass().getSimpleName(), "onItemSelected: " + contactInfoName.getText().toString());
 //                    Toast.makeText(view.getContext(), "onItemSelected: " + textViewData.getText().toString(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -70,6 +70,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
+
         ContactInfo item = mDataset.get(position);
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
         viewHolder.swipeLayout.addSwipeListener(new SimpleSwipeListener() {
@@ -87,12 +88,12 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 
 
         viewHolder.trashView.setOnClickListener(v->{
+            showNormalDialog(mDataset.get(position).getNoteName());
             mItemManger.removeShownLayouts(viewHolder.swipeLayout);
             mDataset.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mDataset.size());
             mItemManger.closeAllItems();
-            showNormalDialog(mDataset.get(position).getNoteName());
         });
 //        viewHolder.textViewPos.setText((position + 1) + ".");
         viewHolder.contactInfoName.setText(item.getNoteName());

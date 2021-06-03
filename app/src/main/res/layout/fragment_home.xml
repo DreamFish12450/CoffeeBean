@@ -69,7 +69,7 @@
             android:visibility="visible"
             android:orientation="vertical"
             android:background="@color/white"
-            android:layout_alignParentRight="true">
+            >
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -304,8 +304,8 @@
 
             app:fab_labelsPosition="left"
             tools:ignore="RelativeOverlap"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp">
+            
+            >
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/action_call"

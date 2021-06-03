@@ -23,9 +23,9 @@
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
+                
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
+                
                 android:scaleType="centerCrop"
                 android:src="@drawable/avater"
                 app:roundHeight="24dp"
@@ -37,9 +37,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
+                
                 android:layout_toEndOf="@id/tag_cell_icon"
-                android:layout_toRightOf="@id/tag_cell_icon"
+                
                 android:gravity="center_vertical"
                 android:text="soso"
 

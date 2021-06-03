@@ -97,7 +97,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         ArrayList<PhoneRecord> PhoneRecordsList = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
-               +"WHERE noteName="+searchname + " ORDER BY " + PhoneRecord.COLUMN_RECORDID + " ASC";
+               +" WHERE "+ PhoneRecord.COLUMN_NOTENAME +"='"+searchname + "' ORDER BY " + PhoneRecord.COLUMN_RECORDID + " ASC";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor != null) {
