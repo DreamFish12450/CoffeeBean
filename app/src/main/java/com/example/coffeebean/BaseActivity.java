@@ -9,15 +9,14 @@ import android.os.Build;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-public class BaseFragment extends Fragment {
-
+public class BaseActivity extends AppCompatActivity {
     protected Activity mContext;
     public static final int REQUEST_CALL_PERMISSION = 10111; //拨号请求码\
-    private String phonenum="";
+    public String phonenum="";
     /**
      * 申请指定的权限.
      */
@@ -73,7 +72,4 @@ public class BaseFragment extends Fragment {
             startActivity(intent);
         }
     }
-
-
-
 }

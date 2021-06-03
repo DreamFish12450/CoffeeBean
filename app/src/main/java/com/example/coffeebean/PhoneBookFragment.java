@@ -251,7 +251,6 @@ public class PhoneBookFragment extends Fragment {
                         useName.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                hideSoft();
                                 //启动个人页面
                                 Log.d("itemclicked","search");
                                 Intent intent = new Intent();

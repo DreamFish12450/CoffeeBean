@@ -55,7 +55,6 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSoft();
         setContentView(R.layout.activity_contact_info);
         PersonPhoneRecordAdapter personPhoneRecordAdapter = new PersonPhoneRecordAdapter(findViewById(R.id.phone_record_view));
         mContext=this;
@@ -78,6 +77,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         }.start();
         while(phoneRecords==null){}
         while (contactInfo==null){}
+        hideSoft();
         personPhoneRecordAdapter.setItems(phoneRecords);
         noteNameTextView = findViewById(R.id.contact_note_name);
         noteNameTextView.setText(contactInfo.getNoteName());
@@ -239,15 +239,15 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                 call(phoneNumberTextView.getText().toString());
                 break;
             default:
-                hideSoft();
+
                 break;
         }
     }
 
     private void hideSoft(){
         try{
-            InputMethodManager imm=(InputMethodManager)ContactInfoActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(ContactInfoActivity.this.getWindow().getDecorView().getWindowToken(),0);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(ContactInfoActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.RESULT_HIDDEN);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -266,12 +266,5 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         }
         return super.onTouchEvent(event);
     }
-    @Override
-    public void call(String telPhone) {
-        phonenum=telPhone;
-        if (checkReadPermission(Manifest.permission.CALL_PHONE, REQUEST_CALL_PERMISSION)) {
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(telPhone));
-            ContactInfoActivity.this.startActivity(intent);
-        }
-    }
+
 }

@@ -41,7 +41,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ContactInfoActivity"
-            android:theme="@style/Theme.CoffeeBean.NoActionBar" />
+            android:theme="@style/Theme.CoffeeBean.NoActionBar" >
+        </activity>
         <activity
             android:name=".BottomActivity"
             android:label="@string/title_activity_bottom" />
