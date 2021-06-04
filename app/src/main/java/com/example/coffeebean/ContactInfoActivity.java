@@ -52,6 +52,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     EditText careerTextView;
     EditText phoneNumberTextView;
     TextView edit;
+    int id;//用于修改
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         while (contactInfo==null){}
         hideSoft();
         personPhoneRecordAdapter.setItems(phoneRecords);
+        id=contactInfo.getId();
         noteNameTextView = findViewById(R.id.contact_note_name);
         noteNameTextView.setText(contactInfo.getNoteName());
         nameTextView = findViewById(R.id.contact_name);
@@ -227,6 +229,20 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                 }
                 else if(edit.getText().equals("完成")){
                     edit.setText("编辑");
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            //缺头像修改头像访问相册？
+                            ContactInfo contactInfo=new ContactInfo();
+                            contactInfo.setNoteName(noteNameTextView.getText().toString());
+                            contactInfo.setName(nameTextView.getText().toString());
+                            contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
+                            contactInfo.setWorkAddress(workAddressTextView.getText().toString());
+                            contactInfo.setCareer(careerTextView.getText().toString());
+                            contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
+                            new ContactDBHelper(getApplicationContext()).updateContactInfo(id,contactInfo);
+                        }
+                    }.start();
                     noteNameTextView.setEnabled(false);
                     nameTextView.setEnabled(false);
                     homeAddressTextView.setEnabled(false);

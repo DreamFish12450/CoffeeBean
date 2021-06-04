@@ -36,9 +36,12 @@ import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.CharacterParser;
 import com.example.coffeebean.util.DividerItemDecoration;
+import com.example.coffeebean.util.PinyinComparator;
+import com.example.coffeebean.widget.SideBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +57,6 @@ public class PhoneBookFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private EditText editText;
@@ -65,6 +67,7 @@ public class PhoneBookFragment extends Fragment {
     SimpleAdapter adapter;
     ArrayList<ContactInfo> ContactInfosList_searched;
     LinearLayout outLayout;
+    private PinyinComparator mComparator = new PinyinComparator();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -125,14 +128,24 @@ public class PhoneBookFragment extends Fragment {
             public void run(){
 
                 contactInfos=new ContactDBHelper(getContext()).getAllContactInfos();
+                contactInfos.add(new ContactInfo("农宣宣2",null,null,null,null,"13766663333",null));
+                contactInfos.add(new ContactInfo("王俊凯",null,null,null,null,"13866663333",null));
+                contactInfos.add(new ContactInfo("周科宇",null,null,null,null,"13744663333",null));
+                contactInfos.add(new ContactInfo("许铃冰",null,null,null,null,"13765553333",null));
+                contactInfos.add(new ContactInfo("赵懂佳",null,null,null,null,"13712363333",null));
 
-                contactInfos.add(new ContactInfo("陈桂君"));
-                contactInfos.add(new ContactInfo("农宣宣"));
+                contactInfos.add(new ContactInfo("陈桂君",null,null,null,null,"15384039889",null));
+                contactInfos.add(new ContactInfo("陈1",null,null,null,null,"12845432346",null));
+                contactInfos.add(new ContactInfo("陈2",null,null,null,null,"13868485252",null));
+                contactInfos.add(new ContactInfo("农宣宣",null,null,null,null,"13852528312",null));
+
             }
         }.start();
 
         while (contactInfos==null){}
         // Adapter:
+        contactInfos=filledData(contactInfos);
+        Collections.sort(contactInfos, mComparator);
         mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
         recyclerView.setAdapter(mAdapter);
@@ -143,6 +156,17 @@ public class PhoneBookFragment extends Fragment {
         cancelView=root.findViewById(R.id.text_cancel);
         editText=root.findViewById(R.id.edittext);
         outLayout=root.findViewById(R.id.search_out);
+        SideBar sideBar=root.findViewById(R.id.viewSidebar);
+        sideBar.setLetterTouchListener(new SideBar.LetterTouchListener(){
+            @Override
+            public void setLetter(String letter) {
+                for(int i = 0 ; i < contactInfos.size(); i++ ){
+                    if(letter.equals(contactInfos.get(i).getLetter())){
+                        recyclerView.scrollToPosition(i);
+                    }
+                }
+            }
+        });
 //        outLayout.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
 //            public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -171,7 +195,7 @@ public class PhoneBookFragment extends Fragment {
         editText.addTextChangedListener(new TextWatcher() {
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                cancelView.setVisibility(View.VISIBLE);
+
             }//文本改变之前执行
 
             @Override
@@ -230,8 +254,8 @@ public class PhoneBookFragment extends Fragment {
             public void run(){
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
                 ArrayList<ContactInfo> ContactInfosList = new ContactDBHelper(getContext()).getAllContactInfos();
-                CharacterParser.search(str,ContactInfosList,ContactInfosList_searched);
-                Log.d("模糊搜索开始", String.valueOf(ContactInfosList.size()));
+                Log.d("模糊搜索开始", String.valueOf(contactInfos.size()));
+                CharacterParser.search(str,contactInfos,ContactInfosList_searched);
                 for(ContactInfo i:ContactInfosList_searched){
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("title", i.getNoteName());
@@ -248,7 +272,8 @@ public class PhoneBookFragment extends Fragment {
                         final int p=position;
                         final View view=super.getView(position, convertView, parent);
                         TextView useName=(TextView)view.findViewById(R.id.title);
-                        useName.setOnClickListener(new View.OnClickListener() {
+                        LinearLayout item=view.findViewById(R.id.searchitem);
+                        item.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 //启动个人页面
@@ -280,5 +305,25 @@ public class PhoneBookFragment extends Fragment {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+//    填充首字母
+    private ArrayList<ContactInfo> filledData(ArrayList<ContactInfo> data){
+        CharacterParser characterParser=CharacterParser.getInstance();
+        ArrayList<ContactInfo> list = new ArrayList<ContactInfo>();
+        for (int i = data.size() - 1; i >= 0; i--) {
+            ContactInfo sm = new ContactInfo();
+            sm.setNoteName(data.get(i).getNoteName());
+            sm.setPhoneNumber(data.get(i).getPhoneNumber());
+            String pinyin = characterParser.getSelling(data.get(i).getNoteName());
+
+            String sortString = pinyin.substring(0, 1).toUpperCase();
+            if (sortString.matches("[A-Z]")) {
+                sm.setLetter(sortString);
+            } else {
+                sm.setLetter("#");
+            }
+            list.add(sm);
+        }
+        return list;
     }
 }

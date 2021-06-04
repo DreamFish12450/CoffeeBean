@@ -1,5 +1,7 @@
 package com.example.coffeebean.model;
 
+import com.example.coffeebean.util.CharacterParser;
+
 public class ContactInfo {
 
     public static final String TABLE_NAME ="contactInfo" ;
@@ -27,8 +29,23 @@ public class ContactInfo {
     private String homeAddress;
     private String workAddress;
     private String career;
+    private String Letter;
+
+    public void setLetter(String letter) {
+        Letter = letter;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private String phoneNumber;
     private String avaterUri;
+    private int id;
 
     public ContactInfo(){}
 
@@ -102,6 +119,6 @@ public class ContactInfo {
     }
     //获取首字母
     public String getLetter(){
-        return noteName.substring(0,1);
+        return Letter;
     }
 }

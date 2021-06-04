@@ -179,7 +179,7 @@ public class CharacterParser {
             for (ContactInfo contact : allContacts) {
                 if (contact.getPhoneNumber() != null && contact.getNoteName() != null) {
                     if (contact.getPhoneNumber().contains(str)
-                            || contact.getName().contains(str)) {
+                            || contact.getNoteName().contains(str)) {
 
                         contactList.add(contact);
                     }
@@ -210,7 +210,7 @@ public class CharacterParser {
      *
      */
     public static boolean contains(ContactInfo contact, String search) {
-        if (TextUtils.isEmpty(contact.getName())) {
+        if (TextUtils.isEmpty(contact.getNoteName())) {
             return false;
         }
 

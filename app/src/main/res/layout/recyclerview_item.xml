@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/tools"
-    app:ignore="NamespaceTypo"
-    android:orientation="vertical">
+    app:ignore="NamespaceTypo">
+    <TextView
+        android:id="@+id/tv_item_tag"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="#F3F5F8"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="20dp"
+        android:text="A"
+        android:textColor="#FF595959"
+        android:textSize="10sp"/>
 
-    <com.daimajia.swipe.SwipeLayout xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
+        android:id="@+id/user"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_item_tag"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+    <com.daimajia.swipe.SwipeLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +33,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="40dp"
             android:background="#FF5534"
             android:gravity="center"
             android:tag="Bottom3"
@@ -39,21 +57,21 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/clickView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/item_selector"
             android:elevation="5dp"
-            android:padding="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="10dp">
+
             <com.example.coffeebean.util.RoundAngleImageView
                 android:id="@+id/contact_info__item_avater"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="8dp"
-                
                 android:layout_marginEnd="16dp"
-                
                 android:scaleType="centerCrop"
                 android:src="@drawable/avater"
                 app:roundHeight="24dp"
@@ -65,13 +83,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                
                 android:layout_toEndOf="@id/tag_cell_icon"
-                
                 android:gravity="center_vertical"
                 android:text="soso"
 
-                android:textSize="32sp" />
+                android:textSize="20sp" />
+
             <TextView
                 android:id="@+id/position"
                 android:layout_width="wrap_content"
@@ -79,8 +96,9 @@
 
         </LinearLayout>
     </com.daimajia.swipe.SwipeLayout>
+    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#1A666666" />
-</LinearLayout>
+</RelativeLayout>

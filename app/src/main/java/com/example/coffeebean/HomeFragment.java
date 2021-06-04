@@ -218,7 +218,18 @@ public class HomeFragment extends BaseFragment {
         }
         Log.d("拨号",all);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        main_phoneCard.setVisibility(View.GONE);
+        floatingActionsMenu.setVisibility(View.VISIBLE);
+        all="";
+        tv_text.setText(all);
+        del.setVisibility(View.INVISIBLE);
+        if (floatingActionsMenu.isExpanded()) {
+            floatingActionsMenu.collapse();
+        }
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

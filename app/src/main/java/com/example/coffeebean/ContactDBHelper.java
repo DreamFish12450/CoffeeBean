@@ -77,7 +77,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         ContactInfo ContactInfo = new ContactInfo();
         SQLiteDatabase db = this.getReadableDatabase();
         String[] columnArray = new String[]{
-//                ContactInfo.COLUMN_ID,
+                ContactInfo.COLUMN_ID,
                 ContactInfo.COLUMN_NAME,
                 ContactInfo.COLUMN_NOTENAME,
                 ContactInfo.COLUMN_HOMEADDRESS,
@@ -91,7 +91,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
                 new String[]{searchName},
                 null, null, null);
         if (cursor != null && cursor.moveToNext()) {
-//            int id = cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_ID));
+            int id = cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_ID));
             String name = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_NAME));
             String noteName=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_NOTENAME));
             String workAddress=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_WORKADDRESS));
@@ -100,6 +100,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             String avaterUrl=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_AVATERURL));
             String career=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_CAREER));
 
+            ContactInfo.setId(id);
             ContactInfo.setName(name);
             ContactInfo.setNoteName(noteName);
             ContactInfo.setHomeAddress(homeAddress);
