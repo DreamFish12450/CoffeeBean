@@ -65,7 +65,11 @@ public class PhoneBookFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private EditText editText;
     private TextView cancelView;
+    private TextView addView;
     private ListView listView;
+    private static final int REQUESTCODE = 1;
+    private static final int SUCCESS = 1;
+    private static final int FAILURE = 0;
     ArrayList<ContactInfo> contactInfos;
     //phonelist
     SimpleAdapter adapter;
@@ -156,8 +160,10 @@ public class PhoneBookFragment extends Fragment {
         ContactInfosList_searched=new ArrayList<ContactInfo>();
         /* Listeners */
         recyclerView.setOnScrollListener(onScrollListener);
+        //各控件
         listView=root.findViewById(R.id.listview);
         cancelView=root.findViewById(R.id.text_cancel);
+        addView=root.findViewById(R.id.text_add);
         editText=root.findViewById(R.id.edittext);
         outLayout=root.findViewById(R.id.search_out);
         SideBar sideBar=root.findViewById(R.id.viewSidebar);
@@ -181,7 +187,12 @@ public class PhoneBookFragment extends Fragment {
                 }
             }
         });
-
+        addView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(getContext(),AddActivity.class), REQUESTCODE );
+            }
+        });
 
 //        outLayout.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -208,6 +219,7 @@ public class PhoneBookFragment extends Fragment {
 //                cancelView.setVisibility(View.INVISIBLE);
 //            }
 //        });
+
         editText.addTextChangedListener(new TextWatcher() {
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -351,6 +363,17 @@ public class PhoneBookFragment extends Fragment {
             list.add(sm);
         }
         return list;
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUESTCODE:
+                if(resultCode==SUCCESS){
+                    //更新界面操作 插入数组 重新排序 更新界面
+                }
+                break;
+            default:break;
+        }
     }
 
 }
