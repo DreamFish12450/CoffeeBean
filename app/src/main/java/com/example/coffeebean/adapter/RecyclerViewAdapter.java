@@ -3,8 +3,10 @@ package com.example.coffeebean.adapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,6 +26,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.example.coffeebean.ContactInfoActivity;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.ContactInfo;
+import com.example.coffeebean.widget.PopWindowView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         TextView tv_item_tag;
         TextView contactInfoName;
         LinearLayout clickView;
+
         public SimpleViewHolder(View itemView) {
             super(itemView);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
@@ -66,9 +70,8 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 
     private Context mContext;
     private ArrayList<ContactInfo> mDataset;
-    public MyItemOnClickListener mListener;
     public MyItemOnLongClickListener mLongListener;
-
+    public MyItemOnClickListener mListener;
     //protected SwipeItemRecyclerMangerImpl mItemManger = new SwipeItemRecyclerMangerImpl(this);
 
     public RecyclerViewAdapter(Context context, ArrayList<ContactInfo> objects) {
@@ -129,32 +132,28 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 //                mContext.startActivity(intent);
             }
         });
-//        if(mListener != null){
-//            viewHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    try {
-//                        mListener.onItemOnClick(v, mDataset.get(position));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-//        }
+        if(mListener != null){
+            viewHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        mListener.onItemOnClick(v, mDataset.get(position));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
         //长按
-//        if(mLongListener != null){
-//            viewHolder.swipeLayout.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    try {
-//                        mLongListener.onItemLongClick(v, mDataset.get(position));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    return true;
-//                }
-//            });
-//        }
+
+            viewHolder.clickView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    initPopWindow(v, mDataset.get(position));
+                    return true;
+                }
+            });
+
         viewHolder.trashView.setOnClickListener(v->{
             showNormalDialog(mDataset.get(position).getNoteName());
             mItemManger.removeShownLayouts(viewHolder.swipeLayout);
@@ -214,11 +213,65 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
     }
+
+    public void setOnItemClickListener(MyItemOnClickListener listener){
+        this.mListener = listener;
+    }
+
+    public void setOnItemLongClickListener(MyItemOnLongClickListener listener) {
+        this.mLongListener = listener;
+    }
+
     public interface MyItemOnClickListener {
         void onItemOnClick(View view, ContactInfo contact) throws IOException;
     }
 
     public interface MyItemOnLongClickListener {
         void onItemLongClick(View view, ContactInfo contact) throws IOException;
+    }
+    //生成删除气泡
+    private void initPopWindow(View v, final ContactInfo contact) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.bubble_dialog, null, false);
+        Button btn_xixi = (Button) view.findViewById(R.id.buttonDelete);
+        //1.构造一个PopupWindow，参数依次是加载的View，宽高
+        final PopWindowView popWindow = new PopWindowView(mContext, view);
+
+//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        popWindow.setAnimationStyle(R.anim.anim_pop);  //设置加载动画
+
+        //这些为了点击非PopupWindow区域，PopupWindow会消失的，如果没有下面的
+        //代码的话，你会发现，当你把PopupWindow显示出来了，无论你按多少次后退键
+        //PopupWindow并不会关闭，而且退不出程序，加上下述代码可以解决这个问题
+        popWindow.setTouchable(true);
+        popWindow.setTouchInterceptor(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return false;
+//            }
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+                // 这里如果返回true的话，touch事件将被拦截
+                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+            }
+        });
+        popWindow.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        popWindow.getBackground().setAlpha(0);    //要为popWindow设置一个背景才有效
+
+        //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+        popWindow.showUp2(v, 300, 50);
+
+        //设置popupWindow里的按钮的事件
+        btn_xixi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDataset.remove(contact);
+                //数据库删除
+                notifyDataSetChanged();
+                popWindow.dismiss();
+            }
+        });
     }
 }

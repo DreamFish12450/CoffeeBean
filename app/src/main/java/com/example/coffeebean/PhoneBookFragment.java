@@ -3,6 +3,7 @@ package com.example.coffeebean;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,8 +39,10 @@ import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.CharacterParser;
 import com.example.coffeebean.util.DividerItemDecoration;
 import com.example.coffeebean.util.PinyinComparator;
+import com.example.coffeebean.widget.PopWindowView;
 import com.example.coffeebean.widget.SideBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -157,16 +161,28 @@ public class PhoneBookFragment extends Fragment {
         editText=root.findViewById(R.id.edittext);
         outLayout=root.findViewById(R.id.search_out);
         SideBar sideBar=root.findViewById(R.id.viewSidebar);
+
+        //实现侧边栏快速定位功能
         sideBar.setLetterTouchListener(new SideBar.LetterTouchListener(){
             @Override
             public void setLetter(String letter) {
                 for(int i = 0 ; i < contactInfos.size(); i++ ){
                     if(letter.equals(contactInfos.get(i).getLetter())){
+                        Log.d("侧边查找",contactInfos.get(i).getNoteName());
+//                        if(i+1>=contactInfos.size()){
+//                        recyclerView.scrollToPosition(i);
+//                        break;
+//                        }
+//                        else if(letter.equals(contactInfos.get(i+1).getLetter()))
+//                            continue;
                         recyclerView.scrollToPosition(i);
+                        break;
                     }
                 }
             }
         });
+
+
 //        outLayout.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
 //            public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -205,8 +221,10 @@ public class PhoneBookFragment extends Fragment {
                 if (s.length() == 0) {
                     //隐藏
                    listView.setVisibility(View.GONE);
+                    cancelView.setVisibility(View.INVISIBLE);
                 } else {//长度不为0
                         //更新显示ListView
+                    cancelView.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.VISIBLE);
                     String str=s.toString();
                     showSearchList(str);
@@ -287,6 +305,14 @@ public class PhoneBookFragment extends Fragment {
                                 startActivity(intent);
                             }
                         });
+//                        item.setOnLongClickListener(new View.OnLongClickListener(){
+//
+//                            @Override
+//                            public boolean onLongClick(View view) {
+//                                initPopWindow(view, contactInfos.get(position));
+//                                return true;
+//                            }
+//                        });
                         return view;
                     }
                 };
@@ -326,4 +352,5 @@ public class PhoneBookFragment extends Fragment {
         }
         return list;
     }
+
 }
