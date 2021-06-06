@@ -2,7 +2,9 @@ package com.example.coffeebean.model;
 
 import com.example.coffeebean.util.CharacterParser;
 
-public class ContactInfo {
+import java.io.Serializable;
+
+public class ContactInfo implements Serializable {
 
     public static final String TABLE_NAME ="contactInfo" ;
     public static final String COLUMN_NOTENAME="noteName";

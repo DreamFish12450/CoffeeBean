@@ -55,7 +55,9 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
     EditText careerTextView;
     EditText phoneNumberTextView;
     TextView add;
-
+    long id=-1;
+    private static final int FAILURE = 0;
+    private static final int SUCCESS = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,10 +86,32 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
                 finish();
                 break;
             case R.id.add_contact://新增用户
-
+                ContactInfo contactInfo=new ContactInfo();
+                contactInfo.setNoteName(noteNameTextView.getText().toString());
+                contactInfo.setName(nameTextView.getText().toString());
+                contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
+                contactInfo.setWorkAddress(workAddressTextView.getText().toString());
+                contactInfo.setCareer(careerTextView.getText().toString());
+                contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
+                id=-1;
+                new Thread(){
+                    @Override
+                    public void run() {
+                        id =new ContactDBHelper(getApplicationContext()).insertContactInfo(contactInfo);
+                    }
+                }.start();
+                while(id==-1){}
+                Intent intent = new Intent();
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("newContactInfo", contactInfo); // 传递对象
+                intent.putExtra("bundle",mBundle);
+                Log.d("返回值",String.valueOf(id));
+                if(id>0)setResult(SUCCESS,intent);
+                else setResult(FAILURE);
+                this.finish();
                 break;
             case R.id.change_img://修改头像
-                call(phoneNumberTextView.getText().toString());
+
                 break;
             default:
 

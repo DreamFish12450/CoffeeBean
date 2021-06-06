@@ -366,10 +366,27 @@ public class PhoneBookFragment extends Fragment {
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("Request",String.valueOf(requestCode));
+        Log.d("Result",String.valueOf(resultCode));
         switch (requestCode){
             case REQUESTCODE:
                 if(resultCode==SUCCESS){
-                    //更新界面操作 插入数组 重新排序 更新界面
+                    Log.d("Success","123");
+                    Bundle bundle = data.getBundleExtra("bundle");
+                    if (bundle != null) {
+                        ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("newContactInfo");
+                        contactInfos.add(contactInfo);
+                        contactInfos=filledData(contactInfos);
+                        Collections.sort(contactInfos, mComparator);
+                        Log.d("add",contactInfo.getNoteName());
+                        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+                        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+                        recyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+                else if(requestCode==FAILURE){
+
                 }
                 break;
             default:break;
