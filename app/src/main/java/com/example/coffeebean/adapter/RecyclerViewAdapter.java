@@ -262,7 +262,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         popWindow.getBackground().setAlpha(0);    //要为popWindow设置一个背景才有效
 
         //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
-        popWindow.showUp2(v, 300, 50);
+        popWindow.showUp2(v, 200, 50);
 
         //设置popupWindow里的按钮的事件
         btn_xixi.setOnClickListener(new View.OnClickListener() {
