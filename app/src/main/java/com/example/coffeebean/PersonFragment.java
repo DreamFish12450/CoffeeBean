@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.example.coffeebean.adapter.PersonInfoAdapter;
+import com.example.coffeebean.model.UserInfo;
 import com.example.coffeebean.util.UserManage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,15 +117,28 @@ public class PersonFragment extends Fragment {
                 });
         builder.show();
     }
-    public void showAccountManagementDialog(LayoutInflater inflater, View root){
+
+    public void showAccountManagementDialog(LayoutInflater inflater, View root) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         builder.setTitle("添加用户");
         final View dialogView = LayoutInflater.from(this.getActivity())
                 .inflate(R.layout.dialog_account_magament, null);
         PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(root.findViewById(R.id.account_list));
+        ArrayList<UserInfo> userInfos = new ArrayList<>();
+        userInfos.add(new UserInfo(1, "100", "123", 1, 123));
+        personInfoAdapter.setItems(userInfos);
         builder.setView(dialogView);
+        root.findViewById(R.id.add_account).setOnClickListener((v -> {
+            startActivityForResult(new Intent(getActivity(), AddAccount.class), 1);
+        }));
 
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String result = data.getExtras().getString("username");//得到新Activity 关
+        Log.i("The Result", result);
     }
 }
