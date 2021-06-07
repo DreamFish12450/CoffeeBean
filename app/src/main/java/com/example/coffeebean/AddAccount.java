@@ -37,6 +37,23 @@ public class AddAccount extends AppCompatActivity {
             loginVerifyAsyncTask.execute();
         });
     }
+    @Override
+
+    public void onBackPressed() {
+        //数据是使用Intent返回
+
+        Intent intent = new Intent();
+
+
+        //设置返回数据
+
+        this.setResult(RESULT_CANCELED, intent);
+
+        //关闭Activity
+
+        this.finish();
+
+    }
     public class LoginVerifyAsyncTask extends AsyncTask<String, Void, UserInfo> {
         private String username;
         private String password;

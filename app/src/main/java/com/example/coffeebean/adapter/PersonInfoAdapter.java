@@ -55,7 +55,7 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
         holder.username.setText(items.get(position).getUsername());
 //        holder.date.setText(SimpleDateFormat.getDateInstance().format(items.get(position).getDate()));
 //        holder.image.setImageURI(Uri.parse(items.get(position).getAvaterUrl()));
-//        holder.phoneNumber.setText(items.get(position).getPhone_number());
+        holder.phoneNumber.setText(items.get(position).getPhone_number());
         String username = items.get(position).getUsername();
         UserInfo userInfo = UserManage.getInstance().getUserInfo(context);
         if (username.equals(userInfo.getUsername())){
