@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.example.coffeebean.model.UserInfo;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 保存用户信息的管理类
@@ -34,7 +39,7 @@ public class UserManage {
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("USERNAME", username);
         editor.putString("PASSWORD", password);
-        editor.commit();
+        editor.apply();
     }
     /**
      * 清除自动登录的用户信息
@@ -59,6 +64,28 @@ public class UserManage {
         userInfo.setUsername(sp.getString("USERNAME", ""));
         userInfo.setPassword(sp.getString("PASSWORD", ""));
         return userInfo;
+    }
+
+    public List<String> getUserInfoList(Context context){
+        SharedPreferences sp = context.getSharedPreferences("userInfoList", Context.MODE_PRIVATE);//Context.MODE_PRIVATE表示SharePrefences的数据只有自己应用程序能访问。
+        Gson gson = new Gson();
+        String jsonTextPre = sp.getString("key", null);
+        String[] text = gson.fromJson(jsonTextPre, String[].class);
+        return Arrays.asList(text);
+    }
+
+    public void saveUserInfoList(Context context, String username){
+        SharedPreferences sp = context.getSharedPreferences("userInfoList", Context.MODE_PRIVATE);//Context.MODE_PRIVATE表示SharePrefences的数据只有自己应用程序能访问。
+        SharedPreferences.Editor editor = sp.edit();
+        Gson gson = new Gson();
+        String jsonTextPre = sp.getString("key", null);
+        String[] text = gson.fromJson(jsonTextPre, String[].class);
+        List<String> textList = Arrays.asList(text);
+        textList.add(username);
+        String jsonText = gson.toJson(textList);
+        editor.putString("key", jsonText);
+        editor.apply();
+
     }
 
 

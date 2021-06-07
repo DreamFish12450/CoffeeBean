@@ -87,12 +87,13 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 
 
         viewHolder.trashView.setOnClickListener(v->{
+            showNormalDialog(mDataset.get(position).getNoteName());
             mItemManger.removeShownLayouts(viewHolder.swipeLayout);
             mDataset.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mDataset.size());
             mItemManger.closeAllItems();
-            showNormalDialog(mDataset.get(position).getNoteName());
+
         });
 //        viewHolder.textViewPos.setText((position + 1) + ".");
         viewHolder.contactInfoName.setText(item.getNoteName());

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.example.coffeebean.adapter.PersonInfoAdapter;
 import com.example.coffeebean.util.UserManage;
 
 import java.io.IOException;
@@ -77,6 +78,7 @@ public class PersonFragment extends Fragment {
     }
 
     public void showChangePasswordDialog(LayoutInflater inflater, View root) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         builder.setTitle("修改密码");
@@ -89,22 +91,22 @@ public class PersonFragment extends Fragment {
                     EditText editPreText = dialogView.findViewById(R.id.pre_password);
                     EditText editAfterText = dialogView.findViewById(R.id.after_password);
                     String prePassword = editPreText.getText().toString();
-                    Log.d("dialogViewMessage", prePassword+UserManage.getInstance().getUserInfo(getActivity()).getPassword());
+                    Log.d("dialogViewMessage", prePassword + UserManage.getInstance().getUserInfo(getActivity()).getPassword());
                     if (prePassword.equals(UserManage.getInstance().getUserInfo(getActivity()).getPassword())) {
 //                        Log.d("userInfoMessage", UserManage.getInstance().getUserInfo(getActivity()).getUsername().toString());
                         try {
                             loginDBHelper = new LoginDBHelper(getActivity());
                             new Thread(() -> {
                                 loginDBHelper.changePassword(UserManage.getInstance().getUserInfo(getActivity()).getUsername(), editAfterText.getText().toString());
-                                Log.d("dialogViewMessage",loginDBHelper.getUserInfoQueryByName(UserManage.getInstance().getUserInfo(getActivity()).getUsername()).getPassword());
-
+                                Log.d("dialogViewMessage", loginDBHelper.getUserInfoQueryByName(UserManage.getInstance().getUserInfo(getActivity()).getUsername()).getPassword());
                             }).start();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-//                        Intent intent = new Intent(getActivity(), LoginActivity.class);
-//                        startActivity(intent);
-//                        UserManage.getInstance().delUserInfo(getActivity());
+                        UserManage.getInstance().delUserInfo(getActivity());
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(intent);
+//
                     }
 //                    UserManage.getInstance().delUserInfo(getActivity());
                 })
@@ -112,6 +114,16 @@ public class PersonFragment extends Fragment {
 
                 });
         builder.show();
+    }
+    public void showAccountManagementDialog(LayoutInflater inflater, View root){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        builder.setTitle("添加用户");
+        final View dialogView = LayoutInflater.from(this.getActivity())
+                .inflate(R.layout.dialog_account_magament, null);
+        PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(root.findViewById(R.id.account_list));
+        builder.setView(dialogView);
+
 
     }
 }
