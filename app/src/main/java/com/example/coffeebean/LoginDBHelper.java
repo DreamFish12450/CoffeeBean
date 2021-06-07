@@ -1,4 +1,5 @@
 package com.example.coffeebean;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
+
 import androidx.annotation.Nullable;
 
 
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 
 public class LoginDBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
-//    private static final String
+    //    private static final String
     private final Context myContext;
     private SQLiteDatabase mDatabase;
     private static final String DATABASE_NAME = "identifier.sqlite";
@@ -39,10 +41,9 @@ public class LoginDBHelper extends SQLiteOpenHelper {
     private final String DATABASE_FILENAME = "identifier.sqlite";//数据库文件名称
 
 
-
     public LoginDBHelper(@Nullable Context context) throws IOException {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        myContext=context;
+        myContext = context;
 //        createDataBase();
     }
 
@@ -63,7 +64,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-//    private SQLiteDatabase openDatabase()
+    //    private SQLiteDatabase openDatabase()
 //    {
 //        try
 //        {
@@ -111,13 +112,13 @@ public class LoginDBHelper extends SQLiteOpenHelper {
 //        }
 //        return null;
 //    }
-    public void createDataBase() throws IOException{
+    public void createDataBase() throws IOException {
 
         boolean dbExist = checkDataBase();
 
-        if(dbExist){
+        if (dbExist) {
             //do nothing - database already exist
-        }else{
+        } else {
 
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
@@ -138,23 +139,25 @@ public class LoginDBHelper extends SQLiteOpenHelper {
 
     /**
      * Check if the database already exist to avoid re-copying the file each time you open the application.
+     *
      * @return true if it exists, false if it doesn't
      */
-    private boolean checkDataBase(){
+    private boolean checkDataBase() {
 
         SQLiteDatabase checkDB = null;
 
-        try{
-            String myPath = DATABASE_PATH + "/" + DATABASE_FILENAME;;
+        try {
+            String myPath = DATABASE_PATH + "/" + DATABASE_FILENAME;
+            ;
 //            checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
 
-        }catch(Exception e){
+        } catch (Exception e) {
 
             //database does't exist yet.
 
         }
 
-        if(checkDB != null){
+        if (checkDB != null) {
 
             checkDB.close();
 
@@ -167,7 +170,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
      * Copies your database from your local assets-folder to the just created empty database in the
      * system folder, from where it can be accessed and handled.
      * This is done by transfering bytestream.
-     * */
+     */
     private void copyDataBase() throws IOException {
 
         //Open your local db as the input stream
@@ -175,10 +178,11 @@ public class LoginDBHelper extends SQLiteOpenHelper {
                 R.raw.identifier);
 //         如果/sdcard/dictionary目录不存在，创建这个目录
         File dir = new File(DATABASE_PATH);//sd卡的路径，
-            if (!dir.exists())
-                dir.mkdir();
+        if (!dir.exists())
+            dir.mkdir();
         // Path to the just created empty db
-        String outFileName = DATABASE_PATH + "/" + DATABASE_FILENAME;;
+        String outFileName = DATABASE_PATH + "/" + DATABASE_FILENAME;
+        ;
 
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
@@ -187,7 +191,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         //transfer bytes from the inputfile to the outputfile
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = myInput.read(buffer))>0){
+        while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length);
         }
 
@@ -197,10 +201,12 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         myInput.close();
 
     }
+
     public SQLiteDatabase openDataBase() throws SQLException {
 
         //Open the database
-        String myPath =DATABASE_PATH + "/" + DATABASE_FILENAME;;
+        String myPath = DATABASE_PATH + "/" + DATABASE_FILENAME;
+        ;
         mDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
         return mDatabase;
     }
@@ -208,7 +214,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
     @Override
     public synchronized void close() {
 
-        if(mDatabase != null)
+        if (mDatabase != null)
             mDatabase.close();
 
         super.close();
@@ -216,19 +222,20 @@ public class LoginDBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
      * @param searchName query database by name
      * @return UserInfo
      */
     public UserInfo getUserInfoQueryByName(String searchName) {
         UserInfo UserInfo = new UserInfo();
-        mDatabase=this.getReadableDatabase();
+        mDatabase = this.getReadableDatabase();
         String[] columnArray = new String[]{
                 UserInfo.COLUMN_USERID,
                 UserInfo.COLUMN_USERNAME,
                 UserInfo.COLUMN_PASSWORD,
                 UserInfo.COLUMN_VIP_LEVEL,
-                UserInfo.COLUMN_AMOUNT,};
+                UserInfo.COLUMN_AMOUNT,
+                UserInfo.COLUMN_PHONE_NUMBER,
+                UserInfo.COLUMN_AVATAR_URL};
         Cursor cursor = mDatabase.query(UserInfo.TABLE_NAME,
                 columnArray,
                 UserInfo.COLUMN_USERNAME + "=? ",
@@ -237,14 +244,18 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(UserInfo.COLUMN_USERID));
             String username = cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_USERNAME));
-            String password=cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_PASSWORD));
-            int vip_level=cursor.getInt(cursor.getColumnIndex(UserInfo.COLUMN_VIP_LEVEL));
+            String password = cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_PASSWORD));
+            int vip_level = cursor.getInt(cursor.getColumnIndex(UserInfo.COLUMN_VIP_LEVEL));
             double amount = cursor.getDouble(cursor.getColumnIndex(UserInfo.COLUMN_AMOUNT));
+            String phone_number = cursor.getString(cursor.getColumnIndex(UserInfo.getPhone_number()));
+            String avatar_url = cursor.getString(cursor.getColumnIndex(UserInfo.getAvatar_url()));
             UserInfo.setId(id);
             UserInfo.setUsername(username);
             UserInfo.setPassword(password);
             UserInfo.setVip_level(vip_level);
             UserInfo.setAmount(amount);
+            UserInfo.setPhone_number(phone_number);
+            UserInfo.setAvatar_url(avatar_url);
             cursor.close();
             close();
             return UserInfo;
@@ -252,14 +263,13 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void changePassword(String username,String password){
-        mDatabase=this.getWritableDatabase();
+    public void changePassword(String username, String password) {
+        mDatabase = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("password",password);
-        mDatabase.update(UserInfo.TABLE_NAME,values,"username=?",new String[]{username});
+        values.put("password", password);
+        mDatabase.update(UserInfo.TABLE_NAME, values, "username=?", new String[]{username});
         close();
     }
-
 
 
 }

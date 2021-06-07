@@ -161,6 +161,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, mDataset.size());
             mItemManger.closeAllItems();
+
         });
 //        viewHolder.textViewPos.setText((position + 1) + ".");
         viewHolder.contactInfoName.setText(item.getNoteName());
