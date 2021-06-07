@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeebean.ContactInfoActivity;
+import com.example.coffeebean.LoginActivity;
+import com.example.coffeebean.LoginDBHelper;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.model.UserInfo;
@@ -22,6 +24,7 @@ import com.example.coffeebean.util.UserManage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +55,16 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
 
     @Override
     public void onBindViewHolder(PersonInfoAdapter.RecyclerHolder holder, int position) {
-        holder.username.setText(items.get(position).getUsername());
+        String username = null;
+        if (items != null) {
+            holder.username.setText(items.get(position).getUsername());
 //        holder.date.setText(SimpleDateFormat.getDateInstance().format(items.get(position).getDate()));
 //        holder.image.setImageURI(Uri.parse(items.get(position).getAvaterUrl()));
-        holder.phoneNumber.setText(items.get(position).getPhone_number());
-        String username = items.get(position).getUsername();
+            holder.phoneNumber.setText(items.get(position).getPhone_number());
+            username = items.get(position).getUsername();
+        }
         UserInfo userInfo = UserManage.getInstance().getUserInfo(context);
-        if (username.equals(userInfo.getUsername())){
+        if (username.equals(userInfo.getUsername())) {
             holder.loginButton.setVisibility(View.GONE);
         }
 //        if (items.get(position).getStatus() == 0) {
@@ -75,6 +81,7 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
     }
 
     public void addItem(UserInfo item) {
+
         items.add(item);
         notifyDataSetChanged();
     }
@@ -97,16 +104,25 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
             loginButton = itemView.findViewById(R.id.person_login_button);
             phoneNumber = itemView.findViewById(R.id.person_phone_number);
             loginButton.setOnClickListener(v -> {
-                Intent intent = new Intent(context, ContactInfoActivity.class);
-                context.startActivity(intent);
+                final String[] password = {null};
+                new Thread(()->{
+                    try {
+                        UserManage.getInstance().delUserInfo(context);
+                        LoginDBHelper loginDBHelper = new LoginDBHelper(context);
+                         password[0] = loginDBHelper.getUserInfoQueryByName(username.getText().toString()).getPassword();
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        intent.putExtra("username", username.getText());
+                        intent.putExtra("password", password[0]);
+                        intent.putExtra("isChecked",true);
+                        context.startActivity(intent);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }).start();
+
             });
-//            image.setOnClickListener(v -> {
-//                new AlertDialog.Builder(itemView.getContext())
-//                        .setTitle("温馨小提示")
-//                        .setMessage("主人，将在30分钟后解冻完成哦～")
-//                        .create().show();
-//                heatIcon.setVisibility(View.GONE);
-//            });
+
         }
     }
 }

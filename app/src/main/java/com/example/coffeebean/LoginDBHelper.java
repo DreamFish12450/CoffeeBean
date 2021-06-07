@@ -247,8 +247,8 @@ public class LoginDBHelper extends SQLiteOpenHelper {
             String password = cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_PASSWORD));
             int vip_level = cursor.getInt(cursor.getColumnIndex(UserInfo.COLUMN_VIP_LEVEL));
             double amount = cursor.getDouble(cursor.getColumnIndex(UserInfo.COLUMN_AMOUNT));
-            String phone_number = cursor.getString(cursor.getColumnIndex(UserInfo.getPhone_number()));
-            String avatar_url = cursor.getString(cursor.getColumnIndex(UserInfo.getAvatar_url()));
+            String phone_number = cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_PHONE_NUMBER));
+            String avatar_url = cursor.getString(cursor.getColumnIndex(UserInfo.COLUMN_AVATAR_URL));
             UserInfo.setId(id);
             UserInfo.setUsername(username);
             UserInfo.setPassword(password);
@@ -265,6 +265,7 @@ public class LoginDBHelper extends SQLiteOpenHelper {
 
     public void changePassword(String username, String password) {
         mDatabase = this.getWritableDatabase();
+        Log.d("database",mDatabase.getPath());
         ContentValues values = new ContentValues();
         values.put("password", password);
         mDatabase.update(UserInfo.TABLE_NAME, values, "username=?", new String[]{username});

@@ -3,6 +3,7 @@ package com.example.coffeebean.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.coffeebean.model.UserInfo;
 import com.google.gson.Gson;
@@ -41,6 +42,7 @@ public class UserManage {
         editor.putString("PASSWORD", password);
         editor.apply();
     }
+
     /**
      * 清除自动登录的用户信息
      */
@@ -66,26 +68,43 @@ public class UserManage {
         return userInfo;
     }
 
-    public List<String> getUserInfoList(Context context){
+    public List<String> getUserInfoList(Context context) {
         SharedPreferences sp = context.getSharedPreferences("userInfoList", Context.MODE_PRIVATE);//Context.MODE_PRIVATE表示SharePrefences的数据只有自己应用程序能访问。
         Gson gson = new Gson();
         String jsonTextPre = sp.getString("key", null);
-        String[] text = gson.fromJson(jsonTextPre, String[].class);
-        return Arrays.asList(text);
+        String[] text = new String[10];
+        if (jsonTextPre != null)
+            text = gson.fromJson(jsonTextPre, String[].class);
+        else text = null;
+        if (text != null)
+            return Arrays.asList(text);
+        else return null;
     }
 
-    public void saveUserInfoList(Context context, String username){
+    public void saveUserInfoList(Context context, String username) {
         SharedPreferences sp = context.getSharedPreferences("userInfoList", Context.MODE_PRIVATE);//Context.MODE_PRIVATE表示SharePrefences的数据只有自己应用程序能访问。
         SharedPreferences.Editor editor = sp.edit();
         Gson gson = new Gson();
-        String jsonTextPre = sp.getString("key", null);
-        String[] text = gson.fromJson(jsonTextPre, String[].class);
-        List<String> textList = Arrays.asList(text);
+        List<String> textList =  new ArrayList<>();
+        if (sp.getString("key", null) != null) {
+            String jsonTextPre = sp.getString("key", null);
+            String[] text = gson.fromJson(jsonTextPre, String[].class);
+            Log.d("UserInfoList", String.valueOf(text));
+            textList = new ArrayList<> (Arrays.asList(text));
+        }
+//        textList = new ArrayList<>(textList);
         textList.add(username);
         String jsonText = gson.toJson(textList);
         editor.putString("key", jsonText);
         editor.apply();
 
+    }
+
+    public void clearUserInfoList(Context context) {
+        SharedPreferences sp = context.getSharedPreferences("userInfoList", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.apply();
     }
 
 

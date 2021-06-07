@@ -1,10 +1,14 @@
 package com.example.coffeebean;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,13 +17,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.coffeebean.adapter.PersonInfoAdapter;
 import com.example.coffeebean.model.UserInfo;
 import com.example.coffeebean.util.UserManage;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,12 +39,13 @@ public class PersonFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private PersonInfoAdapter personInfoAdapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     LoginDBHelper loginDBHelper;
     private RecyclerView accountListView;
+
     public PersonFragment() {
         // Required empty public constructor
     }
@@ -69,18 +77,32 @@ public class PersonFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        try {
+            loginDBHelper = new LoginDBHelper(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_person, container, false);
-        accountListView =root.findViewById(R.id.account_list);
+        accountListView = root.findViewById(R.id.account_list);
         root.findViewById(R.id.change_password).setOnClickListener((view) -> {
             showChangePasswordDialog(inflater, root);
         });
-        root.findViewById(R.id.account_management).setOnClickListener(v->{
-            showAccountManagementDialog(inflater,root);
+        root.findViewById(R.id.account_management).setOnClickListener(v -> {
+            try {
+                showAccountManagementDialog(inflater, root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        root.findViewById(R.id.log_out_view).setOnClickListener(v -> {
+            UserManage.getInstance().delUserInfo(getActivity());
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
         });
         return root;
     }
@@ -99,20 +121,25 @@ public class PersonFragment extends Fragment {
                     EditText editPreText = dialogView.findViewById(R.id.pre_password);
                     EditText editAfterText = dialogView.findViewById(R.id.after_password);
                     String prePassword = editPreText.getText().toString();
-                    Log.d("dialogViewMessage", prePassword + UserManage.getInstance().getUserInfo(getActivity()).getPassword());
+                    Log.d("dialogViewMessage", prePassword + "input" + UserManage.getInstance().getUserInfo(getActivity()).getPassword());
                     if (prePassword.equals(UserManage.getInstance().getUserInfo(getActivity()).getPassword())) {
+                        String username = UserManage.getInstance().getUserInfo(getActivity()).getUsername();
 //                        Log.d("userInfoMessage", UserManage.getInstance().getUserInfo(getActivity()).getUsername().toString());
                         try {
                             loginDBHelper = new LoginDBHelper(getActivity());
                             new Thread(() -> {
-                                loginDBHelper.changePassword(UserManage.getInstance().getUserInfo(getActivity()).getUsername(), editAfterText.getText().toString());
-                                Log.d("dialogViewMessage", loginDBHelper.getUserInfoQueryByName(UserManage.getInstance().getUserInfo(getActivity()).getUsername()).getPassword());
+                                loginDBHelper.changePassword(username, editAfterText.getText().toString());
+//                                Log.d("dialogViewMessage", loginDBHelper.getUserInfoQueryByName(UserManage.getInstance().getUserInfo(getActivity()).getUsername()).getPassword());
+                                loginDBHelper.close();
                             }).start();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         UserManage.getInstance().delUserInfo(getActivity());
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.putExtra("isChecked", true);
+                        intent.putExtra("username", username);
+                        intent.putExtra("password", editAfterText.getText().toString());
                         startActivity(intent);
 //
                     }
@@ -124,22 +151,41 @@ public class PersonFragment extends Fragment {
         builder.show();
     }
 
-    public void showAccountManagementDialog(LayoutInflater inflater, View root) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void showAccountManagementDialog(LayoutInflater inflater, View root) throws IOException {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         builder.setTitle("添加用户");
-        final View dialogView = LayoutInflater.from(this.getActivity())
-                .inflate(R.layout.dialog_account_magament, null);
-        PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(dialogView.findViewById(R.id.account_list));
-        ArrayList<UserInfo> userInfos = new ArrayList<>();
-        userInfos.add(new UserInfo(1, "1001", "123", 1, 123,"1899",null));
-        userInfos.add(new UserInfo(1, "1002", "123", 1, 123,"1899",null));
-        userInfos.add(new UserInfo(1, "1003", "123", 1, 123,"1899",null));
-        personInfoAdapter.setItems(userInfos);
-        builder.setView(dialogView);
-        dialogView.findViewById(R.id.add_account).setOnClickListener((v -> {
-            startActivityForResult(new Intent(getActivity(), AddAccount.class), 1);
-        }));
+        getActivity().runOnUiThread(() -> {
+            final View dialogView = LayoutInflater.from(this.getActivity())
+                    .inflate(R.layout.dialog_account_magament, null);
+            personInfoAdapter = new PersonInfoAdapter(dialogView.findViewById(R.id.account_list));
+            ArrayList<UserInfo> userInfos = new ArrayList<>();
+            final UserInfo[] user = new UserInfo[1];
+            String username = UserManage.getInstance().getUserInfo(getActivity()).getUsername();
+            try {
+                loginDBHelper = new LoginDBHelper(getActivity());
+                new Thread(() -> {
+                    if (UserManage.getInstance().getUserInfoList(getActivity()) != null) {
+                        List<String> usernameList = UserManage.getInstance().getUserInfoList(getActivity());
+                        usernameList.forEach(item -> {
+                            UserInfo temp = loginDBHelper.getUserInfoQueryByName(item);
+                            personInfoAdapter.addItem(temp);
+                        });
+                    }
+//                            loginDBHelper.close();
+                }
+                ).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            userInfos.add(user[0]);
+
+            builder.setView(dialogView);
+            dialogView.findViewById(R.id.add_account).setOnClickListener((v -> {
+                startActivityForResult(new Intent(getActivity(), AddAccount.class), 1);
+            }));
+        });
         builder.show();
 
 
@@ -148,6 +194,21 @@ public class PersonFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         String result = data.getExtras().getString("username");//得到新Activity 关
-        Log.i("The Result", result);
+        Log.d("The Result", result);
+        final UserInfo[] user = new UserInfo[1];
+        new Thread() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> {
+                    user[0] = loginDBHelper.getUserInfoQueryByName(result);
+                    personInfoAdapter.addItem(user[0]);
+                    UserManage.getInstance().saveUserInfoList(getActivity(), result);
+                });
+            }
+        }.start();
+
+
     }
+
+
 }
