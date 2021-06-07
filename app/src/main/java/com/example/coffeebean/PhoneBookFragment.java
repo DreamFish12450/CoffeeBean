@@ -354,6 +354,7 @@ public class PhoneBookFragment extends Fragment {
             sm.setPhoneNumber(data.get(i).getPhoneNumber());
             String pinyin = characterParser.getSelling(data.get(i).getNoteName());
 
+            //如果标签分组不为空 Letter为分组名
             String sortString = pinyin.substring(0, 1).toUpperCase();
             if (sortString.matches("[A-Z]")) {
                 sm.setLetter(sortString);

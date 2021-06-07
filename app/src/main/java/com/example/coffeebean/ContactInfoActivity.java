@@ -82,7 +82,6 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         }.start();
         while(phoneRecords==null){}
         while (contactInfo==null){}
-        hideSoft();
         personPhoneRecordAdapter.setItems(phoneRecords);
         id=contactInfo.getId();
         noteNameTextView = findViewById(R.id.contact_note_name);
@@ -264,15 +263,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private void hideSoft(){
-        try{
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(ContactInfoActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.RESULT_HIDDEN);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

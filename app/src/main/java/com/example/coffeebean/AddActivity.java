@@ -40,6 +40,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.OnClick;
 import butterknife.ButterKnife;
@@ -58,6 +60,8 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
     long id=-1;
     private static final int FAILURE = 0;
     private static final int SUCCESS = 1;
+
+    String regex = "0\\d{2,3}[-]?\\d{7,8}|0\\d{2,3}\\s?\\d{7,8}|13[0-9]\\d{8}|15[1089]\\d{8}";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,16 +87,28 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.add_returnbook://返回
+                setResult(FAILURE);
                 finish();
                 break;
             case R.id.add_contact://新增用户
                 ContactInfo contactInfo=new ContactInfo();
-                contactInfo.setNoteName(noteNameTextView.getText().toString());
-                contactInfo.setName(nameTextView.getText().toString());
-                contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
-                contactInfo.setWorkAddress(workAddressTextView.getText().toString());
-                contactInfo.setCareer(careerTextView.getText().toString());
-                contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
+                contactInfo.setNoteName(noteNameTextView.getText().toString().trim());
+                contactInfo.setName(nameTextView.getText().toString().trim());
+                contactInfo.setHomeAddress(homeAddressTextView.getText().toString().trim());
+                contactInfo.setWorkAddress(workAddressTextView.getText().toString().trim());
+                contactInfo.setCareer(careerTextView.getText().toString().trim());
+                contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString().trim());
+                Pattern pattern = Pattern.compile(regex);    // 编译正则表达式
+                Matcher matcher = pattern.matcher(phoneNumberTextView.getText().toString().trim());    // 创建给定输入模式的匹配器
+                boolean bool = matcher.matches();
+                if(noteNameTextView.getText().toString().length()==0){
+                    CharSequence cs="昵称不得为空";
+                    Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                }
+                else if(bool){//正则判断
+                    CharSequence cs="电话格式不规范";
+                    Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                }
                 id=-1;
                 new Thread(){
                     @Override

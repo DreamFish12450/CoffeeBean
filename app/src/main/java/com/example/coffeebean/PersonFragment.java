@@ -132,7 +132,9 @@ public class PersonFragment extends Fragment {
                 .inflate(R.layout.dialog_account_magament, null);
         PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(dialogView.findViewById(R.id.account_list));
         ArrayList<UserInfo> userInfos = new ArrayList<>();
-        userInfos.add(new UserInfo(1, "100", "123", 1, 123,"1899",null));
+        userInfos.add(new UserInfo(1, "1001", "123", 1, 123,"1899",null));
+        userInfos.add(new UserInfo(1, "1002", "123", 1, 123,"1899",null));
+        userInfos.add(new UserInfo(1, "1003", "123", 1, 123,"1899",null));
         personInfoAdapter.setItems(userInfos);
         builder.setView(dialogView);
         dialogView.findViewById(R.id.add_account).setOnClickListener((v -> {
