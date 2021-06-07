@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ public class PersonFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     LoginDBHelper loginDBHelper;
-
+    private RecyclerView accountListView;
     public PersonFragment() {
         // Required empty public constructor
     }
@@ -71,10 +72,15 @@ public class PersonFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_person, container, false);
+        accountListView =root.findViewById(R.id.account_list);
         root.findViewById(R.id.change_password).setOnClickListener((view) -> {
             showChangePasswordDialog(inflater, root);
+        });
+        root.findViewById(R.id.account_management).setOnClickListener(v->{
+            showAccountManagementDialog(inflater,root);
         });
         return root;
     }
@@ -124,14 +130,15 @@ public class PersonFragment extends Fragment {
         builder.setTitle("添加用户");
         final View dialogView = LayoutInflater.from(this.getActivity())
                 .inflate(R.layout.dialog_account_magament, null);
-        PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(root.findViewById(R.id.account_list));
+        PersonInfoAdapter personInfoAdapter = new PersonInfoAdapter(dialogView.findViewById(R.id.account_list));
         ArrayList<UserInfo> userInfos = new ArrayList<>();
-        userInfos.add(new UserInfo(1, "100", "123", 1, 123));
+        userInfos.add(new UserInfo(1, "100", "123", 1, 123,"1899",null));
         personInfoAdapter.setItems(userInfos);
         builder.setView(dialogView);
-        root.findViewById(R.id.add_account).setOnClickListener((v -> {
+        dialogView.findViewById(R.id.add_account).setOnClickListener((v -> {
             startActivityForResult(new Intent(getActivity(), AddAccount.class), 1);
         }));
+        builder.show();
 
 
     }

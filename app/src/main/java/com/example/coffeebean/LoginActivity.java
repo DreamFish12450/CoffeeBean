@@ -156,7 +156,7 @@ public class LoginActivity extends Activity {
 
         }
     };
-    private class LoginAsyncTask extends AsyncTask<String, Void, UserInfo> {
+    public class LoginAsyncTask extends AsyncTask<String, Void, UserInfo> {
         private String username;
         private String password;
         boolean isChecked;
@@ -205,6 +205,5 @@ public class LoginActivity extends Activity {
                 Toast.makeText(context, "登录失败，账户不存在", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 }

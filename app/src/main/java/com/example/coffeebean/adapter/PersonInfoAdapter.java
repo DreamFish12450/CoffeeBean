@@ -55,7 +55,7 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
         holder.username.setText(items.get(position).getUsername());
 //        holder.date.setText(SimpleDateFormat.getDateInstance().format(items.get(position).getDate()));
 //        holder.image.setImageURI(Uri.parse(items.get(position).getAvaterUrl()));
-        holder.phoneNumber.setText(items.get(position).getPhone_number());
+//        holder.phoneNumber.setText(items.get(position).getPhone_number());
         String username = items.get(position).getUsername();
         UserInfo userInfo = UserManage.getInstance().getUserInfo(context);
         if (username.equals(userInfo.getUsername())){
@@ -95,7 +95,7 @@ public class PersonInfoAdapter extends RecyclerView.Adapter<PersonInfoAdapter.Re
             avatarImage = itemView.findViewById(R.id.person_avatar_image);
             username = itemView.findViewById(R.id.username_text);
             loginButton = itemView.findViewById(R.id.person_login_button);
-
+            phoneNumber = itemView.findViewById(R.id.person_phone_number);
             loginButton.setOnClickListener(v -> {
                 Intent intent = new Intent(context, ContactInfoActivity.class);
                 context.startActivity(intent);
