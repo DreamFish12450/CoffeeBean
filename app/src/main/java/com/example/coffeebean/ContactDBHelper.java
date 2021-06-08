@@ -254,7 +254,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_PHONENUMBER, ContactInfo.getPhoneNumber());
         values.put(ContactInfo.COLUMN_AVATERURL, ContactInfo.getAvaterUri());
         values.put(ContactInfo.COLUMN_GROUP,ContactInfo.getGroup());
-
+        values.put(ContactInfo.COLUMN_ID,id);
         int idReturnByUpdate = db.update(ContactInfo.TABLE_NAME, values, ContactInfo.COLUMN_ID + " =? ", new String[]{String.valueOf(id)});
         db.close();
         return idReturnByUpdate;

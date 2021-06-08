@@ -29,9 +29,11 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.swipe.SimpleSwipeListener;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.example.coffeebean.ContactDBHelper;
 import com.example.coffeebean.ContactInfoActivity;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.ContactInfo;
+import com.example.coffeebean.model.Group;
 import com.example.coffeebean.util.RoundAngleImageView;
 import com.example.coffeebean.widget.PopWindowView;
 
@@ -44,6 +46,11 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     private RequestOptions requestOptions = RequestOptions.circleCropTransform()
             .diskCacheStrategy(DiskCacheStrategy.NONE)//不做磁盘缓存
             .skipMemoryCache(true);//不做内存缓存
+    private Context mContext;
+    private ArrayList<ContactInfo> mDataset;
+    public MyItemOnLongClickListener mLongListener;
+    public MyItemOnClickListener mListener;
+    ArrayList<Group> groupInfo;
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
         SwipeLayout swipeLayout;
@@ -81,22 +88,21 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         }
     }
 
-    private Context mContext;
-    private ArrayList<ContactInfo> mDataset;
-    public MyItemOnLongClickListener mLongListener;
-    public MyItemOnClickListener mListener;
+
     //protected SwipeItemRecyclerMangerImpl mItemManger = new SwipeItemRecyclerMangerImpl(this);
 
     public RecyclerViewAdapter(Context context, ArrayList<ContactInfo> objects) {
         this.mContext = context;
         this.mDataset = objects;
-
-
+        groupInfo=null;
+        new Thread(()->{ groupInfo=new ContactDBHelper(mContext).getAllGroup();}).start();
+        while (groupInfo==null){}
     }
 
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+
         return new SimpleViewHolder(view);
     }
 
@@ -117,7 +123,9 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             }
         });
         if (!letterCompareSection(position)) {
+            if(mDataset.get(position).getGroup()==1)
             viewHolder.tv_item_tag.setText(letter);
+            else viewHolder.tv_item_tag.setText(groupInfo.get(mDataset.get(position).getGroup()-1).getGroupName());
             viewHolder.tv_item_tag.setVisibility(View.VISIBLE);
         } else {
             viewHolder.tv_item_tag.setVisibility(View.GONE);
@@ -189,9 +197,15 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         if (position == 0) {
             return false;
         }
-        String letter1 = mDataset.get(position).getLetter();
-        String letter2 = mDataset.get(position - 1 ).getLetter();
-        Boolean result = letter1.equals(letter2);
+        Boolean result;
+        if(mDataset.get(position).getGroup()==1) {
+            String letter1 = mDataset.get(position).getLetter();
+            String letter2 = mDataset.get(position - 1).getLetter();
+             result = letter1.equals(letter2);
+        }
+        else {
+            result=(mDataset.get(position).getGroup()==mDataset.get(position-1).getGroup());
+        }
         return result;
     }
     private void showNormalDialog(String noteName){

@@ -122,4 +122,5 @@ public class HomeActivity extends AppCompatActivity {
         }
         return super.onTouchEvent(event);
     }
+
 }

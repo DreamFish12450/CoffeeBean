@@ -144,7 +144,7 @@ public class PhoneBookFragment extends Fragment {
         // Adapter:
         contactInfos=filledData(contactInfos);
         Collections.sort(contactInfos, mComparator);
-        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+        mAdapter = new RecyclerViewAdapter(getContext(), contactInfos);
         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
         recyclerView.setAdapter(mAdapter);
         ContactInfosList_searched=new ArrayList<ContactInfo>();
@@ -331,6 +331,7 @@ public class PhoneBookFragment extends Fragment {
         }
         return data;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("Request",String.valueOf(requestCode));
