@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.example.coffeebean.adapter.ContactInfoAdapter;
 import com.example.coffeebean.adapter.PersonPhoneRecordAdapter;
 import com.example.coffeebean.model.ContactInfo;
+import com.example.coffeebean.model.Group;
 
 
 import java.lang.ref.WeakReference;
@@ -60,14 +62,41 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_HOMEADDRESS, ContactInfo.getHomeAddress());
         values.put(ContactInfo.COLUMN_WORKADDRESS, ContactInfo.getWorkAddress());
         values.put(ContactInfo.COLUMN_CAREER, ContactInfo.getCareer());
-//        values.put(ContactInfo.COLUMN_ID, NULL);//已设置自增长
         values.put(ContactInfo.COLUMN_PHONENUMBER, ContactInfo.getPhoneNumber());
         values.put(ContactInfo.COLUMN_AVATERURL, ContactInfo.getAvaterUri());
+        values.put(ContactInfo.COLUMN_GROUP,ContactInfo.getGroup());
         long id = db.insert(ContactInfo.TABLE_NAME, null, values);
         db.close();
         return id;
     }
 
+    /**
+     *
+     * @param
+     * @return ALLGroup
+     */
+    public ArrayList<Group> getAllGroup() {
+        ArrayList<Group> GroupList = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + Group.TABLE_NAME;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                Group group = new Group();
+
+                String name = cursor.getString(cursor.getColumnIndex(Group.COLUMN_GROUPNAME));
+                int id=cursor.getInt(cursor.getColumnIndex(Group.COLUMN_GROUPID));
+
+                group.setGroupID(id);
+                group.setGroupName(name);
+                GroupList.add(group);
+            }
+        }
+        cursor.close();
+        db.close();
+        return GroupList;
+    }
     /**
      *
      * @param searchName query database by notename
@@ -84,7 +113,8 @@ public class ContactDBHelper extends SQLiteOpenHelper {
                 ContactInfo.COLUMN_WORKADDRESS,
                 ContactInfo.COLUMN_CAREER,
                 ContactInfo.COLUMN_PHONENUMBER,
-                ContactInfo.COLUMN_AVATERURL};
+                ContactInfo.COLUMN_AVATERURL,
+                ContactInfo.COLUMN_GROUP};
         Cursor cursor = db.query(ContactInfo.TABLE_NAME,
                 columnArray,
                 ContactInfo.COLUMN_NOTENAME + "=? ",
@@ -99,7 +129,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             String homeAddress = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_HOMEADDRESS));
             String avaterUrl=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_AVATERURL));
             String career=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_CAREER));
-
+            int group=cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_GROUP));
             ContactInfo.setId(id);
             ContactInfo.setName(name);
             ContactInfo.setNoteName(noteName);
@@ -108,7 +138,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             ContactInfo.setCareer(career);
             ContactInfo.setAvaterUri(avaterUrl);
             ContactInfo.setPhoneNumber(telephone);
-
+            ContactInfo.setGroup(group);
             cursor.close();
             return ContactInfo;
         }
@@ -137,6 +167,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
                 String homeAddress = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_HOMEADDRESS));
                 String avaterUrl=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_AVATERURL));
                 String career=cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_CAREER));
+                int group=cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_GROUP));
                 int id=cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_ID));
 
 
@@ -147,7 +178,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
                 ContactInfo.setCareer(career);
                 ContactInfo.setAvaterUri(avaterUrl);
                 ContactInfo.setPhoneNumber(telephone);
-
+                ContactInfo.setGroup(group);
 
                 ContactInfosList.add(ContactInfo);
             }
@@ -222,6 +253,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_ID, NULL);//已设置自增长
         values.put(ContactInfo.COLUMN_PHONENUMBER, ContactInfo.getPhoneNumber());
         values.put(ContactInfo.COLUMN_AVATERURL, ContactInfo.getAvaterUri());
+        values.put(ContactInfo.COLUMN_GROUP,ContactInfo.getGroup());
 
         int idReturnByUpdate = db.update(ContactInfo.TABLE_NAME, values, ContactInfo.COLUMN_ID + " =? ", new String[]{String.valueOf(id)});
         db.close();

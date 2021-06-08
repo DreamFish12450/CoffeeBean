@@ -15,6 +15,7 @@ public class ContactInfo implements Serializable {
     public static final String COLUMN_ID="contactId";
     public static final String COLUMN_PHONENUMBER="phoneNumber";
     public static final String COLUMN_AVATERURL="avaterUrl";
+    public static final String COLUMN_GROUP="group_id";
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + COLUMN_NOTENAME + " VARCHAR(32),"
             + COLUMN_NAME + " VARCHAR(32),"
@@ -24,6 +25,7 @@ public class ContactInfo implements Serializable {
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + COLUMN_PHONENUMBER + " VARCHAR(32),"
             + COLUMN_AVATERURL + " VARCHAR(100),"
+            + COLUMN_GROUP + " INTEGER,"
             + ")";
 
     private String noteName;
@@ -32,6 +34,18 @@ public class ContactInfo implements Serializable {
     private String workAddress;
     private String career;
     private String Letter;
+    private int Group;
+    private String phoneNumber;
+    private String avaterUri;
+    private int id;
+
+    public int getGroup() {
+        return Group;
+    }
+
+    public void setGroup(int group) {
+        Group = group;
+    }
 
     public void setLetter(String letter) {
         Letter = letter;
@@ -45,9 +59,7 @@ public class ContactInfo implements Serializable {
         this.id = id;
     }
 
-    private String phoneNumber;
-    private String avaterUri;
-    private int id;
+
 
     public ContactInfo(){}
 

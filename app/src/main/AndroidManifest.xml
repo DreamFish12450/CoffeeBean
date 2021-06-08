@@ -40,6 +40,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CoffeeBean"
         android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
         android:usesCleartextTraffic="true">
         <activity android:name=".AddAccount"></activity>
         <activity

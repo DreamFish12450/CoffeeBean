@@ -56,18 +56,23 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     EditText careerTextView;
     EditText phoneNumberTextView;
     TextView edit;
+    Intent intent;
+    boolean isEdit=false;
+    private static final int SUCCESS = 1;
+    private static final int FAILURE = 0;
     int id;//用于修改
+    int group;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_info);
         PersonPhoneRecordAdapter personPhoneRecordAdapter = new PersonPhoneRecordAdapter(findViewById(R.id.phone_record_view));
         mContext=this;
-         phoneRecords = null;
+        phoneRecords = null;
         Intent myIntent = getIntent();
         //读取Intent的值
         TextValue = myIntent.getStringExtra("NoteName");
-         contactInfo = null;
+        contactInfo = null;
         new Thread(){
             public void run(){
                 Log.d("个人信息初始化" , TextValue);
@@ -97,12 +102,21 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         phoneNumberTextView = findViewById(R.id.contact_phone_number);
         phoneNumberTextView.setText(contactInfo.getPhoneNumber());
         edit=findViewById(R.id.edit);
+        ivHead=findViewById(R.id.tag_cell_icon);
+        imgPath=contactInfo.getAvaterUri();
+        group=contactInfo.getGroup();
+        if(contactInfo.getAvaterUri()!=null) {
+            ivHead.setImageURI(Uri.parse(contactInfo.getAvaterUri()));
+        }
         LinearLayout returnback=findViewById(R.id.returnbook);
         ImageView Info_call=findViewById(R.id.Info_call);
         returnback.setOnClickListener(this);
         edit.setOnClickListener(this);
         phoneNumberTextView.setOnClickListener(this);
         Info_call.setOnClickListener(this);
+        ivHead.setOnClickListener(this);
+
+        setResult(FAILURE);
 //        String url = Requests.API_GET_ALL_PHONE + "0,soso";
 //        String url2 = Requests.API_GET_CONTACT_INFO+"soso";
 //        new Thread() {
@@ -218,7 +232,11 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.returnbook:
-                finish();
+                if(isEdit){
+                    setResult(SUCCESS,intent);
+                    Log.d("设置","Success");
+                }
+                this.finish();
                 break;
             case R.id.edit:
                 if(edit.getText().equals("编辑")) {
@@ -236,16 +254,26 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                         @Override
                         public void run() {
                             //缺头像修改头像访问相册？
-                            ContactInfo contactInfo=new ContactInfo();
+
                             contactInfo.setNoteName(noteNameTextView.getText().toString());
                             contactInfo.setName(nameTextView.getText().toString());
                             contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
                             contactInfo.setWorkAddress(workAddressTextView.getText().toString());
                             contactInfo.setCareer(careerTextView.getText().toString());
                             contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
+                            contactInfo.setAvaterUri(imgPath);
+                            contactInfo.setGroup(group);
                             new ContactDBHelper(getApplicationContext()).updateContactInfo(id,contactInfo);
+                            isEdit=true;
                         }
                     }.start();
+                    while (isEdit==false){}
+                    intent = new Intent();
+                    Bundle mBundle = new Bundle();
+                    mBundle.putSerializable("refreshContactInfo", contactInfo); // 传递对象
+                    intent.putExtra("bundle",mBundle);
+
+
                     noteNameTextView.setEnabled(false);
                     nameTextView.setEnabled(false);
                     homeAddressTextView.setEnabled(false);
@@ -256,6 +284,10 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.Info_call:
                 call(phoneNumberTextView.getText().toString());
+                break;
+            case R.id.tag_cell_icon:
+                if(edit.getText().equals("完成"))
+                changeAvatar(v);
                 break;
             default:
 

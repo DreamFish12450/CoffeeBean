@@ -40,13 +40,13 @@
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="300dp"
         android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="280dp"
-            android:layout_height="280dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical">
@@ -56,25 +56,17 @@
                 android:layout_width="160dp"
                 android:layout_height="170dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/avater"
+
                 app:roundHeight="80dp"
                 app:roundWidth="80dp" />
-            <TextView
-                android:id="@+id/change_img"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="修改头像"
-                android:clickable="true"
-                android:textColor="#00CD00"
-                android:textSize="20sp"/>
+
             <EditText
                 android:id="@+id/add_contact_note_name"
                 android:layout_width="wrap_content"
                 android:minWidth="100dp"
                 android:gravity="center"
                 android:layout_height="40dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="6dp"
                 android:hint="昵称"
                 android:text=""
@@ -222,12 +214,33 @@
             android:background="@null"
             android:textSize="16sp"
             tools:ignore="RtlHardcoded" />
-    </LinearLayout>
 
+
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:background="#1A666666" />
+        android:layout_height="1dp"
+        android:background="#666666" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:gravity="center|left"
+            android:text="分组"
+            android:textSize="20sp"
+            tools:ignore="RtlHardcoded" />
+    <Spinner android:id="@+id/spinnerGroup"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:textSize="16sp"/>
+    </LinearLayout>
+
 
 
 

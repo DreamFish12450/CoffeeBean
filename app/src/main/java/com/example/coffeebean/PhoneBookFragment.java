@@ -68,6 +68,7 @@ public class PhoneBookFragment extends Fragment {
     private TextView addView;
     private ListView listView;
     private static final int REQUESTCODE = 1;
+    private static final int REQUESTCODE_Info = 2;
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
     ArrayList<ContactInfo> contactInfos;
@@ -134,18 +135,7 @@ public class PhoneBookFragment extends Fragment {
         new Thread(){
             @Override
             public void run(){
-
                 contactInfos=new ContactDBHelper(getContext()).getAllContactInfos();
-                contactInfos.add(new ContactInfo("农宣宣2",null,null,null,null,"13766663333",null));
-                contactInfos.add(new ContactInfo("王俊凯",null,null,null,null,"13866663333",null));
-                contactInfos.add(new ContactInfo("周科宇",null,null,null,null,"13744663333",null));
-                contactInfos.add(new ContactInfo("许铃冰",null,null,null,null,"13765553333",null));
-                contactInfos.add(new ContactInfo("赵懂佳",null,null,null,null,"13712363333",null));
-
-                contactInfos.add(new ContactInfo("陈桂君",null,null,null,null,"15384039889",null));
-                contactInfos.add(new ContactInfo("陈1",null,null,null,null,"12845432346",null));
-                contactInfos.add(new ContactInfo("陈2",null,null,null,null,"13868485252",null));
-                contactInfos.add(new ContactInfo("农宣宣",null,null,null,null,"13852528312",null));
 
             }
         }.start();
@@ -194,31 +184,7 @@ public class PhoneBookFragment extends Fragment {
             }
         });
 
-//        outLayout.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                if(view.getId()!=R.id.edittext&&motionEvent.getAction()==MotionEvent.ACTION_DOWN){
-//                    editText.clearFocus();
-//                    hideSoft();
-//                    cancelView.setVisibility(View.INVISIBLE);
-//                }
-//                return false;
-//            }
-//        });
-//        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean b) {
-//
-//            }
-//        });
-//        outLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean b) {
-//                editText.clearFocus();
-//                hideSoft();
-//                cancelView.setVisibility(View.INVISIBLE);
-//            }
-//        });
+
 
         editText.addTextChangedListener(new TextWatcher() {
 
@@ -347,23 +313,23 @@ public class PhoneBookFragment extends Fragment {
 //    填充首字母
     private ArrayList<ContactInfo> filledData(ArrayList<ContactInfo> data){
         CharacterParser characterParser=CharacterParser.getInstance();
-        ArrayList<ContactInfo> list = new ArrayList<ContactInfo>();
+//        ArrayList<ContactInfo> list = new ArrayList<ContactInfo>();
         for (int i = data.size() - 1; i >= 0; i--) {
-            ContactInfo sm = new ContactInfo();
-            sm.setNoteName(data.get(i).getNoteName());
-            sm.setPhoneNumber(data.get(i).getPhoneNumber());
+//            ContactInfo sm = new ContactInfo();
+//            sm.setNoteName(data.get(i).getNoteName());
+//            sm.setPhoneNumber(data.get(i).getPhoneNumber());
+//            sm.setAvaterUri(data.get(i).getAvaterUri());
             String pinyin = characterParser.getSelling(data.get(i).getNoteName());
-
             //如果标签分组不为空 Letter为分组名
             String sortString = pinyin.substring(0, 1).toUpperCase();
             if (sortString.matches("[A-Z]")) {
-                sm.setLetter(sortString);
+                data.get(i).setLetter(sortString);
             } else {
-                sm.setLetter("#");
+                data.get(i).setLetter("#");
             }
-            list.add(sm);
+//            list.add(sm);
         }
-        return list;
+        return data;
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -387,6 +353,25 @@ public class PhoneBookFragment extends Fragment {
                     }
                 }
                 else if(requestCode==FAILURE){
+
+                }
+                break;
+            case REQUESTCODE_Info:
+                if(resultCode==SUCCESS) {
+                    Log.d("Success_Info","123");
+                    Bundle bundle = data.getBundleExtra("bundle");
+                    if (bundle != null) {
+                        ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("refreshContactInfo");
+                        contactInfos.remove(contactInfo);
+                        contactInfos.add(contactInfo);
+                        contactInfos=filledData(contactInfos);
+                        Collections.sort(contactInfos, mComparator);
+                        Log.d("refresh",contactInfo.getNoteName());
+                        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+                        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+                        recyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                    }
 
                 }
                 break;

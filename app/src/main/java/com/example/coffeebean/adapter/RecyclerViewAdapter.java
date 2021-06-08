@@ -1,9 +1,12 @@
 package com.example.coffeebean.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +21,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.swipe.SimpleSwipeListener;
@@ -26,13 +32,18 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.example.coffeebean.ContactInfoActivity;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.ContactInfo;
+import com.example.coffeebean.util.RoundAngleImageView;
 import com.example.coffeebean.widget.PopWindowView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapter.SimpleViewHolder> {
-
+    private static final int REQUESTCODE_Info = 2;
+    //Glide请求图片选项配置
+    private RequestOptions requestOptions = RequestOptions.circleCropTransform()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)//不做磁盘缓存
+            .skipMemoryCache(true);//不做内存缓存
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
         SwipeLayout swipeLayout;
@@ -42,7 +53,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         TextView tv_item_tag;
         TextView contactInfoName;
         LinearLayout clickView;
-
+        RoundAngleImageView roundAngleImageView;
         public SimpleViewHolder(View itemView) {
             super(itemView);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
@@ -51,6 +62,8 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             tv_item_tag = (TextView) itemView.findViewById(R.id.tv_item_tag);
             contactInfoName = itemView.findViewById(R.id.contact_info_item_name);
             clickView=itemView.findViewById(R.id.clickView);
+            roundAngleImageView=itemView.findViewById(R.id.contact_info__item_avater);
+
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
@@ -91,6 +104,10 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
 
         ContactInfo item = mDataset.get(position);
+        new UpdateAsyncTask(viewHolder.roundAngleImageView,item).execute();
+//        if(item.getAvaterUri()!=null) {
+//           viewHolder.roundAngleImageView.setImageURI(Uri.parse(item.getAvaterUri()));
+//        }
         String letter = String.valueOf(item.getLetter());
         viewHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
         viewHolder.swipeLayout.addSwipeListener(new SimpleSwipeListener() {
@@ -115,7 +132,8 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
                     //把一个值写入到Intent中
                     intent.putExtra("NoteName", viewHolder.contactInfoName.getText());
                     //启动另一个activity
-                    mContext.startActivity(intent);
+
+                ((Activity)mContext).startActivityForResult(intent,REQUESTCODE_Info);
             }
         });
         viewHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
@@ -275,4 +293,29 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             }
         });
     }
+    //更新图片 内容过大需要异步
+    public class UpdateAsyncTask extends AsyncTask<Integer, Integer, Integer> {
+        private RoundAngleImageView roundAngleImageView;
+        private ContactInfo item;
+        public UpdateAsyncTask(RoundAngleImageView roundAngleImageView,ContactInfo item) {
+            super();
+            this.roundAngleImageView = roundAngleImageView;
+            this.item=item;
+        }
+
+        @Override
+        protected Integer doInBackground(Integer... integers) {
+            return 1;
+        }
+
+        protected void onPreExecute() {
+            Log.d("tag", "开始执行");
+        }
+        protected void onPostExecute(Integer result) {
+            if(item.getAvaterUri()!=null) {
+                roundAngleImageView.setImageURI(Uri.parse(item.getAvaterUri()));
+            }
+        }
+    }
+
 }
