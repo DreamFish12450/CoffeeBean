@@ -1,3 +1,4 @@
+
 package com.example.coffeebean;
 
 import android.app.ActionBar;
@@ -144,7 +145,9 @@ public class PhoneBookFragment extends Fragment {
         // Adapter:
         contactInfos=filledData(contactInfos);
         Collections.sort(contactInfos, mComparator);
-        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+
+        Log.d("fragment context",getContext().toString());
+        mAdapter = new RecyclerViewAdapter(getContext(), contactInfos);
         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
         recyclerView.setAdapter(mAdapter);
         ContactInfosList_searched=new ArrayList<ContactInfo>();
@@ -331,8 +334,10 @@ public class PhoneBookFragment extends Fragment {
         }
         return data;
     }
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        getParentFragment().onActivityResult(requestCode,resultCode,data);
         Log.d("Request",String.valueOf(requestCode));
         Log.d("Result",String.valueOf(resultCode));
         switch (requestCode){

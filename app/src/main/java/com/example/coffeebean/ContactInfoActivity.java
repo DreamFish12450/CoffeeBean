@@ -115,8 +115,8 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         phoneNumberTextView.setOnClickListener(this);
         Info_call.setOnClickListener(this);
         ivHead.setOnClickListener(this);
-
         setResult(FAILURE);
+
 //        String url = Requests.API_GET_ALL_PHONE + "0,soso";
 //        String url2 = Requests.API_GET_CONTACT_INFO+"soso";
 //        new Thread() {
@@ -233,10 +233,10 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         switch (v.getId()){
             case R.id.returnbook:
                 if(isEdit){
-                    setResult(SUCCESS,intent);
+                    ContactInfoActivity.this.setResult(SUCCESS,intent);
                     Log.d("设置","Success");
                 }
-                this.finish();
+                ContactInfoActivity.this.finish();
                 break;
             case R.id.edit:
                 if(edit.getText().equals("编辑")) {

@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -132,8 +134,10 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
                     //把一个值写入到Intent中
                     intent.putExtra("NoteName", viewHolder.contactInfoName.getText());
                     //启动另一个activity
-
+                Log.d("Contextname",mContext.getClass().getName());
+                Log.d(getClass().getName(),"I DO");
                 ((Activity)mContext).startActivityForResult(intent,REQUESTCODE_Info);
+
             }
         });
         viewHolder.swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
