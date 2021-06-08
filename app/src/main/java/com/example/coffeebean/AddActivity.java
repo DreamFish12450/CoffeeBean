@@ -109,20 +109,20 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
 //            .diskCacheStrategy(DiskCacheStrategy.NONE)//不做磁盘缓存
 //            .skipMemoryCache(true);//不做内存缓存
 
-    String regex = "0\\d{2,3}[-]?\\d{7,8}|0\\d{2,3}\\s?\\d{7,8}|13[0-9]\\d{8}|15[1089]\\d{8}";
+    String regex = "^1[3-9]\\d{9}$";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_add);
         mContext=this;
-        ArrayAdapter<Group> adapterCity = null;
+        ArrayAdapter<Group> adapterGroup = null;
         spinnerGroup=findViewById(R.id.spinnerGroup);
         groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
         while (groupInfo==null){}
-        adapterCity = new ArrayAdapter<Group>(this,
+        adapterGroup = new ArrayAdapter<Group>(this,
                 android.R.layout.simple_spinner_dropdown_item, groupInfo);
-//设置下拉框的数据适配器adapterCity
-        this.spinnerGroup.setAdapter(adapterCity);
+//设置下拉框的数据适配器adapterGroup
+        this.spinnerGroup.setAdapter(adapterGroup);
 
         ivHead=findViewById(R.id.add_contact_img);
         noteNameTextView = findViewById(R.id.add_contact_note_name);
@@ -159,9 +159,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
                 contactInfo.setAvaterUri(imgPath);
                 contactInfo.setGroup( ((Group)spinnerGroup.getSelectedItem()).getGroupID());
                 Log.d("groupid",String.valueOf(((Group)spinnerGroup.getSelectedItem()).getGroupID()));
-                Pattern pattern = Pattern.compile(regex);    // 编译正则表达式
-                Matcher matcher = pattern.matcher(phoneNumberTextView.getText().toString().trim());    // 创建给定输入模式的匹配器
-                boolean bool = matcher.matches();
+                boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
                 if(noteNameTextView.getText().toString().length()==0){
                     CharSequence cs="昵称不得为空";
                     Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();

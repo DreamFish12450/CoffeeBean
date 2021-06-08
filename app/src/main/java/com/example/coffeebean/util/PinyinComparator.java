@@ -49,7 +49,7 @@ public class PinyinComparator implements Comparator<ContactInfo> {
         }
         else {
             //对有分组的情况进行排序
-            return (arg0.getGroup()-arg1.getGroup())<0?-1:1;
+            return (arg0.getGroup()-arg1.getGroup())<0?1:-1;
         }
 
     }

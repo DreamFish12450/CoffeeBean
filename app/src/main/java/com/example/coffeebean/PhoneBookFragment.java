@@ -146,7 +146,10 @@ public class PhoneBookFragment extends Fragment {
         contactInfos=filledData(contactInfos);
         Collections.sort(contactInfos, mComparator);
 
+
         Log.d("fragment context",getContext().toString());
+
+
         mAdapter = new RecyclerViewAdapter(getContext(), contactInfos);
         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
         recyclerView.setAdapter(mAdapter);
@@ -334,7 +337,10 @@ public class PhoneBookFragment extends Fragment {
         }
         return data;
     }
+
     @Override
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 //        getParentFragment().onActivityResult(requestCode,resultCode,data);

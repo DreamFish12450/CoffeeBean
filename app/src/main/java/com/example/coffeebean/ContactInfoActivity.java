@@ -14,10 +14,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
 import com.example.coffeebean.adapter.PersonPhoneRecordAdapter;
 import com.example.coffeebean.model.ContactInfo;
+import com.example.coffeebean.model.Group;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.Requests;
 import com.example.coffeebean.util.UserManage;
@@ -40,6 +44,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import butterknife.OnClick;
 import butterknife.ButterKnife;
@@ -57,11 +62,14 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     EditText phoneNumberTextView;
     TextView edit;
     Intent intent;
+    Spinner spinnerGroup;
+
     boolean isEdit=false;
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
     int id;//用于修改
     int group;
+    ArrayList<Group> groupInfo=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +81,10 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         //读取Intent的值
         TextValue = myIntent.getStringExtra("NoteName");
         contactInfo = null;
+
         new Thread(){
             public void run(){
+                groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
                 Log.d("个人信息初始化" , TextValue);
                 contactInfo =new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
                 Log.d("个人信息初始化" , contactInfo.getNoteName());
@@ -87,6 +97,14 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         }.start();
         while(phoneRecords==null){}
         while (contactInfo==null){}
+        ArrayAdapter<Group> adapterGroup = null;
+        spinnerGroup=findViewById(R.id.spinnerGroup_info);
+        while (groupInfo==null){}
+        adapterGroup = new ArrayAdapter<Group>(this,
+                android.R.layout.simple_spinner_dropdown_item, groupInfo);
+//设置下拉框的数据适配器adapterGroup
+        this.spinnerGroup.setAdapter(adapterGroup);
+
         personPhoneRecordAdapter.setItems(phoneRecords);
         id=contactInfo.getId();
         noteNameTextView = findViewById(R.id.contact_note_name);
@@ -115,6 +133,30 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         phoneNumberTextView.setOnClickListener(this);
         Info_call.setOnClickListener(this);
         ivHead.setOnClickListener(this);
+
+        spinnerGroup.setSelection(contactInfo.getGroup()-1);
+        spinnerGroup.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {//选择item的选择点击监听事件
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                if((arg2+1)!=contactInfo.getGroup()){
+                    isEdit=false;
+                    edit.setText("完成");
+                    noteNameTextView.setEnabled(true);
+                    nameTextView.setEnabled(true);
+                    homeAddressTextView.setEnabled(true);
+                    workAddressTextView.setEnabled(true);
+                    careerTextView.setEnabled(true);
+                    phoneNumberTextView.setEnabled(true);
+                    isEdit=false;
+                }
+            }
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+
+
+
+
         setResult(FAILURE);
 
 //        String url = Requests.API_GET_ALL_PHONE + "0,soso";
@@ -235,11 +277,15 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                 if(isEdit){
                     ContactInfoActivity.this.setResult(SUCCESS,intent);
                     Log.d("设置","Success");
+                    startActivity(intent);
                 }
+
                 ContactInfoActivity.this.finish();
+
                 break;
             case R.id.edit:
                 if(edit.getText().equals("编辑")) {
+                    isEdit=false;
                     edit.setText("完成");
                     noteNameTextView.setEnabled(true);
                     nameTextView.setEnabled(true);
@@ -247,8 +293,21 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                     workAddressTextView.setEnabled(true);
                     careerTextView.setEnabled(true);
                     phoneNumberTextView.setEnabled(true);
+                    isEdit=false;
                 }
                 else if(edit.getText().equals("完成")){
+                    String regex = "^1[3-9]\\d{9}$";
+                    boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
+                    if(noteNameTextView.getText().toString().length()==0){
+                        CharSequence cs="昵称不得为空";
+                        Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    else if(phoneNumberTextView.getText().toString().trim().equals("")||!bool){//正则判断
+                        CharSequence cs="电话格式不规范";
+                        Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     edit.setText("编辑");
                     new Thread(){
                         @Override
@@ -262,13 +321,13 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                             contactInfo.setCareer(careerTextView.getText().toString());
                             contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
                             contactInfo.setAvaterUri(imgPath);
-                            contactInfo.setGroup(group);
+                            contactInfo.setGroup(spinnerGroup.getSelectedItemPosition()+1);
                             new ContactDBHelper(getApplicationContext()).updateContactInfo(id,contactInfo);
                             isEdit=true;
                         }
                     }.start();
                     while (isEdit==false){}
-                    intent = new Intent();
+                    intent = new Intent(this,HomeActivity.class);
                     Bundle mBundle = new Bundle();
                     mBundle.putSerializable("refreshContactInfo", contactInfo); // 传递对象
                     intent.putExtra("bundle",mBundle);
