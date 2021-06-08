@@ -99,6 +99,7 @@ public class PersonFragment extends Fragment {
                 e.printStackTrace();
             }
         });
+
         root.findViewById(R.id.log_out_view).setOnClickListener(v -> {
             UserManage.getInstance().delUserInfo(getActivity());
             Intent intent = new Intent(getActivity(), LoginActivity.class);

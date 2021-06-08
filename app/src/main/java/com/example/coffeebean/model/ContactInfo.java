@@ -5,6 +5,21 @@ import com.example.coffeebean.util.CharacterParser;
 import java.io.Serializable;
 
 public class ContactInfo implements Serializable {
+    @Override
+    public String toString() {
+        return "ContactInfo{" +
+                "noteName='" + noteName + '\'' +
+                ", name='" + name + '\'' +
+                ", homeAddress='" + homeAddress + '\'' +
+                ", workAddress='" + workAddress + '\'' +
+                ", career='" + career + '\'' +
+                ", Letter='" + Letter + '\'' +
+                ", Group=" + Group +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", avaterUri='" + avaterUri + '\'' +
+                ", id=" + id +
+                '}';
+    }
 
     public static final String TABLE_NAME ="contactInfo" ;
     public static final String COLUMN_NOTENAME="noteName";

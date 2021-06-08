@@ -62,6 +62,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     EditText phoneNumberTextView;
     TextView edit;
     Intent intent;
+    Intent broadIntent;
     Spinner spinnerGroup;
 
     boolean isEdit=false;
@@ -81,13 +82,14 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         //读取Intent的值
         TextValue = myIntent.getStringExtra("NoteName");
         contactInfo = null;
-
+        broadIntent = new Intent("action1");
         new Thread(){
             public void run(){
                 groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
                 Log.d("个人信息初始化" , TextValue);
                 contactInfo =new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
                 Log.d("个人信息初始化" , contactInfo.getNoteName());
+                broadIntent.putExtra("PreInfoName",contactInfo.getNoteName());
                 try {
                     phoneRecords=new PhoneRecordDBHelper(getApplicationContext()).getPhoneRecordsByName(TextValue);
                 } catch (ParseException e) {
@@ -275,15 +277,20 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         switch (v.getId()){
             case R.id.returnbook:
                 if(isEdit){
+//                    Intent i1 = new Intent();// 不能进行页面的跳转，只能实例化成这样
+//                    intent.setAction("action1");// 设置Intent对象的action属性，以便于在主界面做匹配
+
+                    sendBroadcast(broadIntent);// 发送广播
                     ContactInfoActivity.this.setResult(SUCCESS,intent);
                     Log.d("设置","Success");
-                    startActivity(intent);
+//                    startActivity(intent);
                 }
 
                 ContactInfoActivity.this.finish();
 
                 break;
             case R.id.edit:
+
                 if(edit.getText().equals("编辑")) {
                     isEdit=false;
                     edit.setText("完成");
@@ -331,8 +338,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                     Bundle mBundle = new Bundle();
                     mBundle.putSerializable("refreshContactInfo", contactInfo); // 传递对象
                     intent.putExtra("bundle",mBundle);
-
-
+                    broadIntent.putExtra("Info",contactInfo);
                     noteNameTextView.setEnabled(false);
                     nameTextView.setEnabled(false);
                     homeAddressTextView.setEnabled(false);

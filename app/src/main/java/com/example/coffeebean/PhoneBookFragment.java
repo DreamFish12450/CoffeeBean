@@ -2,12 +2,15 @@
 package com.example.coffeebean;
 
 import android.app.ActionBar;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +81,56 @@ public class PhoneBookFragment extends Fragment {
     SimpleAdapter adapter;
     ArrayList<ContactInfo> ContactInfosList_searched;
     LinearLayout outLayout;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(getClass().getName(), "获取回调");
+            Bundle bundle = intent.getBundleExtra("bundle");
+
+            ContactInfo contactInfo1 = (ContactInfo) intent.getSerializableExtra("Info");
+//            ContactInfo preInfo = (ContactInfo) intent.getSerializableExtra("PreInfo");
+            String preInfoName = (String) intent.getSerializableExtra("PreInfoName");
+            if (contactInfo1 != null) {
+                Log.d("信息", contactInfo1.toString());
+//                Log.d("Preinfo", preInfo.toString());
+
+                Iterator<ContactInfo> it =contactInfos.iterator();
+                while(it.hasNext()){
+                   ContactInfo x = it.next();
+                    if(preInfoName.equals(x.getNoteName())){
+                        it.remove();
+                    }
+                }
+
+                contactInfos.add(contactInfo1);
+
+                Log.d("preInfo",contactInfos.toString());
+                contactInfos = filledData(contactInfos);
+                Collections.sort(contactInfos, mComparator);
+                Log.d("add", contactInfo1.getNoteName());
+                mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+                ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            }
+
+//            if (bundle != null) {
+//                ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("newContactInfo");
+//                Log.d(getClass().getName(),contactInfo.toString());
+//                contactInfos.add(contactInfo);
+//                contactInfos=filledData(contactInfos);
+//                Collections.sort(contactInfos, mComparator);
+//                Log.d("add",contactInfo.getNoteName());
+//                mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+//                ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+//                recyclerView.setAdapter(mAdapter);
+//                mAdapter.notifyDataSetChanged();
+//            }
+        }
+    };
     private PinyinComparator mComparator = new PinyinComparator();
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -84,6 +138,15 @@ public class PhoneBookFragment extends Fragment {
 
     public PhoneBookFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
+//        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
+//        recyclerView.setAdapter(mAdapter);
+//        mAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -117,8 +180,11 @@ public class PhoneBookFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root =  inflater.inflate(R.layout.fragment_phone_book, container, false);
+        View root = inflater.inflate(R.layout.fragment_phone_book, container, false);
         recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+        getActivity().registerReceiver(receiver, new IntentFilter("action1"));
+
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            ActionBar actionBar = getActionBar();
 //            if (actionBar != null) {
@@ -133,44 +199,61 @@ public class PhoneBookFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider)));
 //        recyclerView.setItemAnimator(new FadeInLeftAnimator());
         contactInfos = null;
-        new Thread(){
+        new Thread() {
             @Override
-            public void run(){
-                contactInfos=new ContactDBHelper(getContext()).getAllContactInfos();
+            public void run() {
+                contactInfos = new ContactDBHelper(getContext()).getAllContactInfos();
 
             }
         }.start();
 
-        while (contactInfos==null){}
+        while (contactInfos == null) {
+        }
         // Adapter:
-        contactInfos=filledData(contactInfos);
+        contactInfos = filledData(contactInfos);
         Collections.sort(contactInfos, mComparator);
 
 
-        Log.d("fragment context",getContext().toString());
+        Log.d("fragment context", getContext().toString());
 
 
         mAdapter = new RecyclerViewAdapter(getContext(), contactInfos);
+//        ((RecyclerViewAdapter) mAdapter).onBind = (viewHolder, position) -> {
+//            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent();
+////
+//                    intent.setClass(getContext(),ContactInfoActivity.class);
+//                    //把一个值写入到Intent中
+//                    TextView textView = (TextView)viewHolder.itemView.findViewById(R.id.contact_info_item_name);
+//                    intent.putExtra("NoteName", textView.getText());
+//                    //启动另一个activity
+//                   startActivity(intent);
+////                    Toast.makeText(view.getContext(), "onItemSelected: " + textViewData.getText().toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        };
         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
         recyclerView.setAdapter(mAdapter);
-        ContactInfosList_searched=new ArrayList<ContactInfo>();
+        ContactInfosList_searched = new ArrayList<ContactInfo>();
         /* Listeners */
         recyclerView.setOnScrollListener(onScrollListener);
         //各控件
-        listView=root.findViewById(R.id.listview);
-        cancelView=root.findViewById(R.id.text_cancel);
-        addView=root.findViewById(R.id.text_add);
-        editText=root.findViewById(R.id.edittext);
-        outLayout=root.findViewById(R.id.search_out);
-        SideBar sideBar=root.findViewById(R.id.viewSidebar);
+        listView = root.findViewById(R.id.listview);
+        cancelView = root.findViewById(R.id.text_cancel);
+        addView = root.findViewById(R.id.text_add);
+        editText = root.findViewById(R.id.edittext);
+        outLayout = root.findViewById(R.id.search_out);
+        SideBar sideBar = root.findViewById(R.id.viewSidebar);
 
         //实现侧边栏快速定位功能
-        sideBar.setLetterTouchListener(new SideBar.LetterTouchListener(){
+        sideBar.setLetterTouchListener(new SideBar.LetterTouchListener() {
             @Override
             public void setLetter(String letter) {
-                for(int i = 0 ; i < contactInfos.size(); i++ ){
-                    if(letter.equals(contactInfos.get(i).getLetter())){
-                        Log.d("侧边查找",contactInfos.get(i).getNoteName());
+                for (int i = 0; i < contactInfos.size(); i++) {
+                    if (letter.equals(contactInfos.get(i).getLetter())) {
+                        Log.d("侧边查找", contactInfos.get(i).getNoteName());
 //                        if(i+1>=contactInfos.size()){
 //                        recyclerView.scrollToPosition(i);
 //                        break;
@@ -186,10 +269,9 @@ public class PhoneBookFragment extends Fragment {
         addView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(getContext(),AddActivity.class), REQUESTCODE );
+                startActivityForResult(new Intent(getContext(), AddActivity.class), REQUESTCODE);
             }
         });
-
 
 
         editText.addTextChangedListener(new TextWatcher() {
@@ -204,13 +286,13 @@ public class PhoneBookFragment extends Fragment {
                 //如果长度为0
                 if (s.length() == 0) {
                     //隐藏
-                   listView.setVisibility(View.GONE);
+                    listView.setVisibility(View.GONE);
                     cancelView.setVisibility(View.INVISIBLE);
                 } else {//长度不为0
-                        //更新显示ListView
+                    //更新显示ListView
                     cancelView.setVisibility(View.VISIBLE);
                     listView.setVisibility(View.VISIBLE);
-                    String str=s.toString();
+                    String str = s.toString();
                     showSearchList(str);
 
                 }
@@ -236,6 +318,7 @@ public class PhoneBookFragment extends Fragment {
 
         return root;
     }
+
     RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -249,16 +332,17 @@ public class PhoneBookFragment extends Fragment {
             // Could hide open views here if you wanted. //
         }
     };
-    public void showSearchList(String str){
-        adapter=null;
-        new Thread(){
+
+    public void showSearchList(String str) {
+        adapter = null;
+        new Thread() {
             @Override
-            public void run(){
+            public void run() {
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
                 ArrayList<ContactInfo> ContactInfosList = new ContactDBHelper(getContext()).getAllContactInfos();
                 Log.d("模糊搜索开始", String.valueOf(contactInfos.size()));
-                CharacterParser.search(str,contactInfos,ContactInfosList_searched);
-                for(ContactInfo i:ContactInfosList_searched){
+                CharacterParser.search(str, contactInfos, ContactInfosList_searched);
+                for (ContactInfo i : ContactInfosList_searched) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("title", i.getNoteName());
                     map.put("info", i.getPhoneNumber());
@@ -266,20 +350,20 @@ public class PhoneBookFragment extends Fragment {
                 }
                 Log.d("模糊搜索结束", String.valueOf(list.size()));
 //                list=new ContactDBHelper(getContext()).getLikeContactInfos(str);
-                adapter = new SimpleAdapter(getContext(),list,R.layout.search_list,
-                        new String[]{"title","info"},
-                        new int[]{R.id.title,R.id.info}){
+                adapter = new SimpleAdapter(getContext(), list, R.layout.search_list,
+                        new String[]{"title", "info"},
+                        new int[]{R.id.title, R.id.info}) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        final int p=position;
-                        final View view=super.getView(position, convertView, parent);
-                        TextView useName=(TextView)view.findViewById(R.id.title);
-                        LinearLayout item=view.findViewById(R.id.searchitem);
+                        final int p = position;
+                        final View view = super.getView(position, convertView, parent);
+                        TextView useName = (TextView) view.findViewById(R.id.title);
+                        LinearLayout item = view.findViewById(R.id.searchitem);
                         item.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 //启动个人页面
-                                Log.d("itemclicked","search");
+                                Log.d("itemclicked", "search");
                                 Intent intent = new Intent();
 
                                 intent.setClass(getContext(), ContactInfoActivity.class);
@@ -303,22 +387,24 @@ public class PhoneBookFragment extends Fragment {
 
             }
         }.start();
-        while(adapter==null){}
+        while (adapter == null) {
+        }
         listView.setAdapter(adapter);
         Log.d("模糊搜索初始化", "111");
     }
-    private void hideSoft(){
-        try{
-            InputMethodManager imm=(InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(),0);
-        }
-        catch (Exception e){
+
+    private void hideSoft() {
+        try {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-//    填充首字母
-    private ArrayList<ContactInfo> filledData(ArrayList<ContactInfo> data){
-        CharacterParser characterParser=CharacterParser.getInstance();
+
+    //    填充首字母
+    private ArrayList<ContactInfo> filledData(ArrayList<ContactInfo> data) {
+        CharacterParser characterParser = CharacterParser.getInstance();
 //        ArrayList<ContactInfo> list = new ArrayList<ContactInfo>();
         for (int i = data.size() - 1; i >= 0; i--) {
 //            ContactInfo sm = new ContactInfo();
@@ -344,40 +430,39 @@ public class PhoneBookFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 //        getParentFragment().onActivityResult(requestCode,resultCode,data);
-        Log.d("Request",String.valueOf(requestCode));
-        Log.d("Result",String.valueOf(resultCode));
-        switch (requestCode){
+        Log.d("Request", String.valueOf(requestCode));
+        Log.d("Result", String.valueOf(resultCode));
+        switch (requestCode) {
             case REQUESTCODE:
-                if(resultCode==SUCCESS){
-                    Log.d("Success","123");
+                if (resultCode == SUCCESS) {
+                    Log.d("Success", "123");
                     Bundle bundle = data.getBundleExtra("bundle");
                     if (bundle != null) {
                         ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("newContactInfo");
                         contactInfos.add(contactInfo);
-                        contactInfos=filledData(contactInfos);
+                        contactInfos = filledData(contactInfos);
                         Collections.sort(contactInfos, mComparator);
-                        Log.d("add",contactInfo.getNoteName());
+                        Log.d("add", contactInfo.getNoteName());
                         mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
                         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                     }
-                }
-                else if(requestCode==FAILURE){
+                } else if (requestCode == FAILURE) {
 
                 }
                 break;
             case REQUESTCODE_Info:
-                if(resultCode==SUCCESS) {
-                    Log.d("Success_Info","123");
+                if (resultCode == SUCCESS) {
+                    Log.d("Success_Info", "123");
                     Bundle bundle = data.getBundleExtra("bundle");
                     if (bundle != null) {
                         ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("refreshContactInfo");
                         contactInfos.remove(contactInfo);
                         contactInfos.add(contactInfo);
-                        contactInfos=filledData(contactInfos);
+                        contactInfos = filledData(contactInfos);
                         Collections.sort(contactInfos, mComparator);
-                        Log.d("refresh",contactInfo.getNoteName());
+                        Log.d("refresh", contactInfo.getNoteName());
                         mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
                         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                         recyclerView.setAdapter(mAdapter);
@@ -386,7 +471,8 @@ public class PhoneBookFragment extends Fragment {
 
                 }
                 break;
-            default:break;
+            default:
+                break;
         }
     }
 

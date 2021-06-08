@@ -36,6 +36,7 @@ import com.example.coffeebean.ContactInfoActivity;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.Group;
+import com.example.coffeebean.util.OnBindCallback;
 import com.example.coffeebean.util.RoundAngleImageView;
 import com.example.coffeebean.widget.PopWindowView;
 
@@ -53,7 +54,9 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public MyItemOnLongClickListener mLongListener;
     public MyItemOnClickListener mListener;
     ArrayList<Group> groupInfo;
+    public OnBindCallback onBind;
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
+
 
         SwipeLayout swipeLayout;
         TextView textViewPos;
@@ -131,6 +134,9 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             viewHolder.tv_item_tag.setVisibility(View.VISIBLE);
         } else {
             viewHolder.tv_item_tag.setVisibility(View.GONE);
+        }
+        if (onBind != null) {
+            onBind.onViewBound(viewHolder, position);
         }
         viewHolder.clickView.setOnClickListener(new View.OnClickListener() {
             @Override
