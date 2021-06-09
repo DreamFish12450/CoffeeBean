@@ -14,8 +14,8 @@ import java.io.IOException
 
 
 object Requests {
-    //    private const val SERVER = "https://192.168.123.109:5001"
-    private const val SERVER = "https://192.168.43.41:5001"
+        private const val SERVER = "https://192.168.123.109:5001"
+//    private const val SERVER = "https://192.168.43.41:5001"
     var retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SERVER)
             .addConverterFactory(GsonConverterFactory.create())
@@ -31,6 +31,7 @@ object Requests {
     const val API_LOGIN = "$SERVER/api/userInfo/"
     const val API_GET_ALL_PHONE = "$SERVER/api/PhoneRecord/"
     const val API_GET_CONTACT_INFO = "$SERVER/api/ContactInfo/"
+    const val API_GET_ONLINE_USER_RANDOM = "$SERVER/api/OnlineUser/"
 
     @JvmStatic
     fun post(

@@ -269,7 +269,9 @@ public class PhoneBookFragment extends Fragment {
         addView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(getContext(), AddActivity.class), REQUESTCODE);
+                Log.d(getClass().getName(),"ready to enter");
+//                Toast.makeText(getContext(),"点击",Toast.LENGTH_SHORT).show();
+                startActivityForResult(new Intent(getActivity(), AddActivity.class), REQUESTCODE);
             }
         });
 

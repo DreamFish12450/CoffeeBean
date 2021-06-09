@@ -50,7 +50,7 @@ import butterknife.OnClick;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class ContactInfoActivity extends BaseActivity implements View.OnClickListener{
+public class ContactInfoActivity extends BaseActivity implements View.OnClickListener {
     ArrayList<PhoneRecord> phoneRecords;
     ContactInfo contactInfo;
     String TextValue;
@@ -65,85 +65,161 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     Intent broadIntent;
     Spinner spinnerGroup;
 
-    boolean isEdit=false;
+    boolean isEdit = false;
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
     int id;//用于修改
     int group;
-    ArrayList<Group> groupInfo=null;
+    ArrayList<Group> groupInfo = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_info);
         PersonPhoneRecordAdapter personPhoneRecordAdapter = new PersonPhoneRecordAdapter(findViewById(R.id.phone_record_view));
-        mContext=this;
+        mContext = this;
         phoneRecords = null;
         Intent myIntent = getIntent();
         //读取Intent的值
         TextValue = myIntent.getStringExtra("NoteName");
         contactInfo = null;
         broadIntent = new Intent("action1");
-        new Thread(){
-            public void run(){
-                groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
-                Log.d("个人信息初始化" , TextValue);
+
+        nameTextView = findViewById(R.id.contact_name);
+
+        homeAddressTextView = findViewById(R.id.contact_home_address);
+
+        workAddressTextView = findViewById(R.id.contact_workplace);
+
+        careerTextView = findViewById(R.id.contact_career);
+
+        phoneNumberTextView = findViewById(R.id.contact_phone_number);
+
+        edit = findViewById(R.id.edit);
+        ivHead = findViewById(R.id.tag_cell_icon);
+        groupInfo = new ContactDBHelper(getApplicationContext()).getAllGroup();
+        Log.d("个人信息初始化", TextValue);
+        contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
+        Log.d("个人信息初始化", contactInfo.getNoteName());
+        broadIntent.putExtra("PreInfoName", contactInfo.getNoteName());
+        try {
+            phoneRecords = new PhoneRecordDBHelper(getApplicationContext()).getPhoneRecordsByName(TextValue);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
-                try {
-                    phoneRecords=new PhoneRecordDBHelper(getApplicationContext()).getPhoneRecordsByName(TextValue);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                contactInfo =new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
-                broadIntent.putExtra("PreInfoName",contactInfo.getNoteName());
-                Log.d("个人信息初始化" , contactInfo.getNoteName());
-            }
-        }.start();
-
-        while (contactInfo==null){}
         ArrayAdapter<Group> adapterGroup = null;
-        spinnerGroup=findViewById(R.id.spinnerGroup_info);
-        while (groupInfo==null){}
+        spinnerGroup = findViewById(R.id.spinnerGroup_info);
+
         adapterGroup = new ArrayAdapter<Group>(this,
                 android.R.layout.simple_spinner_dropdown_item, groupInfo);
 //设置下拉框的数据适配器adapterGroup
         this.spinnerGroup.setAdapter(adapterGroup);
 
         personPhoneRecordAdapter.setItems(phoneRecords);
-        id=contactInfo.getId();
+        id = contactInfo.getId();
         noteNameTextView = findViewById(R.id.contact_note_name);
-        noteNameTextView.setText(contactInfo.getNoteName());
-        nameTextView = findViewById(R.id.contact_name);
-        nameTextView.setText(contactInfo.getName());
-        homeAddressTextView = findViewById(R.id.contact_home_address);
-        homeAddressTextView.setText(contactInfo.getHomeAddress());
-        workAddressTextView = findViewById(R.id.contact_workplace);
-        workAddressTextView.setText(contactInfo.getWorkAddress());
-        careerTextView = findViewById(R.id.contact_career);
-        careerTextView.setText(contactInfo.getCareer());
-        phoneNumberTextView = findViewById(R.id.contact_phone_number);
-        phoneNumberTextView.setText(contactInfo.getPhoneNumber());
-        edit=findViewById(R.id.edit);
-        ivHead=findViewById(R.id.tag_cell_icon);
-        imgPath=contactInfo.getAvaterUri();
-        group=contactInfo.getGroup();
-        if(contactInfo.getAvaterUri()!=null) {
+        runOnUiThread(()->{
+            noteNameTextView.setText(contactInfo.getNoteName());
+            nameTextView.setText(contactInfo.getName());
+            homeAddressTextView.setText(contactInfo.getHomeAddress());
+            workAddressTextView.setText(contactInfo.getWorkAddress());
+            careerTextView.setText(contactInfo.getCareer());
+            phoneNumberTextView.setText(contactInfo.getPhoneNumber());
+        });
+
+        imgPath = contactInfo.getAvaterUri();
+        group = contactInfo.getGroup();
+        if (contactInfo.getAvaterUri() != null) {
             ivHead.setImageURI(Uri.parse(contactInfo.getAvaterUri()));
         }
-        LinearLayout returnback=findViewById(R.id.returnbook);
-        ImageView Info_call=findViewById(R.id.Info_call);
-        returnback.setOnClickListener(this);
-        edit.setOnClickListener(this);
-        phoneNumberTextView.setOnClickListener(this);
-        Info_call.setOnClickListener(this);
-        ivHead.setOnClickListener(this);
+        LinearLayout returnback = findViewById(R.id.returnbook);
+        ImageView Info_call = findViewById(R.id.Info_call);
+//        returnback.setOnClickListener(this);
+//        edit.setOnClickListener(this);
+//        phoneNumberTextView.setOnClickListener(this);
+//        Info_call.setOnClickListener(this);
+//        ivHead.setOnClickListener(this);
+        ((LinearLayout)findViewById(R.id.returnbook)).setOnClickListener(v -> {
+            if (isEdit) {
+//                    Intent i1 = new Intent();// 不能进行页面的跳转，只能实例化成这样
+//                    intent.setAction("action1");// 设置Intent对象的action属性，以便于在主界面做匹配
 
-        spinnerGroup.setSelection(contactInfo.getGroup()-1);
+                sendBroadcast(broadIntent);// 发送广播
+                ContactInfoActivity.this.setResult(SUCCESS, intent);
+                Log.d("设置", "Success");
+//                    startActivity(intent);
+            }
+            ContactInfoActivity.this.finish();
+        });
+
+        ((TextView)findViewById(R.id.edit)).setOnClickListener((v)->{
+            if (edit.getText().equals("编辑")) {
+                isEdit = false;
+                runOnUiThread(()-> edit.setText("完成"));
+                noteNameTextView.setEnabled(true);
+                nameTextView.setEnabled(true);
+                homeAddressTextView.setEnabled(true);
+                workAddressTextView.setEnabled(true);
+                careerTextView.setEnabled(true);
+                phoneNumberTextView.setEnabled(true);
+                isEdit = false;
+            } else if (edit.getText().equals("完成")) {
+                String regex = "^1[3-9]\\d{9}$";
+                boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
+                if (noteNameTextView.getText().toString().length() == 0) {
+                    CharSequence cs = "昵称不得为空";
+                    Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
+                } else if (phoneNumberTextView.getText().toString().trim().equals("") || !bool) {//正则判断
+                    CharSequence cs = "电话格式不规范";
+                    Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
+                }
+                runOnUiThread(()->edit.setText("编辑"));
+                new Thread() {
+                    @Override
+                    public void run() {
+                        //缺头像修改头像访问相册？
+                        contactInfo.setNoteName(noteNameTextView.getText().toString());
+                        contactInfo.setName(nameTextView.getText().toString());
+                        contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
+                        contactInfo.setWorkAddress(workAddressTextView.getText().toString());
+                        contactInfo.setCareer(careerTextView.getText().toString());
+                        contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
+                        contactInfo.setAvaterUri(imgPath);
+                        contactInfo.setGroup(spinnerGroup.getSelectedItemPosition() + 1);
+                        new ContactDBHelper(getApplicationContext()).updateContactInfo(id, contactInfo);
+                        isEdit = true;
+                    }
+                }.start();
+//                while (isEdit == false) {
+//                }
+                intent = new Intent(this, HomeActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putSerializable("refreshContactInfo", contactInfo); // 传递对象
+                intent.putExtra("bundle", mBundle);
+                broadIntent.putExtra("Info", contactInfo);
+                noteNameTextView.setEnabled(false);
+                nameTextView.setEnabled(false);
+                homeAddressTextView.setEnabled(false);
+                workAddressTextView.setEnabled(false);
+                careerTextView.setEnabled(false);
+                phoneNumberTextView.setEnabled(false);
+            }
+        });
+        ((ImageView)findViewById(R.id.Info_call)).setOnClickListener(v -> {
+            call(phoneNumberTextView.getText().toString());
+        });
+        (findViewById(R.id.tag_cell_icon)).setOnClickListener(v->{
+            if (edit.getText().equals("完成"))
+                changeAvatar(v);
+        });
+        spinnerGroup.setSelection(contactInfo.getGroup() - 1);
         spinnerGroup.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {//选择item的选择点击监听事件
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int arg2, long arg3) {
-                if((arg2+1)!=contactInfo.getGroup()){
-                    isEdit=false;
+                if ((arg2 + 1) != contactInfo.getGroup()) {
+                    isEdit = false;
                     edit.setText("完成");
                     noteNameTextView.setEnabled(true);
                     nameTextView.setEnabled(true);
@@ -151,18 +227,14 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                     workAddressTextView.setEnabled(true);
                     careerTextView.setEnabled(true);
                     phoneNumberTextView.setEnabled(true);
-                    isEdit=false;
+                    isEdit = false;
                 }
             }
+
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
-
-
-
-
         setResult(FAILURE);
-
 //        String url = Requests.API_GET_ALL_PHONE + "0,soso";
 //        String url2 = Requests.API_GET_CONTACT_INFO+"soso";
 //        new Thread() {
@@ -276,92 +348,25 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.returnbook:
-                if(isEdit){
-//                    Intent i1 = new Intent();// 不能进行页面的跳转，只能实例化成这样
-//                    intent.setAction("action1");// 设置Intent对象的action属性，以便于在主界面做匹配
-
-                    sendBroadcast(broadIntent);// 发送广播
-                    ContactInfoActivity.this.setResult(SUCCESS,intent);
-                    Log.d("设置","Success");
-//                    startActivity(intent);
-                }
-
-                ContactInfoActivity.this.finish();
 
                 break;
             case R.id.edit:
 
-                if(edit.getText().equals("编辑")) {
-                    isEdit=false;
-                    edit.setText("完成");
-                    noteNameTextView.setEnabled(true);
-                    nameTextView.setEnabled(true);
-                    homeAddressTextView.setEnabled(true);
-                    workAddressTextView.setEnabled(true);
-                    careerTextView.setEnabled(true);
-                    phoneNumberTextView.setEnabled(true);
-                    isEdit=false;
-                }
-                else if(edit.getText().equals("完成")){
-                    String regex = "^1[3-9]\\d{9}$";
-                    boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
-                    if(noteNameTextView.getText().toString().length()==0){
-                        CharSequence cs="昵称不得为空";
-                        Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                    else if(phoneNumberTextView.getText().toString().trim().equals("")||!bool){//正则判断
-                        CharSequence cs="电话格式不规范";
-                        Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                    edit.setText("编辑");
-                    new Thread(){
-                        @Override
-                        public void run() {
-                            //缺头像修改头像访问相册？
 
-                            contactInfo.setNoteName(noteNameTextView.getText().toString());
-                            contactInfo.setName(nameTextView.getText().toString());
-                            contactInfo.setHomeAddress(homeAddressTextView.getText().toString());
-                            contactInfo.setWorkAddress(workAddressTextView.getText().toString());
-                            contactInfo.setCareer(careerTextView.getText().toString());
-                            contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
-                            contactInfo.setAvaterUri(imgPath);
-                            contactInfo.setGroup(spinnerGroup.getSelectedItemPosition()+1);
-                            new ContactDBHelper(getApplicationContext()).updateContactInfo(id,contactInfo);
-                            isEdit=true;
-                        }
-                    }.start();
-                    while (isEdit==false){}
-                    intent = new Intent(this,HomeActivity.class);
-                    Bundle mBundle = new Bundle();
-                    mBundle.putSerializable("refreshContactInfo", contactInfo); // 传递对象
-                    intent.putExtra("bundle",mBundle);
-                    broadIntent.putExtra("Info",contactInfo);
-                    noteNameTextView.setEnabled(false);
-                    nameTextView.setEnabled(false);
-                    homeAddressTextView.setEnabled(false);
-                    workAddressTextView.setEnabled(false);
-                    careerTextView.setEnabled(false);
-                    phoneNumberTextView.setEnabled(false);
-                }
                 break;
             case R.id.Info_call:
-                call(phoneNumberTextView.getText().toString());
+
                 break;
             case R.id.tag_cell_icon:
-                if(edit.getText().equals("完成"))
-                changeAvatar(v);
+
                 break;
             default:
 
                 break;
         }
     }
-
 
 
     @Override

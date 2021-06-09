@@ -17,9 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.coffeebean.adapter.PersonInfoAdapter;
+import com.example.coffeebean.model.OnlineUser;
 import com.example.coffeebean.model.UserInfo;
 import com.example.coffeebean.util.UserManage;
 
@@ -27,6 +29,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +48,7 @@ public class PersonFragment extends Fragment {
     private String mParam2;
     LoginDBHelper loginDBHelper;
     private RecyclerView accountListView;
-
+    LinearLayout linearLayoutShake;
     public PersonFragment() {
         // Required empty public constructor
     }
@@ -99,17 +102,23 @@ public class PersonFragment extends Fragment {
                 e.printStackTrace();
             }
         });
-
+        linearLayoutShake = root.findViewById(R.id.line7);
         root.findViewById(R.id.log_out_view).setOnClickListener(v -> {
             UserManage.getInstance().delUserInfo(getActivity());
             Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+        });
+        linearLayoutShake.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(),Shake.class);
+            String currentName = UserManage.getInstance().getUserInfo(requireActivity()).getUsername();
+            intent.putExtra("currentName",currentName);
+
             startActivity(intent);
         });
         return root;
     }
 
     public void showChangePasswordDialog(LayoutInflater inflater, View root) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         builder.setTitle("修改密码");
@@ -142,12 +151,10 @@ public class PersonFragment extends Fragment {
                         intent.putExtra("username", username);
                         intent.putExtra("password", editAfterText.getText().toString());
                         startActivity(intent);
-//
                     }
 //                    UserManage.getInstance().delUserInfo(getActivity());
                 })
                 .setNegativeButton("取消", (dialog, id) -> {
-
                 });
         builder.show();
     }
