@@ -87,17 +87,19 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
             public void run(){
                 groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
                 Log.d("个人信息初始化" , TextValue);
-                contactInfo =new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
-                Log.d("个人信息初始化" , contactInfo.getNoteName());
-                broadIntent.putExtra("PreInfoName",contactInfo.getNoteName());
+
+
                 try {
                     phoneRecords=new PhoneRecordDBHelper(getApplicationContext()).getPhoneRecordsByName(TextValue);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                contactInfo =new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
+                broadIntent.putExtra("PreInfoName",contactInfo.getNoteName());
+                Log.d("个人信息初始化" , contactInfo.getNoteName());
             }
         }.start();
-        while(phoneRecords==null){}
+
         while (contactInfo==null){}
         ArrayAdapter<Group> adapterGroup = null;
         spinnerGroup=findViewById(R.id.spinnerGroup_info);

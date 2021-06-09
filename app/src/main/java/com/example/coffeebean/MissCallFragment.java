@@ -8,6 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
+import com.example.coffeebean.model.PhoneRecord;
+import com.example.coffeebean.util.Requests;
+
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MissCallFragment#newInstance} factory method to
@@ -19,7 +25,7 @@ public class MissCallFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    AllPhoneRecordAdapter missPhoneRecordAdapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -59,6 +65,12 @@ public class MissCallFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_miss_call, container, false);
+        View root = inflater.inflate(R.layout.fragment_miss_call, container, false);
+        missPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.miss_phone_record));
+        ArrayList<PhoneRecord> phoneRecords = new ArrayList<>();
+        String url = Requests.API_GET_ALL_PHONE + "0";
+        PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask selectMissContactAsyncTask=new PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask(getContext(),missPhoneRecordAdapter);
+        selectMissContactAsyncTask.execute();
+        return root;
     }
 }
