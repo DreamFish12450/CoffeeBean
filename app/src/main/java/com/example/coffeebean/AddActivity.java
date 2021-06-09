@@ -112,6 +112,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
     String regex = "^1[3-9]\\d{9}$";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(getClass().getName(),"eneter successfully");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_add);
         mContext=this;

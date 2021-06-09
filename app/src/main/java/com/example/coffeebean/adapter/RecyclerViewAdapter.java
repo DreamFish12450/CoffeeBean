@@ -226,7 +226,6 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
          */
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(mContext);
-
         normalDialog.setTitle("提示");
         normalDialog.setMessage("你确认要删除"+noteName+"嘛?");
         normalDialog.setPositiveButton("确定",
