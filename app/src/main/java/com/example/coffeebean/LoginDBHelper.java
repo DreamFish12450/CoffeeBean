@@ -31,6 +31,7 @@ import com.example.coffeebean.util.UserManage;
 import java.util.ArrayList;
 
 public class LoginDBHelper extends SQLiteOpenHelper {
+    private static LoginDBHelper instance=null;
     private static final int DATABASE_VERSION = 1;
     //    private static final String
     private final Context myContext;
@@ -46,7 +47,15 @@ public class LoginDBHelper extends SQLiteOpenHelper {
         myContext = context;
 //        createDataBase();
     }
-
+    public static LoginDBHelper getInstance(@Nullable Context context) throws IOException {
+        if(instance==null)
+            synchronized (LoginDBHelper.class){
+                if (instance==null){
+                    instance=new LoginDBHelper(context);
+                }
+            }
+        return instance;
+    }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 //        sqLiteDatabase.execSQL(ContactInfo.CREATE_TABLE);

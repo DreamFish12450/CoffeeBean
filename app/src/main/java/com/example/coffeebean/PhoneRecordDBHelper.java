@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
 import com.example.coffeebean.adapter.PersonPhoneRecordAdapter;
+import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.model.UserInfo;
 import com.example.coffeebean.util.UserManage;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PhoneRecordDBHelper extends SQLiteOpenHelper {
+    private static PhoneRecordDBHelper instance=null;
     private static final int DATABASE_VERSION = 1;
     private final Context myContext;
     private SQLiteDatabase mDatabase;
@@ -46,6 +48,16 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PhoneRecord.TABLE_NAME);
         //create table again
         onCreate(sqLiteDatabase);
+    }
+
+    public static PhoneRecordDBHelper getInstance(@Nullable Context context){
+        if(instance==null)
+        synchronized (PhoneRecordDBHelper.class){
+            if (instance==null){
+                instance=new PhoneRecordDBHelper(context);
+            }
+        }
+        return instance;
     }
     /**
      *
@@ -173,6 +185,18 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
     }
     /**
      *
+     * @return 返回数据库行数
+     */
+    public int getContactInfoCount() {
+        String countQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+    /**
+     *
      * @return 初始化通话记录
      */
     public static class SelectALLPhoneRecordAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
@@ -189,7 +213,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                   return new PhoneRecordDBHelper(context).getAllPhoneRecords();
+                   return  PhoneRecordDBHelper.getInstance(context).getAllPhoneRecords();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -223,7 +247,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    return new PhoneRecordDBHelper(context).getMissPhoneRecords();
+                    return  PhoneRecordDBHelper.getInstance(context).getMissPhoneRecords();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -260,7 +284,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    return new PhoneRecordDBHelper(context).getPhoneRecordsByName(noteName);
+                    return  PhoneRecordDBHelper.getInstance(context).getPhoneRecordsByName(noteName);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

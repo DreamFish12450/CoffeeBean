@@ -202,7 +202,7 @@ public class PhoneBookFragment extends Fragment {
         new Thread() {
             @Override
             public void run() {
-                contactInfos = new ContactDBHelper(getContext()).getAllContactInfos();
+                contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
 
             }
         }.start();
@@ -341,7 +341,7 @@ public class PhoneBookFragment extends Fragment {
             @Override
             public void run() {
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                ArrayList<ContactInfo> ContactInfosList = new ContactDBHelper(getContext()).getAllContactInfos();
+                ArrayList<ContactInfo> ContactInfosList =  ContactDBHelper.getInstance(getContext()).getAllContactInfos();
                 Log.d("模糊搜索开始", String.valueOf(contactInfos.size()));
                 CharacterParser.search(str, contactInfos, ContactInfosList_searched);
                 for (ContactInfo i : ContactInfosList_searched) {

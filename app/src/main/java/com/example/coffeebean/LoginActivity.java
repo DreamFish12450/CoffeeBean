@@ -75,7 +75,7 @@ public class LoginActivity extends Activity {
             }
         }
 
-//        loginDBHelper=new LoginDBHelper(this);
+
 
     }
 
@@ -184,7 +184,7 @@ public class LoginActivity extends Activity {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    loginDBHelper = new LoginDBHelper(context);
+                    loginDBHelper =  LoginDBHelper.getInstance(context);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

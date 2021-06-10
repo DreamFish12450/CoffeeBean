@@ -29,6 +29,7 @@ import java.util.Map;
 import static java.sql.Types.NULL;
 
 public class ContactDBHelper extends SQLiteOpenHelper {
+    private static ContactDBHelper instance=null;
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "identifier.sqlite";
 
@@ -48,7 +49,15 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         //create table again
         onCreate(sqLiteDatabase);
     }
-
+    public static ContactDBHelper getInstance(@Nullable Context context){
+        if(instance==null)
+            synchronized (ContactDBHelper.class){
+                if (instance==null){
+                    instance=new ContactDBHelper(context);
+                }
+            }
+        return instance;
+    }
     /**
      *
      * @param ContactInfo
