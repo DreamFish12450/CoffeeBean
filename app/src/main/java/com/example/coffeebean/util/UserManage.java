@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
+
 import com.example.coffeebean.model.UserInfo;
 import com.google.gson.Gson;
 
@@ -35,11 +36,12 @@ public class UserManage {
     /**
      * 保存自动登录的用户信息
      */
-    public void saveUserInfo(Context context, String username, String password) {
+    public void saveUserInfo(Context context, String username, String password,int id) {
         SharedPreferences sp = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);//Context.MODE_PRIVATE表示SharePrefences的数据只有自己应用程序能访问。
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("USERNAME", username);
         editor.putString("PASSWORD", password);
+        editor.putInt("ID",id);
         editor.apply();
     }
 
@@ -65,6 +67,7 @@ public class UserManage {
         UserInfo userInfo = new UserInfo();
         userInfo.setUsername(sp.getString("USERNAME", ""));
         userInfo.setPassword(sp.getString("PASSWORD", ""));
+        userInfo.setId(sp.getInt("ID", 0));
         return userInfo;
     }
 

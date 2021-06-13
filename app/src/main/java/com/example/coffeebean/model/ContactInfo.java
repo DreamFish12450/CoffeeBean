@@ -1,7 +1,5 @@
 package com.example.coffeebean.model;
 
-import com.example.coffeebean.util.CharacterParser;
-
 import java.io.Serializable;
 
 public class ContactInfo implements Serializable {
@@ -37,7 +35,7 @@ public class ContactInfo implements Serializable {
             + COLUMN_HOMEADDRESS + " VARCHAR(64),"
             + COLUMN_WORKADDRESS + " VARCHAR(64),"
             + COLUMN_CAREER + " VARCHAR(32),"
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_ID + " INTEGER ,"
             + COLUMN_PHONENUMBER + " VARCHAR(32),"
             + COLUMN_AVATERURL + " VARCHAR(100),"
             + COLUMN_GROUP + " INTEGER,"
@@ -52,7 +50,30 @@ public class ContactInfo implements Serializable {
     private int Group;
     private String phoneNumber;
     private String avaterUri;
+    private int contactId;
     private int id;
+
+    public int getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(int contactId) {
+        this.contactId = contactId;
+    }
+
+    public ContactInfo(String noteName, String name, String homeAddress, String workAddress, String career, String letter, int group, String phoneNumber, String avaterUri, int contactId, int id) {
+        this.noteName = noteName;
+        this.name = name;
+        this.homeAddress = homeAddress;
+        this.workAddress = workAddress;
+        this.career = career;
+        Letter = letter;
+        Group = group;
+        this.phoneNumber = phoneNumber;
+        this.avaterUri = avaterUri;
+        this.contactId = contactId;
+        this.id = id;
+    }
 
     public int getGroup() {
         return Group;
@@ -74,7 +95,18 @@ public class ContactInfo implements Serializable {
         this.id = id;
     }
 
-
+    public ContactInfo(String noteName, String name, String homeAddress, String workAddress, String career, String letter, int group, String phoneNumber, String avaterUri, int id) {
+        this.noteName = noteName;
+        this.name = name;
+        this.homeAddress = homeAddress;
+        this.workAddress = workAddress;
+        this.career = career;
+        Letter = letter;
+        Group = group;
+        this.phoneNumber = phoneNumber;
+        this.avaterUri = avaterUri;
+        this.id = id;
+    }
 
     public ContactInfo(){}
 

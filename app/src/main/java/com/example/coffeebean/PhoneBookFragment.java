@@ -4,6 +4,7 @@ package com.example.coffeebean;
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,11 +40,13 @@ import com.daimajia.swipe.util.Attributes;
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
 import com.example.coffeebean.adapter.ContactInfoAdapter;
 import com.example.coffeebean.adapter.RecyclerViewAdapter;
+
 import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.CharacterParser;
 import com.example.coffeebean.util.DividerItemDecoration;
 import com.example.coffeebean.util.PinyinComparator;
+import com.example.coffeebean.util.UserManage;
 import com.example.coffeebean.widget.PopWindowView;
 import com.example.coffeebean.widget.SideBar;
 
@@ -82,53 +86,79 @@ public class PhoneBookFragment extends Fragment {
     ArrayList<ContactInfo> ContactInfosList_searched;
     LinearLayout outLayout;
 
+    public void showAddUserDiagLog(String user) {
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(getActivity());
+//        normalDialog.setIcon(R.drawable.icon_dialog);
+        normalDialog.setTitle("好友请求");
+        normalDialog.setMessage("用户名为" + user + "的用户向您发送了一则好友请求");
+        normalDialog.setPositiveButton("接受",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ContactInfo contactInfo = new ContactDBHelper(getActivity()).getContactInfoQueryByName(user);
+                            contactInfos.add(contactInfo);
+                            contactInfo.setContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
+//                        new ContactDBHelper(getActivity()).insertContactInfo(contactInfo);
+                            Log.d("preInfo", contactInfo.toString());
+                            contactInfos = filledData(contactInfos);
+                            Collections.sort(contactInfos, mComparator);
+                            mAdapter.notifyDataSetChanged();
+                            Log.d("add", contactInfo.getNoteName());
+                    }
+                });
+        normalDialog.setNegativeButton("忽略",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //...To-do
+                    }
+                });
+        // 显示
+        normalDialog.show();
+    }
+
+    private BroadcastReceiver Addreceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String username = (String) intent.getSerializableExtra("user");
+            if (username != null) {
+                Log.d("广播信息", username);
+                showAddUserDiagLog(username);
+            }
+        }
+    };
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(getClass().getName(), "获取回调");
-            Bundle bundle = intent.getBundleExtra("bundle");
-
             ContactInfo contactInfo1 = (ContactInfo) intent.getSerializableExtra("Info");
 //            ContactInfo preInfo = (ContactInfo) intent.getSerializableExtra("PreInfo");
             String preInfoName = (String) intent.getSerializableExtra("PreInfoName");
             if (contactInfo1 != null) {
                 Log.d("信息", contactInfo1.toString());
 //                Log.d("Preinfo", preInfo.toString());
-
-                Iterator<ContactInfo> it =contactInfos.iterator();
-                while(it.hasNext()){
-                   ContactInfo x = it.next();
-                    if(preInfoName.equals(x.getNoteName())){
+                Iterator<ContactInfo> it = contactInfos.iterator();
+                while (it.hasNext()) {
+                    ContactInfo x = it.next();
+                    if (preInfoName.equals(x.getNoteName())) {
                         it.remove();
                     }
                 }
-
                 contactInfos.add(contactInfo1);
-
-                Log.d("preInfo",contactInfos.toString());
+                Log.d("preInfo", contactInfos.toString());
                 contactInfos = filledData(contactInfos);
                 Collections.sort(contactInfos, mComparator);
                 Log.d("add", contactInfo1.getNoteName());
+
                 mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
                 ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
             }
-
-//            if (bundle != null) {
-//                ContactInfo contactInfo = (ContactInfo) bundle.getSerializable("newContactInfo");
-//                Log.d(getClass().getName(),contactInfo.toString());
-//                contactInfos.add(contactInfo);
-//                contactInfos=filledData(contactInfos);
-//                Collections.sort(contactInfos, mComparator);
-//                Log.d("add",contactInfo.getNoteName());
-//                mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
-//                ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
-//                recyclerView.setAdapter(mAdapter);
-//                mAdapter.notifyDataSetChanged();
-//            }
         }
     };
     private PinyinComparator mComparator = new PinyinComparator();
@@ -182,9 +212,8 @@ public class PhoneBookFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_phone_book, container, false);
         recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+        getActivity().registerReceiver(Addreceiver, new IntentFilter("addUser"));
         getActivity().registerReceiver(receiver, new IntentFilter("action1"));
-
-
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 //            ActionBar actionBar = getActionBar();
 //            if (actionBar != null) {
@@ -202,6 +231,8 @@ public class PhoneBookFragment extends Fragment {
         new Thread() {
             @Override
             public void run() {
+
+                contactInfos = new ContactDBHelper(getContext()).getContactInfoContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
                 contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
 
             }
@@ -210,6 +241,14 @@ public class PhoneBookFragment extends Fragment {
         while (contactInfos == null) {
         }
         // Adapter:
+//        Iterator<ContactInfo> it =contactInfos.iterator();
+//        Log.d(getActivity().getClass().getName(),String.valueOf(UserManage.getInstance().getUserInfo(getActivity()).getId()));
+//        while(it.hasNext()){
+//            ContactInfo x = it.next();
+//            if(!(UserManage.getInstance().getUserInfo(getActivity()).getId() == x.getContactId())){
+//                it.remove();
+//            }
+//        }
         contactInfos = filledData(contactInfos);
         Collections.sort(contactInfos, mComparator);
 
@@ -269,7 +308,7 @@ public class PhoneBookFragment extends Fragment {
         addView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(getClass().getName(),"ready to enter");
+                Log.d(getClass().getName(), "ready to enter");
 //                Toast.makeText(getContext(),"点击",Toast.LENGTH_SHORT).show();
                 startActivityForResult(new Intent(getActivity(), AddActivity.class), REQUESTCODE);
             }

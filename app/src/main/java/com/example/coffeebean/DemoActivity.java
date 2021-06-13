@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -24,6 +25,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.coffeebean.util.UserManage;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.common.ApiException;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -72,6 +76,29 @@ public class DemoActivity extends AppCompatActivity {
                 Intent intent = new Intent(DemoActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
+        });
+        findViewById(R.id.register_btn).setOnClickListener(v -> {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        // read from agconnect-services.json
+                        String appId = AGConnectServicesConfig.fromContext(getApplicationContext()).getString("client/app_id");
+                        String token = HmsInstanceId.getInstance(getApplicationContext()).getToken(appId, "HCM");
+                        Log.i(TAG, "get token:" + token);
+                        // 1. After a token is obtained by using the getToken method, null judgment must be performed.
+                        // 2. In the outer code segment of the getToken method, you need to add exception capture processing.
+//                        if (!TextUtils.isEmpty(token)) {
+//                            sendRegTokenToServer(token);
+//                        }
+
+//                        mtokenInforView.append("\n" +"get token:" + token);
+                    } catch (ApiException e) {
+                        Log.e(TAG, "get token failed, " + e);
+//                        mtokenInforView.append("\n" +"get token failed, " + e);
+                    }
+                }
+            }.start();
         });
 
 

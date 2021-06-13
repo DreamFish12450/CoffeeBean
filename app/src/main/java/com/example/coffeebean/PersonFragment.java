@@ -112,7 +112,6 @@ public class PersonFragment extends Fragment {
             Intent intent = new Intent(getActivity(),Shake.class);
             String currentName = UserManage.getInstance().getUserInfo(requireActivity()).getUsername();
             intent.putExtra("currentName",currentName);
-
             startActivity(intent);
         });
         return root;

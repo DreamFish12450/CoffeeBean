@@ -6,19 +6,31 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.example.coffeebean"
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        config {
+            storeFile file('CoffeeBean.jks')
+            storePassword '123456'
+            keyPassword '123456'
+            keyAlias 'key0'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.config
+        }
         release {
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -48,7 +60,7 @@ dependencies {
     implementation 'com.daimajia.easing:library:1.0.1@aar'
     implementation 'com.daimajia.androidanimations:library:1.1.2@aar'
     implementation 'com.nineoldandroids:library:2.4.0'
-
+    implementation 'com.huawei.agconnect:agconnect-core:1.3.1.300'
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
     implementation 'androidx.preference:preference:1.1.1'
     testImplementation 'junit:junit:4.13.2'
@@ -82,7 +94,9 @@ dependencies {
 
     //Google Material控件,以及迁移到AndroidX下一些控件的依赖
     implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.huawei.hms:push:5.1.1.301'
 }
 repositories {
     mavenCentral()
 }
+apply plugin: 'com.huawei.agconnect'
