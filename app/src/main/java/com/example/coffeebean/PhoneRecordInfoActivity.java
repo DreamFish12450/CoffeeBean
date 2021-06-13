@@ -63,9 +63,9 @@ public class PhoneRecordInfoActivity extends BaseActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.d("通话信息初始化", phoneRecord.getNoteName()+"123");
+        Log.d("通话信息初始化", phoneRecord.getNoteName());
         if(phoneRecord.getNoteName().length()>0&&phoneRecord.getNoteName()!=null){
-            contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(phoneRecord.getNoteName());
+            contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoBynoteName(phoneRecord.getNoteName());
 
                 noteNameTextView.setText(phoneRecord.getNoteName());
                 if (contactInfo.getAvaterUri() != null&&contactInfo.getAvaterUri().length()>0) {

@@ -78,13 +78,13 @@
         <meta-data android:name="push_kit_auto_init_enabled" android:value="true" />
 
 
-        //注册广播
+
         <activity
             android:name=".RecyclerViewExample"
             android:label="@string/app_name"
-            android:theme="@style/Theme.CoffeeBean.NoActionBar" />
-        //注册广播
-       <receiver android:name=".receiver.PhoneBroadcastReceiver"-->
+            android:theme="@style/Theme.CoffeeBean.NoActionBar"
+            tools:ignore="DuplicateActivity" />
+       <receiver android:name=".receiver.PhoneBroadcastReceiver"
            android:enabled="true"
            android:exported="true" >
            <intent-filter android:priority="1000">
