@@ -1,10 +1,8 @@
 package com.example.coffeebean;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.ParseException;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,20 +14,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.Switch;
+import android.widget.TextView;
 
+import com.android.volley.Response;
 import com.example.coffeebean.adapter.PersonInfoAdapter;
 import com.example.coffeebean.model.OnlineUser;
 import com.example.coffeebean.model.UserInfo;
+import com.example.coffeebean.util.Requests;
 import com.example.coffeebean.util.UserManage;
+import com.example.coffeebean.util.VolleyRequestUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,6 +54,8 @@ public class PersonFragment extends Fragment {
     private String mParam2;
     LoginDBHelper loginDBHelper;
     private RecyclerView accountListView;
+    private Switch onlineSwitch;
+    TextView usernameView;
     LinearLayout linearLayoutShake;
     public PersonFragment() {
         // Required empty public constructor
@@ -79,6 +87,7 @@ public class PersonFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    AtomicBoolean s = new AtomicBoolean(false);
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -92,6 +101,9 @@ public class PersonFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_person, container, false);
         accountListView = root.findViewById(R.id.account_list);
+        onlineSwitch = root.findViewById(R.id.online_switch);
+        usernameView = root.findViewById(R.id.now_username);
+        usernameView.setText(UserManage.getInstance().getUserInfo(getActivity()).getUsername());
         root.findViewById(R.id.change_password).setOnClickListener((view) -> {
             showChangePasswordDialog(inflater, root);
         });
@@ -102,6 +114,10 @@ public class PersonFragment extends Fragment {
                 e.printStackTrace();
             }
         });
+        onlineSwitch.setOnCheckedChangeListener((CompoundButton compoundButton, boolean b)->{
+            s.set(compoundButton.isChecked());
+            Log.d("Switch状态",String.valueOf(s.get()));
+        });
         linearLayoutShake = root.findViewById(R.id.line7);
         root.findViewById(R.id.log_out_view).setOnClickListener(v -> {
             UserManage.getInstance().delUserInfo(getActivity());
@@ -111,7 +127,50 @@ public class PersonFragment extends Fragment {
         linearLayoutShake.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(),Shake.class);
             String currentName = UserManage.getInstance().getUserInfo(requireActivity()).getUsername();
+            Log.d("currentName",currentName);
             intent.putExtra("currentName",currentName);
+            intent.putExtra("state",s.get());
+            String phoneNumber = "19967309203";
+
+            if(!s.get()){
+                getActivity().runOnUiThread(()->{
+                    String url = Requests.API_ADD_USER + "name="+currentName+"&phoneNumber="+phoneNumber;
+                    Log.d(getClass().getName(),url);
+                    OnlineUser onlineUser = new OnlineUser();
+                    VolleyRequestUtil.getInstance(getActivity()).GETJsonArrayRequest(url, new VolleyRequestUtil.VolleyListenerInterface() {
+                        @Override
+                        public Response.Listener<JSONObject> onResponse() {
+                            return null;
+                        }
+                        @Override
+                        public Response.Listener<JSONArray> onResponseArray() {
+                            return response -> {
+                                try {
+//                                Log.d("onResponse", response.toString());
+                                    JSONArray jsonArr = new JSONArray();
+                                    jsonArr = response;
+                                    for (int i = 0; i < jsonArr.length(); i++) {
+                                        JSONObject jsonObject = jsonArr.getJSONObject(i);
+                                        Log.d("onResponse" + i, jsonArr.getJSONObject(i).toString());
+                                    }
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            };
+                        }
+
+                        @Override
+                        public Response.ErrorListener onErr() {
+                            //这里需要什么就new什么
+                            return error -> Log.d("onResponse", error.toString());
+                        }
+                    });
+                });
+            }
+
             startActivity(intent);
         });
         return root;
@@ -180,7 +239,7 @@ public class PersonFragment extends Fragment {
                             personInfoAdapter.addItem(temp);
                         });
                     }
-//                            loginDBHelper.close();
+
                 }
                 ).start();
             } catch (Exception e) {

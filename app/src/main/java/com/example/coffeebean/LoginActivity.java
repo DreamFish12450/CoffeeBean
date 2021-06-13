@@ -34,7 +34,7 @@ import static java.sql.Types.NULL;
 
 /**
  * 登录页面
- * create by linbin
+
  */
 public class LoginActivity extends Activity {
     /**
@@ -207,7 +207,7 @@ public class LoginActivity extends Activity {
                     if (isChecked) {
                         UserManage.getInstance().saveUserInfo(context, null, null,0);
                         UserManage.getInstance().saveUserInfo(context, username, password,userInfo.getId());
-//                        UserManage.getInstance().saveUserInfoList(context, username);
+                        UserManage.getInstance().saveUserInfoList(context, username);
                     }
                     Intent intent = new Intent(context, HomeActivity.class);//跳转到主页
                     startActivity(intent);

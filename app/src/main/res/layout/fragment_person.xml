@@ -31,6 +31,7 @@
             android:textSize="24sp"
             android:layout_below="@id/person_avater"
             android:layout_centerHorizontal="true"
+            android:id="@+id/now_username"
             android:text="梦鱼鱼鱼"/>
         <ImageView
             android:layout_alignParentRight="true"
@@ -177,6 +178,7 @@
                 android:text="离线状态"
                 android:textSize="24sp" />
             <Switch
+                android:id="@+id/online_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 tools:ignore="UseSwitchCompatOrMaterialXml"

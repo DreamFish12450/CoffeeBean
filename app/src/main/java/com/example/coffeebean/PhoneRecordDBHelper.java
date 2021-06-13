@@ -1,4 +1,5 @@
 package com.example.coffeebean;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -26,14 +27,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PhoneRecordDBHelper extends SQLiteOpenHelper {
-    private static PhoneRecordDBHelper instance=null;
+    private static PhoneRecordDBHelper instance = null;
     private static final int DATABASE_VERSION = 1;
     private final Context myContext;
     private SQLiteDatabase mDatabase;
     private static final String DATABASE_NAME = "identifier.sqlite";
+
     public PhoneRecordDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        myContext=context;
+        myContext = context;
     }
 
     @Override
@@ -50,17 +52,17 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public static PhoneRecordDBHelper getInstance(@Nullable Context context){
-        if(instance==null)
-        synchronized (PhoneRecordDBHelper.class){
-            if (instance==null){
-                instance=new PhoneRecordDBHelper(context);
+    public static PhoneRecordDBHelper getInstance(@Nullable Context context) {
+        if (instance == null)
+            synchronized (PhoneRecordDBHelper.class) {
+                if (instance == null) {
+                    instance = new PhoneRecordDBHelper(context);
+                }
             }
-        }
         return instance;
     }
+
     /**
-     *
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
      */
     public ArrayList<PhoneRecord> getAllPhoneRecords() throws ParseException {
@@ -75,17 +77,15 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord PhoneRecord = new PhoneRecord();
 
 
-                String noteName=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
-                int status=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
+                String noteName = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
+                int status = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
                 String telephone = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_PHONENUMBER));
                 int recordId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECORDID));
                 int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
-                String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
-
-                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
-                int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
-
+                String avaterUrl = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
+                int duration = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
                 PhoneRecord.setNoteName(noteName);
                 PhoneRecord.setStatus(status);
                 PhoneRecord.setDuration(duration);
@@ -100,15 +100,17 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         db.close();
         return PhoneRecordsList;
     }
+
     /**
-     *查找未接
+     * 查找未接
+     *
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
      */
     public ArrayList<PhoneRecord> getMissPhoneRecords() throws ParseException {
         ArrayList<PhoneRecord> PhoneRecordsList = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
-                +" WHERE "+ PhoneRecord.COLUMN_STATUS +"=0"
+                + " WHERE " + PhoneRecord.COLUMN_STATUS + "=0"
                 + " ORDER BY " + PhoneRecord.COLUMN_DATA + " DESC";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -117,16 +119,16 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord PhoneRecord = new PhoneRecord();
 
 
-                String noteName=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
-                int status=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
+                String noteName = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
+                int status = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
                 String telephone = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_PHONENUMBER));
                 int recordId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECORDID));
                 int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
-                String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
+                String avaterUrl = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
 
-                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
-                int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
+                int duration = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
 
                 PhoneRecord.setNoteName(noteName);
                 PhoneRecord.setStatus(status);
@@ -142,15 +144,17 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         db.close();
         return PhoneRecordsList;
     }
+
     /**
-     *根据名字查找
+     * 根据名字查找
+     *
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
      */
     public ArrayList<PhoneRecord> getPhoneRecordsByName(String searchname) throws ParseException {
         ArrayList<PhoneRecord> PhoneRecordsList = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
-               +" WHERE "+ PhoneRecord.COLUMN_NOTENAME +"='"+searchname + "' ORDER BY " + PhoneRecord.COLUMN_RECORDID + " ASC";
+                + " WHERE " + PhoneRecord.COLUMN_NOTENAME + "='" + searchname + "' ORDER BY " + PhoneRecord.COLUMN_RECORDID + " ASC";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor != null) {
@@ -158,16 +162,16 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord PhoneRecord = new PhoneRecord();
 
 
-                String noteName=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
-                int status=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
+                String noteName = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
+                int status = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
                 String telephone = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_PHONENUMBER));
                 int recordId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECORDID));
                 int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
-                String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
+                String avaterUrl = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
 
-                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
-                int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
+                int duration = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
 
                 PhoneRecord.setNoteName(noteName);
                 PhoneRecord.setStatus(status);
@@ -183,8 +187,8 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         db.close();
         return PhoneRecordsList;
     }
+
     /**
-     *
      * @return 返回数据库行数
      */
     public int getContactInfoCount() {
@@ -195,17 +199,18 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     /**
-     *
      * @return 初始化通话记录
      */
     public static class SelectALLPhoneRecordAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
 
         private WeakReference<Context> contextWeakReference;
         AllPhoneRecordAdapter allPhoneRecordAdapter;
+
         SelectALLPhoneRecordAsyncTask(Context context, AllPhoneRecordAdapter allPhoneRecordAdapter) {
             contextWeakReference = new WeakReference<>(context);
-            this.allPhoneRecordAdapter=allPhoneRecordAdapter;
+            this.allPhoneRecordAdapter = allPhoneRecordAdapter;
         }
 
         @Override
@@ -213,7 +218,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                   return  PhoneRecordDBHelper.getInstance(context).getAllPhoneRecords();
+                    return PhoneRecordDBHelper.getInstance(context).getAllPhoneRecords();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -229,17 +234,18 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
 
         }
     }
+
     /**
-     *
      * @return 初始化未接通话记录
      */
     public static class SelectMissPhoneRecordAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
 
         private WeakReference<Context> contextWeakReference;
         AllPhoneRecordAdapter missPhoneRecordAdapter;
+
         SelectMissPhoneRecordAsyncTask(Context context, AllPhoneRecordAdapter missPhoneRecordAdapter) {
             contextWeakReference = new WeakReference<>(context);
-            this.missPhoneRecordAdapter=missPhoneRecordAdapter;
+            this.missPhoneRecordAdapter = missPhoneRecordAdapter;
         }
 
         @Override
@@ -247,7 +253,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    return  PhoneRecordDBHelper.getInstance(context).getMissPhoneRecords();
+                    return PhoneRecordDBHelper.getInstance(context).getMissPhoneRecords();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -258,14 +264,15 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         @Override
         protected void onPostExecute(ArrayList<PhoneRecord> phoneRecordlish) {
             super.onPostExecute(phoneRecordlish);
-            Log.d("missPhone",String.valueOf(phoneRecordlish.size()));
+            if (phoneRecordlish != null)
+                Log.d("missPhone", String.valueOf(phoneRecordlish.size()));
             Context context = contextWeakReference.get();
             missPhoneRecordAdapter.setItems(phoneRecordlish);
 
         }
     }
+
     /**
-     *
      * 初始化个人信息界面的来电列表
      */
     public static class SelectByNameAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
@@ -273,10 +280,11 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         private WeakReference<Context> contextWeakReference;
         String noteName;
         PersonPhoneRecordAdapter personPhoneRecordAdapter;
-        SelectByNameAsyncTask(Context context, PersonPhoneRecordAdapter personPhoneRecordAdapter,String notename) {
+
+        SelectByNameAsyncTask(Context context, PersonPhoneRecordAdapter personPhoneRecordAdapter, String notename) {
             contextWeakReference = new WeakReference<>(context);
-            this.personPhoneRecordAdapter=personPhoneRecordAdapter;
-            noteName=notename;
+            this.personPhoneRecordAdapter = personPhoneRecordAdapter;
+            noteName = notename;
         }
 
         @Override
@@ -284,7 +292,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    return  PhoneRecordDBHelper.getInstance(context).getPhoneRecordsByName(noteName);
+                    return PhoneRecordDBHelper.getInstance(context).getPhoneRecordsByName(noteName);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

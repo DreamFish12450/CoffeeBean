@@ -32,6 +32,8 @@ object Requests {
     const val API_GET_ALL_PHONE = "$SERVER/api/PhoneRecord/"
     const val API_GET_CONTACT_INFO = "$SERVER/api/ContactInfo/"
     const val API_GET_ONLINE_USER_RANDOM = "$SERVER/api/OnlineUser/"
+    const val API_ADD_USER = "$SERVER/api/OnlineUser/addUser?"
+    const val API_DELETE_USER = "$SERVER/api/OnlineUser/deleteUser?"
 
     @JvmStatic
     fun post(
