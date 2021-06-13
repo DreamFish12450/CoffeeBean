@@ -2,6 +2,7 @@ package com.example.coffeebean;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -88,9 +89,19 @@ public class BaseActivity extends AppCompatActivity {
         } else {//申请权限
             ActivityCompat.requestPermissions(mContext, new String[]{string_permission}, request_code);
         }
+
         return flag;
     }
-
+    public boolean checkPhoneReceiverPermission(){
+        boolean flag = false;
+        if (ContextCompat.checkSelfPermission(this,  Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED) {
+            //已有权限
+            flag = true;
+        } else {//申请权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
+        }
+        return flag;
+    }
     /**
      * 检查权限后的回调
      * @param requestCode 请求码
@@ -261,5 +272,10 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             showMsg("图片获取失败");
         }
+    }
+    public void sendSms( String number) {
+        Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+        sendIntent.setData(Uri.parse("smsto:" + number));
+        startActivity(sendIntent);
     }
 }

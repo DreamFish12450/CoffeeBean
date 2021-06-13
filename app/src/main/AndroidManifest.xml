@@ -32,6 +32,16 @@
                 </service>
         <activity android:name=".Shake" />
         <activity android:name=".AddAccount" />
+        <activity
+            android:name=".ContactInfoActivity"
+            android:theme="@style/Theme.CoffeeBean.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".PhoneRecordInfoActivity"
+            android:theme="@style/Theme.CoffeeBean.NoActionBar" />
+        <activity
+            android:name=".BottomActivity"
+            android:label="@string/title_activity_bottom" />
         <activity android:name=".PushGetTokenActivity">
         </activity>
         <activity android:name=".ContactInfoActivity" android:theme="@style/Theme.CoffeeBean.NoActionBar" android:windowSoftInputMode="stateHidden" />
@@ -54,6 +64,22 @@
 <!--            </intent-filter>-->
 <!--        </service>-->
         <meta-data android:name="push_kit_auto_init_enabled" android:value="true" />
+
+
+        //注册广播
+        <activity
+            android:name=".RecyclerViewExample"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.CoffeeBean.NoActionBar" />
+        //注册广播
+<!--        <receiver android:name=".receiver.PhoneBroadcastReceiver"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true" >-->
+<!--            <intent-filter android:priority="1000">-->
+<!--                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>-->
+<!--                <action android:name="android.intent.action.PHONE_STATE"/>-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
     </application>
 </manifest>

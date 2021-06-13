@@ -1,9 +1,11 @@
 package com.example.coffeebean;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,7 +41,7 @@ import static java.sql.Types.NULL;
  * 登录页面
 
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     /**
      * 用户名
      */
@@ -59,6 +64,7 @@ public class LoginActivity extends Activity {
 //        UserManage.getInstance().delUserInfo(LoginActivity.this);
         Log.d("UserManage", String.valueOf(UserManage.getInstance().hasUserInfo(LoginActivity.this)));
         if (UserManage.getInstance().hasUserInfo(LoginActivity.this)) {
+
             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);//跳转到主页
             startActivity(intent);
         }
@@ -74,8 +80,6 @@ public class LoginActivity extends Activity {
                 whether_save_auto.setChecked(true);
             }
         }
-
-
 
     }
 
@@ -201,6 +205,10 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(UserInfo userInfo) {
             super.onPostExecute(userInfo);
             Context context = contextWeakReference.get();
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),  Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED) {//已有权限
+            } else {//申请权限
+                ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
+            }
 
             if (userInfo != null)
                 if (userInfo.getPassword().equals(password)) {

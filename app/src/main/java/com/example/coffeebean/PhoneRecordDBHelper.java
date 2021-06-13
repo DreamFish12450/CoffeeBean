@@ -92,6 +92,8 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord.setDate(date);
                 PhoneRecord.setAvaterUrl(avaterUrl);
                 PhoneRecord.setPhoneNumber(telephone);
+                PhoneRecord.setReceiverId(receiverId);
+                PhoneRecord.setRecordId(recordId);
 
                 PhoneRecordsList.add(PhoneRecord);
             }
@@ -136,6 +138,8 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord.setDate(date);
                 PhoneRecord.setAvaterUrl(avaterUrl);
                 PhoneRecord.setPhoneNumber(telephone);
+                PhoneRecord.setReceiverId(receiverId);
+                PhoneRecord.setRecordId(recordId);
 
                 PhoneRecordsList.add(PhoneRecord);
             }
@@ -148,6 +152,44 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
     /**
      * 根据名字查找
      *
+     * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
+     */
+    public PhoneRecord getPhoneRecordsById(int id) throws ParseException {
+
+        PhoneRecord PhoneRecord = new PhoneRecord();
+        String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
+                +" WHERE "+ PhoneRecord.COLUMN_RECORDID +"="+id +"" ;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String noteName=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
+                int status=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
+                String telephone = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_PHONENUMBER));
+                int recordId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECORDID));
+                int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
+                String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
+
+                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
+                int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
+
+                PhoneRecord.setNoteName(noteName);
+                PhoneRecord.setStatus(status);
+                PhoneRecord.setDuration(duration);
+                PhoneRecord.setDate(date);
+                PhoneRecord.setAvaterUrl(avaterUrl);
+                PhoneRecord.setPhoneNumber(telephone);
+                PhoneRecord.setReceiverId(receiverId);
+                PhoneRecord.setRecordId(recordId);
+            }
+        }
+        cursor.close();
+        db.close();
+        return PhoneRecord;
+    }
+    /**
+     *根据名字查找
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
      */
     public ArrayList<PhoneRecord> getPhoneRecordsByName(String searchname) throws ParseException {
@@ -179,6 +221,8 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 PhoneRecord.setDate(date);
                 PhoneRecord.setAvaterUrl(avaterUrl);
                 PhoneRecord.setPhoneNumber(telephone);
+                PhoneRecord.setReceiverId(receiverId);
+                PhoneRecord.setRecordId(recordId);
 
                 PhoneRecordsList.add(PhoneRecord);
             }
