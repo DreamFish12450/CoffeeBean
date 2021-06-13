@@ -85,7 +85,7 @@ public class PersonFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try {
-            loginDBHelper = new LoginDBHelper(getContext());
+            loginDBHelper = LoginDBHelper.getInstance(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +135,7 @@ public class PersonFragment extends Fragment {
                         String username = UserManage.getInstance().getUserInfo(getActivity()).getUsername();
 //                        Log.d("userInfoMessage", UserManage.getInstance().getUserInfo(getActivity()).getUsername().toString());
                         try {
-                            loginDBHelper = new LoginDBHelper(getActivity());
+                            loginDBHelper =  LoginDBHelper.getInstance(getActivity());
                             new Thread(() -> {
                                 loginDBHelper.changePassword(username, editAfterText.getText().toString());
 //                                Log.d("dialogViewMessage", loginDBHelper.getUserInfoQueryByName(UserManage.getInstance().getUserInfo(getActivity()).getUsername()).getPassword());
@@ -171,7 +171,7 @@ public class PersonFragment extends Fragment {
             final UserInfo[] user = new UserInfo[1];
             String username = UserManage.getInstance().getUserInfo(getActivity()).getUsername();
             try {
-                loginDBHelper = new LoginDBHelper(getActivity());
+                loginDBHelper = LoginDBHelper.getInstance(getActivity());
                 new Thread(() -> {
                     if (UserManage.getInstance().getUserInfoList(getActivity()) != null) {
                         List<String> usernameList = UserManage.getInstance().getUserInfoList(getActivity());

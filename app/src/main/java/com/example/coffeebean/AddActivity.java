@@ -118,7 +118,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
         mContext=this;
         ArrayAdapter<Group> adapterGroup = null;
         spinnerGroup=findViewById(R.id.spinnerGroup);
-        groupInfo=new ContactDBHelper(getApplicationContext()).getAllGroup();
+        groupInfo=ContactDBHelper.getInstance(getApplicationContext()).getAllGroup();
         while (groupInfo==null){}
         adapterGroup = new ArrayAdapter<Group>(this,
                 android.R.layout.simple_spinner_dropdown_item, groupInfo);
@@ -175,7 +175,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
                 new Thread(){
                     @Override
                     public void run() {
-                        id =new ContactDBHelper(getApplicationContext()).insertContactInfo(contactInfo);
+                        id = ContactDBHelper.getInstance(getApplicationContext()).insertContactInfo(contactInfo);
                     }
                 }.start();
                 while(id==-1){}

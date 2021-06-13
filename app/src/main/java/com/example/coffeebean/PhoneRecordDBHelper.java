@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
 import com.example.coffeebean.adapter.PersonPhoneRecordAdapter;
+import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.model.UserInfo;
 import com.example.coffeebean.util.UserManage;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class PhoneRecordDBHelper extends SQLiteOpenHelper {
+    private static PhoneRecordDBHelper instance=null;
     private static final int DATABASE_VERSION = 1;
     private final Context myContext;
     private SQLiteDatabase mDatabase;
@@ -47,6 +49,16 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         //create table again
         onCreate(sqLiteDatabase);
     }
+
+    public static PhoneRecordDBHelper getInstance(@Nullable Context context){
+        if(instance==null)
+        synchronized (PhoneRecordDBHelper.class){
+            if (instance==null){
+                instance=new PhoneRecordDBHelper(context);
+            }
+        }
+        return instance;
+    }
     /**
      *
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
@@ -55,7 +67,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         ArrayList<PhoneRecord> PhoneRecordsList = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
-                + " ORDER BY " + PhoneRecord.COLUMN_RECORDID + " ASC";
+                + " ORDER BY " + PhoneRecord.COLUMN_DATA + " DESC";
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor != null) {
@@ -70,7 +82,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
                 String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
 
-                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
                 int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
 
@@ -88,7 +100,48 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
         db.close();
         return PhoneRecordsList;
     }
+    /**
+     *查找未接
+     * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
+     */
+    public ArrayList<PhoneRecord> getMissPhoneRecords() throws ParseException {
+        ArrayList<PhoneRecord> PhoneRecordsList = new ArrayList<>();
 
+        String selectQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME
+                +" WHERE "+ PhoneRecord.COLUMN_STATUS +"=0"
+                + " ORDER BY " + PhoneRecord.COLUMN_DATA + " DESC";
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                PhoneRecord PhoneRecord = new PhoneRecord();
+
+
+                String noteName=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_NOTENAME));
+                int status=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_STATUS));
+                String telephone = cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_PHONENUMBER));
+                int recordId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECORDID));
+                int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
+                String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
+
+                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
+                int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
+
+                PhoneRecord.setNoteName(noteName);
+                PhoneRecord.setStatus(status);
+                PhoneRecord.setDuration(duration);
+                PhoneRecord.setDate(date);
+                PhoneRecord.setAvaterUrl(avaterUrl);
+                PhoneRecord.setPhoneNumber(telephone);
+
+                PhoneRecordsList.add(PhoneRecord);
+            }
+        }
+        cursor.close();
+        db.close();
+        return PhoneRecordsList;
+    }
     /**
      *根据名字查找
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
@@ -112,7 +165,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
                 int receiverId = cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_RECEIVERID));
                 String avaterUrl=cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_AVATERURL));
 
-                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date=sf.parse(cursor.getString(cursor.getColumnIndex(PhoneRecord.COLUMN_DATA)));
                 int duration=cursor.getInt(cursor.getColumnIndex(PhoneRecord.COLUMN_DURATION));
 
@@ -132,6 +185,18 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
     }
     /**
      *
+     * @return 返回数据库行数
+     */
+    public int getContactInfoCount() {
+        String countQuery = "SELECT * FROM " + PhoneRecord.TABLE_NAME;
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+    /**
+     *
      * @return 初始化通话记录
      */
     public static class SelectALLPhoneRecordAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
@@ -148,7 +213,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                   return new PhoneRecordDBHelper(context).getAllPhoneRecords();
+                   return  PhoneRecordDBHelper.getInstance(context).getAllPhoneRecords();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -161,6 +226,41 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             super.onPostExecute(phoneRecordlish);
             Context context = contextWeakReference.get();
             allPhoneRecordAdapter.setItems(phoneRecordlish);
+
+        }
+    }
+    /**
+     *
+     * @return 初始化未接通话记录
+     */
+    public static class SelectMissPhoneRecordAsyncTask extends AsyncTask<Void, Void, ArrayList<PhoneRecord>> {
+
+        private WeakReference<Context> contextWeakReference;
+        AllPhoneRecordAdapter missPhoneRecordAdapter;
+        SelectMissPhoneRecordAsyncTask(Context context, AllPhoneRecordAdapter missPhoneRecordAdapter) {
+            contextWeakReference = new WeakReference<>(context);
+            this.missPhoneRecordAdapter=missPhoneRecordAdapter;
+        }
+
+        @Override
+        protected ArrayList<PhoneRecord> doInBackground(Void... voids) {
+            Context context = contextWeakReference.get();
+            if (context != null) {
+                try {
+                    return  PhoneRecordDBHelper.getInstance(context).getMissPhoneRecords();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<PhoneRecord> phoneRecordlish) {
+            super.onPostExecute(phoneRecordlish);
+            Log.d("missPhone",String.valueOf(phoneRecordlish.size()));
+            Context context = contextWeakReference.get();
+            missPhoneRecordAdapter.setItems(phoneRecordlish);
 
         }
     }
@@ -184,7 +284,7 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    return new PhoneRecordDBHelper(context).getPhoneRecordsByName(noteName);
+                    return  PhoneRecordDBHelper.getInstance(context).getPhoneRecordsByName(noteName);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

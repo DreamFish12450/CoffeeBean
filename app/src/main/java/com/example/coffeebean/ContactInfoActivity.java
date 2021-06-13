@@ -97,13 +97,13 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
 
         edit = findViewById(R.id.edit);
         ivHead = findViewById(R.id.tag_cell_icon);
-        groupInfo = new ContactDBHelper(getApplicationContext()).getAllGroup();
+        groupInfo =  ContactDBHelper.getInstance(getApplicationContext()).getAllGroup();
         Log.d("个人信息初始化", TextValue);
         contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
         Log.d("个人信息初始化", contactInfo.getNoteName());
         broadIntent.putExtra("PreInfoName", contactInfo.getNoteName());
         try {
-            phoneRecords = new PhoneRecordDBHelper(getApplicationContext()).getPhoneRecordsByName(TextValue);
+            phoneRecords =  PhoneRecordDBHelper.getInstance(getApplicationContext()).getPhoneRecordsByName(TextValue);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -188,7 +188,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                         contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
                         contactInfo.setAvaterUri(imgPath);
                         contactInfo.setGroup(spinnerGroup.getSelectedItemPosition() + 1);
-                        new ContactDBHelper(getApplicationContext()).updateContactInfo(id, contactInfo);
+                         ContactDBHelper.getInstance(getApplicationContext()).updateContactInfo(id, contactInfo);
                         isEdit = true;
                     }
                 }.start();

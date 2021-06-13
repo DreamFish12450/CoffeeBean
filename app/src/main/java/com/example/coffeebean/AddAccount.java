@@ -102,7 +102,7 @@ public class AddAccount extends AppCompatActivity {
             Context context = contextWeakReference.get();
             if (context != null) {
                 try {
-                    loginDBHelper = new LoginDBHelper(context);
+                    loginDBHelper = LoginDBHelper.getInstance(context);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
