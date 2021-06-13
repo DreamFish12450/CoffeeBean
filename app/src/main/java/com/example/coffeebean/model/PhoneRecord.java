@@ -32,6 +32,8 @@ public class PhoneRecord {
     Date date;
     String AvaterUrl;
     int duration;
+    int recordId;
+    int receiverId;
 
     public PhoneRecord(String noteName, String phoneNumber, int status, Date date,String avaterUrl,int duration) {
         NoteName = noteName;
@@ -42,7 +44,21 @@ public class PhoneRecord {
         this.duration = duration;
 
     }
+    public int getRecordId() {
+        return recordId;
+    }
 
+    public void setRecordId(int recordId) {
+        this.recordId = recordId;
+    }
+
+    public int getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(int receiverId) {
+        this.receiverId = receiverId;
+    }
     public int getDuration() {
         return duration;
     }

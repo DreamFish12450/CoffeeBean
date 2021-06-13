@@ -17,8 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.coffeebean.ContactInfoActivity;
+import com.example.coffeebean.PhoneRecordInfoActivity;
 import com.example.coffeebean.R;
 import com.example.coffeebean.model.PhoneRecord;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import com.google.i18n.phonenumbers.geocoding.PhoneNumberOfflineGeocoder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,9 +32,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAdapter.RecyclerHolder> {
     List<PhoneRecord> items = new ArrayList<>();
+    private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+    PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
+    String language ="CN";
+    Phonenumber.PhoneNumber referencePhonenumber = null;
     private static Context context = null;
     // 默认的年月日的格式. yyyy-MM-dd
     public static final String PATTEN_DEFAULT_YMD = "yyyy-MM-dd";
@@ -87,6 +97,17 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
            holder.date.setText(day);
 //        holder.image.setImageURI(Uri.parse(items.get(position).getAvaterUrl()));
         holder.phoneNumber.setText(items.get(position).getPhoneNumber());
+        //根据号码判断归属地
+        String phoneNum = items.get(position).getPhoneNumber();
+
+        try {
+            referencePhonenumber = phoneUtil.parse(phoneNum, language);
+            } catch (NumberParseException e) {
+            e.printStackTrace();
+        }
+        String referenceRegion = phoneNumberOfflineGeocoder.getDescriptionForNumber(referencePhonenumber, Locale.CHINA);
+        holder.position.setText(referenceRegion);
+
         if (items.get(position).getStatus() == 0) {
             holder.status.setImageResource(R.drawable.ic_no_get);
             holder.name.setTextColor(Color.RED);
@@ -96,7 +117,15 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
         } else if (items.get(position).getStatus() == 2) {
             holder.status.setImageResource(R.drawable.ic_phone_post);
         }
-
+        holder.more.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PhoneRecordInfoActivity.class);
+            intent.putExtra("PhoneRecord",items.get(position).getRecordId());
+            context.startActivity(intent);
+        });
+        holder.itself.setOnClickListener(v->{
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+items.get(position).getPhoneNumber()));
+            context.startActivity(intent);
+        });
 //        holder.image.setImageResource(items.get(position).getImage());
     }
 
@@ -117,19 +146,18 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
         TextView phoneNumber;
         ImageView status;
         ImageView more;
-
+        TextView position;//归属地
+        View itself;
         private RecyclerHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.tag_cell_icon);
+
             name = itemView.findViewById(R.id.tag_cell_name);
             date = itemView.findViewById(R.id.tag_cell_date);
             phoneNumber = itemView.findViewById(R.id.tag_cell_phone_content);
             status = itemView.findViewById(R.id.phone_get_status);
             more = itemView.findViewById(R.id.more);
-            more.setOnClickListener(v -> {
-                Intent intent = new Intent(context, ContactInfoActivity.class);
-                context.startActivity(intent);
-            });
+            position = itemView.findViewById(R.id.tag_cell_phone_position);
+            itself=itemView;
 //            image.setOnClickListener(v -> {
 //                new AlertDialog.Builder(itemView.getContext())
 //                        .setTitle("温馨小提示")

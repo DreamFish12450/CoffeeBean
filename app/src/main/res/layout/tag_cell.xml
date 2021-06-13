@@ -71,6 +71,17 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 />
+            <TextView
+                android:id="@+id/tag_cell_phone_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tag_cell_phone_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="8dp"
+                android:text="浙江|杭州"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                />
             <com.example.coffeebean.util.RoundAngleImageView
                 android:id="@+id/phone_get_status"
                 android:layout_width="32dp"

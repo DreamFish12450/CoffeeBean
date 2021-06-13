@@ -2,11 +2,16 @@ package com.example.coffeebean;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.coffeebean.adapter.MainViewPagerAdapter;
 import com.example.coffeebean.model.UserInfo;
+import com.example.coffeebean.receiver.PhoneBroadcastReceiver;
 import com.example.coffeebean.util.UserManage;
 import com.example.coffeebean.util.ViewPager;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -31,6 +37,7 @@ import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
 
+    PhoneBroadcastReceiver phoneBroadcastReceiver;
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +92,14 @@ public class HomeActivity extends AppCompatActivity {
         });
         viewPager.setCurrentItem(1);
         bottomNavigationView.setSelectedItemId(R.id.home_button);
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),  Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED) {//已有权限
+        } else {//申请权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
+        }
+        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+        intentFilter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(phoneBroadcastReceiver,intentFilter);
 
     }
 
