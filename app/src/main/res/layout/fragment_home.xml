@@ -45,6 +45,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="bottom|end"
             android:visibility="gone"
+            android:clickable="true"
             android:orientation="vertical"
             android:background="#40000000"
             >

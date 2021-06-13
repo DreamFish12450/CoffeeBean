@@ -210,7 +210,7 @@ public class HomeFragment extends BaseFragment {
                 if(tv_text.length()==0)del.setVisibility(View.INVISIBLE);
                 break;
             case R.id.bt_call:
-                String phonenum="tel:"+tv_text.getText().toString();
+                String phonenum=tv_text.getText().toString();
                 call(phonenum);
                 break;
             default:

@@ -60,10 +60,10 @@ public class HomeActivity extends AppCompatActivity {
         tm.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
 
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
-        intentFilter.addAction("android.intent.action.PHONE_STATE");
-        registerReceiver(phoneBroadcastReceiver,intentFilter);
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+//        intentFilter.addAction("android.intent.action.PHONE_STATE");
+//        registerReceiver(phoneBroadcastReceiver,intentFilter);
         viewPager.setAdapter(mainViewPagerAdapter);
         viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -104,14 +104,14 @@ public class HomeActivity extends AppCompatActivity {
         });
         viewPager.setCurrentItem(1);
         bottomNavigationView.setSelectedItemId(R.id.home_button);
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),  Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED) {//已有权限
-        } else {//申请权限
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
+        if (checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},0);
         }
-//        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
-//        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
-//        intentFilter.setPriority(Integer.MAX_VALUE);
-//        registerReceiver(phoneBroadcastReceiver,intentFilter);
+
+        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+        intentFilter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(phoneBroadcastReceiver,intentFilter);
 
     }
 
