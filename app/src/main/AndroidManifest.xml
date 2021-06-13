@@ -30,19 +30,14 @@
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 相机权限 -->
     <uses-permission android:name="android.permission.CAMERA" />
-
-
-
-    <application android:name=".CoffeeBeanApplication" android:usesCleartextTraffic="true" android:theme="@style/Theme.CoffeeBean" android:supportsRtl="true" android:roundIcon="@mipmap/ic_launcher_round" android:requestLegacyExternalStorage="true" android:largeHeap="true" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:allowBackup="true">
-<!--        <service android:name=".PushGetDataService" android:exported="false">-->
-<!--        <intent-filter>-->
-<!--        <action android:name="com.huawei.push.action.MESSAGING_EVENT"/>-->
-<!--    </intent-filter>-->
-<!--    </service>-->
-        <activity android:name=".Shake"/>
-        <activity android:name=".AddAccount"/>
-        <activity android:name=".PushGetTokenActivity"> </activity>
-
+    <application android:name=".CoffeeBeanApplication" android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:largeHeap="true" android:requestLegacyExternalStorage="true" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:theme="@style/Theme.CoffeeBean" android:usesCleartextTraffic="true">
+                <service android:name=".PushGetDataService" android:exported="false">
+                    <intent-filter>
+                        <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
+                    </intent-filter>
+                </service>
+        <activity android:name=".Shake" />
+        <activity android:name=".AddAccount" />
         <activity
             android:name=".ContactInfoActivity"
             android:theme="@style/Theme.CoffeeBean.NoActionBar"
@@ -74,22 +69,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecyclerViewExample" android:theme="@style/Theme.CoffeeBean.NoActionBar" android:label="@string/app_name"/>
-        <!-- <service android:name=".PushMsgService" android:exported="false">-->
-        <!-- <intent-filter>-->
-        <!-- <action android:name="com.huawei.push.action.MESSAGING_EVENT" />-->
-        <!-- </intent-filter>-->
-        <!-- </service>-->
-        <meta-data android:name="push_kit_auto_init_enabled" android:value="true"/>
+        <activity android:name=".RecyclerViewExample" android:label="@string/app_name" android:theme="@style/Theme.CoffeeBean.NoActionBar" />
+<!--        <service android:name=".PushMsgService" android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+        <meta-data android:name="push_kit_auto_init_enabled" android:value="true" />
+
+
         //注册广播
-        <receiver android:name=".receiver.PhoneBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true" >
-            <intent-filter android:priority="1000">
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
-                <action android:name="android.intent.action.PHONE_STATE"/>
-            </intent-filter>
-        </receiver>
+        <activity
+            android:name=".RecyclerViewExample"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.CoffeeBean.NoActionBar" />
+        //注册广播
+       <receiver android:name=".receiver.PhoneBroadcastReceiver"-->
+           android:enabled="true"
+           android:exported="true" >
+           <intent-filter android:priority="1000">
+               <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+               <action android:name="android.intent.action.PHONE_STATE"/>
+           </intent-filter>
+       </receiver> 
+
     </application>
 
 </manifest>

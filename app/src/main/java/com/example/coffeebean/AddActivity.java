@@ -65,7 +65,7 @@ import butterknife.OnClick;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class AddActivity extends BaseActivity implements View.OnClickListener{
+public class AddActivity extends BaseActivity implements View.OnClickListener {
     ContactInfo contactInfo;
     String TextValue;
     EditText noteNameTextView;
@@ -77,13 +77,13 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
     Spinner spinnerGroup;
     TextView add;
 
-//    //底部弹窗
+    //    //底部弹窗
 //    private BottomSheetDialog bottomSheetDialog;
 //    //弹窗视图
 //    private View bottomView;
 //    private String imgPath= Environment.getDataDirectory().getPath()+"/data/com.example.coffeebean/avater.jpg";
-    ArrayList<Group> groupInfo=null;
-    long id=-1;
+    ArrayList<Group> groupInfo = null;
+    long id = -1;
     private static final int FAILURE = 0;
     private static final int SUCCESS = 1;
 
@@ -110,32 +110,34 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
 //            .skipMemoryCache(true);//不做内存缓存
 
     String regex = "^1[3-9]\\d{9}$";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getName(),"eneter successfully");
+        Log.d(getClass().getName(), "eneter successfully");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_add);
-        mContext=this;
+        mContext = this;
         ArrayAdapter<Group> adapterGroup = null;
-        spinnerGroup=findViewById(R.id.spinnerGroup);
-        groupInfo=ContactDBHelper.getInstance(getApplicationContext()).getAllGroup();
-        while (groupInfo==null){}
+        spinnerGroup = findViewById(R.id.spinnerGroup);
+        groupInfo = ContactDBHelper.getInstance(getApplicationContext()).getAllGroup();
+        while (groupInfo == null) {
+        }
         adapterGroup = new ArrayAdapter<Group>(this,
                 android.R.layout.simple_spinner_dropdown_item, groupInfo);
 //设置下拉框的数据适配器adapterGroup
         this.spinnerGroup.setAdapter(adapterGroup);
 
-        ivHead=findViewById(R.id.add_contact_img);
+        ivHead = findViewById(R.id.add_contact_img);
         noteNameTextView = findViewById(R.id.add_contact_note_name);
         nameTextView = findViewById(R.id.add_contact_name);
         homeAddressTextView = findViewById(R.id.add_contact_home_address);
         workAddressTextView = findViewById(R.id.add_contact_workplace);
         careerTextView = findViewById(R.id.add_contact_career);
         phoneNumberTextView = findViewById(R.id.add_contact_phone_number);
-        add=findViewById(R.id.add_contact);
+        add = findViewById(R.id.add_contact);
         displayImage(imgPath);
-        LinearLayout returnback=findViewById(R.id.add_returnbook);
-        ImageView Info_call=findViewById(R.id.add_contact_img);
+        LinearLayout returnback = findViewById(R.id.add_returnbook);
+        ImageView Info_call = findViewById(R.id.add_contact_img);
         returnback.setOnClickListener(this);
         add.setOnClickListener(this);
         phoneNumberTextView.setOnClickListener(this);
@@ -144,13 +146,13 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.add_returnbook://返回
                 setResult(FAILURE);
                 finish();
                 break;
             case R.id.add_contact://新增用户
-                ContactInfo contactInfo=new ContactInfo();
+                ContactInfo contactInfo = new ContactInfo();
                 contactInfo.setNoteName(noteNameTextView.getText().toString().trim());
                 contactInfo.setName(nameTextView.getText().toString().trim());
                 contactInfo.setHomeAddress(homeAddressTextView.getText().toString().trim());
@@ -158,33 +160,33 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
                 contactInfo.setCareer(careerTextView.getText().toString().trim());
                 contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString().trim());
                 contactInfo.setAvaterUri(imgPath);
-                contactInfo.setGroup( ((Group)spinnerGroup.getSelectedItem()).getGroupID());
-                Log.d("groupid",String.valueOf(((Group)spinnerGroup.getSelectedItem()).getGroupID()));
+                contactInfo.setGroup(((Group) spinnerGroup.getSelectedItem()).getGroupID());
+                Log.d("groupid", String.valueOf(((Group) spinnerGroup.getSelectedItem()).getGroupID()));
                 boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
-                if(noteNameTextView.getText().toString().length()==0){
-                    CharSequence cs="昵称不得为空";
-                    Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                if (noteNameTextView.getText().toString().length() == 0) {
+                    CharSequence cs = "昵称不得为空";
+                    Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
+                    break;
+                } else if (phoneNumberTextView.getText().toString().trim().equals("") || !bool) {//正则判断
+                    CharSequence cs = "电话格式不规范";
+                    Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                else if(phoneNumberTextView.getText().toString().trim().equals("")||!bool){//正则判断
-                    CharSequence cs="电话格式不规范";
-                    Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                id=-1;
-                new Thread(){
+                id = -1;
+                new Thread() {
                     @Override
                     public void run() {
-                        id = ContactDBHelper.getInstance(getApplicationContext()).insertContactInfo(contactInfo);
+                        id = ContactDBHelper.getInstance(getApplicationContext()).insertContactInfo(contactInfo, getApplicationContext());
                     }
                 }.start();
-                while(id==-1){}
+                while (id == -1) {
+                }
                 Intent intent = new Intent();
                 Bundle mBundle = new Bundle();
                 mBundle.putSerializable("newContactInfo", contactInfo); // 传递对象
-                intent.putExtra("bundle",mBundle);
-                Log.d("返回值",String.valueOf(id));
-                if(id>0)setResult(SUCCESS,intent);
+                intent.putExtra("bundle", mBundle);
+                Log.d("返回值", String.valueOf(id));
+                if (id > 0) setResult(SUCCESS, intent);
                 else setResult(FAILURE);
                 this.finish();
                 break;
@@ -196,7 +198,6 @@ public class AddActivity extends BaseActivity implements View.OnClickListener{
                 break;
         }
     }
-
 
 
     @Override

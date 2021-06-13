@@ -267,6 +267,51 @@ public class Shake extends AppCompatActivity implements SensorEventListener {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d(getClass().getName(),"OnDestory");
+
+        Bundle bundle = getIntent().getExtras();
+        if(!bundle.getBoolean("state")){
+            String currentName = bundle.getString("currentName");
+            runOnUiThread(()->{
+                String url = Requests.API_DELETE_USER + "name="+currentName+"&su="+1;
+                Log.d("userDelete",url);
+                OnlineUser onlineUser = new OnlineUser();
+                VolleyRequestUtil.getInstance(this).GETJsonArrayRequest(url, new VolleyRequestUtil.VolleyListenerInterface() {
+                    @Override
+                    public Response.Listener<JSONObject> onResponse() {
+                        return null;
+                    }
+                    @Override
+                    public Response.Listener<JSONArray> onResponseArray() {
+                        return response -> {
+                            try {
+//                                Log.d("onResponse", response.toString());
+                                JSONArray jsonArr = new JSONArray();
+                                jsonArr = response;
+                                for (int i = 0; i < jsonArr.length(); i++) {
+                                    JSONObject jsonObject = jsonArr.getJSONObject(i);
+                                    Log.d("onResponse" + i, jsonArr.getJSONObject(i).toString());
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        };
+                    }
+
+                    @Override
+                    public Response.ErrorListener onErr() {
+                        return error -> Log.d("onResponse", error.toString());
+                    }
+                });
+            });
+        };
+        super.onDestroy();
+    }
+
     /**
      * 开启 摇一摇动画
      *

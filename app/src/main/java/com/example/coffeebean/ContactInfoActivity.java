@@ -99,8 +99,9 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
         ivHead = findViewById(R.id.tag_cell_icon);
         groupInfo =  ContactDBHelper.getInstance(getApplicationContext()).getAllGroup();
         Log.d("个人信息初始化", TextValue);
-        contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(TextValue);
-        Log.d("个人信息初始化", contactInfo.getNoteName());
+        contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoBynoteName(TextValue);
+
+        Log.d("个人信息初始化", contactInfo.toString());
         broadIntent.putExtra("PreInfoName", contactInfo.getNoteName());
         try {
             phoneRecords =  PhoneRecordDBHelper.getInstance(getApplicationContext()).getPhoneRecordsByName(TextValue);

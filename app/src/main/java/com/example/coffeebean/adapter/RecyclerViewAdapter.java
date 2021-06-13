@@ -55,6 +55,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public MyItemOnClickListener mListener;
     ArrayList<Group> groupInfo;
     public OnBindCallback onBind;
+
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
 
@@ -66,6 +67,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         TextView contactInfoName;
         LinearLayout clickView;
         RoundAngleImageView roundAngleImageView;
+
         public SimpleViewHolder(View itemView) {
             super(itemView);
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
@@ -73,8 +75,8 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             trashView = itemView.findViewById(R.id.trash);
             tv_item_tag = (TextView) itemView.findViewById(R.id.tv_item_tag);
             contactInfoName = itemView.findViewById(R.id.contact_info_item_name);
-            clickView=itemView.findViewById(R.id.clickView);
-            roundAngleImageView=itemView.findViewById(R.id.contact_info__item_avater);
+            clickView = itemView.findViewById(R.id.clickView);
+            roundAngleImageView = itemView.findViewById(R.id.contact_info__item_avater);
 
 //            itemView.setOnClickListener(new View.OnClickListener() {
 //                @Override
@@ -99,9 +101,12 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public RecyclerViewAdapter(Context context, ArrayList<ContactInfo> objects) {
         this.mContext = context;
         this.mDataset = objects;
-        groupInfo=null;
-        new Thread(()->{ groupInfo=new ContactDBHelper(mContext).getAllGroup();}).start();
-        while (groupInfo==null){}
+        groupInfo = null;
+        new Thread(() -> {
+            groupInfo = new ContactDBHelper(mContext).getAllGroup();
+        }).start();
+        while (groupInfo == null) {
+        }
     }
 
     @Override
@@ -115,7 +120,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
 
         ContactInfo item = mDataset.get(position);
-        new UpdateAsyncTask(viewHolder.roundAngleImageView,item).execute();
+        new UpdateAsyncTask(viewHolder.roundAngleImageView, item).execute();
 //        if(item.getAvaterUri()!=null) {
 //           viewHolder.roundAngleImageView.setImageURI(Uri.parse(item.getAvaterUri()));
 //        }
@@ -128,9 +133,10 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             }
         });
         if (!letterCompareSection(position)) {
-            if(mDataset.get(position).getGroup()==1)
-            viewHolder.tv_item_tag.setText(letter);
-            else viewHolder.tv_item_tag.setText(groupInfo.get(mDataset.get(position).getGroup()-1).getGroupName());
+            if (mDataset.get(position).getGroup() == 1)
+                viewHolder.tv_item_tag.setText(letter);
+            else
+                viewHolder.tv_item_tag.setText(groupInfo.get(mDataset.get(position).getGroup() - 1).getGroupName());
             viewHolder.tv_item_tag.setVisibility(View.VISIBLE);
         } else {
             viewHolder.tv_item_tag.setVisibility(View.GONE);
@@ -142,15 +148,15 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             @Override
             public void onClick(View view) {
                 Log.d(getClass().getSimpleName(), "onItemSelected: " + viewHolder.contactInfoName.getText().toString());
-                    Intent intent = new Intent();
+                Intent intent = new Intent();
 
-                    intent.setClass(mContext, ContactInfoActivity.class);
-                    //把一个值写入到Intent中
-                    intent.putExtra("NoteName", viewHolder.contactInfoName.getText());
-                    //启动另一个activity
-                Log.d("Contextname",mContext.getClass().getName());
-                Log.d(getClass().getName(),"I DO");
-                ((Activity)mContext).startActivityForResult(intent,REQUESTCODE_Info);
+                intent.setClass(mContext, ContactInfoActivity.class);
+                //把一个值写入到Intent中
+                intent.putExtra("NoteName", viewHolder.contactInfoName.getText());
+                //启动另一个activity
+                Log.d("Contextname", mContext.getClass().getName());
+                Log.d(getClass().getName(), "I DO");
+                ((Activity) mContext).startActivityForResult(intent, REQUESTCODE_Info);
 
             }
         });
@@ -158,7 +164,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             @Override
             public void onDoubleClick(SwipeLayout layout, boolean surface) {
                 Toast.makeText(mContext, "DoubleClick", Toast.LENGTH_SHORT).show();
-                Log.d("itemdoubleclicked","search");
+                Log.d("itemdoubleclicked", "search");
 //                Intent intent = new Intent();
 //
 //                intent.setClass(mContext, ContactInfoActivity.class);
@@ -168,7 +174,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
 //                mContext.startActivity(intent);
             }
         });
-        if(mListener != null){
+        if (mListener != null) {
             viewHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -182,15 +188,15 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         }
         //长按
 
-            viewHolder.clickView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    initPopWindow(v, mDataset.get(position));
-                    return true;
-                }
-            });
+        viewHolder.clickView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                initPopWindow(v, mDataset.get(position));
+                return true;
+            }
+        });
 
-        viewHolder.trashView.setOnClickListener(v->{
+        viewHolder.trashView.setOnClickListener(v -> {
             showNormalDialog(mDataset.get(position).getNoteName());
             mItemManger.removeShownLayouts(viewHolder.swipeLayout);
             mDataset.remove(position);
@@ -203,22 +209,25 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         viewHolder.contactInfoName.setText(item.getNoteName());
         mItemManger.bindView(viewHolder.itemView, position);
     }
+
     private Boolean letterCompareSection(int position) {
         if (position == 0) {
             return false;
         }
-        Boolean result;
-        if(mDataset.get(position).getGroup()==1) {
+        Boolean result = true;
+        if (mDataset.get(position).getGroup() == 1) {
             String letter1 = mDataset.get(position).getLetter();
             String letter2 = mDataset.get(position - 1).getLetter();
-             result = letter1.equals(letter2);
-        }
-        else {
-            result=(mDataset.get(position).getGroup()==mDataset.get(position-1).getGroup());
+            if (letter1 != null && letter2 != null)
+                result = letter1.equals(letter2);
+            return result;
+        } else {
+            result = (mDataset.get(position).getGroup() == mDataset.get(position - 1).getGroup());
         }
         return result;
     }
-    private void showNormalDialog(String noteName){
+
+    private void showNormalDialog(String noteName) {
         /* @setIcon 设置对话框图标
          * @setTitle 设置对话框标题
          * @setMessage 设置对话框消息提示
@@ -227,13 +236,13 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         final AlertDialog.Builder normalDialog =
                 new AlertDialog.Builder(mContext);
         normalDialog.setTitle("提示");
-        normalDialog.setMessage("你确认要删除"+noteName+"嘛?");
+        normalDialog.setMessage("你确认要删除" + noteName + "嘛?");
         normalDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CharSequence cs="您已成功删除"+noteName+"联系人嘛";
-                        Toast.makeText(mContext,cs,Toast.LENGTH_SHORT).show();
+                        CharSequence cs = "您已成功删除" + noteName + "联系人嘛";
+                        Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
                     }
                 });
         normalDialog.setNegativeButton("取消",
@@ -246,6 +255,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         // 显示
         normalDialog.show();
     }
+
     @Override
     public int getItemCount() {
         return mDataset.size();
@@ -256,7 +266,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         return R.id.swipe;
     }
 
-    public void setOnItemClickListener(MyItemOnClickListener listener){
+    public void setOnItemClickListener(MyItemOnClickListener listener) {
         this.mListener = listener;
     }
 
@@ -271,6 +281,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
     public interface MyItemOnLongClickListener {
         void onItemLongClick(View view, ContactInfo contact) throws IOException;
     }
+
     //生成删除气泡
     private void initPopWindow(View v, final ContactInfo contact) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.bubble_dialog, null, false);
@@ -316,14 +327,16 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             }
         });
     }
+
     //更新图片 内容过大需要异步
     public class UpdateAsyncTask extends AsyncTask<Integer, Integer, Integer> {
         private RoundAngleImageView roundAngleImageView;
         private ContactInfo item;
-        public UpdateAsyncTask(RoundAngleImageView roundAngleImageView,ContactInfo item) {
+
+        public UpdateAsyncTask(RoundAngleImageView roundAngleImageView, ContactInfo item) {
             super();
             this.roundAngleImageView = roundAngleImageView;
-            this.item=item;
+            this.item = item;
         }
 
         @Override
@@ -334,8 +347,9 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         protected void onPreExecute() {
             Log.d("tag", "开始执行");
         }
+
         protected void onPostExecute(Integer result) {
-            if(item.getAvaterUri()!=null) {
+            if (item.getAvaterUri() != null) {
                 roundAngleImageView.setImageURI(Uri.parse(item.getAvaterUri()));
             }
         }

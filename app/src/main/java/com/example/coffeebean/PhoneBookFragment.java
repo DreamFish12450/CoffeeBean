@@ -153,7 +153,6 @@ public class PhoneBookFragment extends Fragment {
                 contactInfos = filledData(contactInfos);
                 Collections.sort(contactInfos, mComparator);
                 Log.d("add", contactInfo1.getNoteName());
-
                 mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
                 ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                 recyclerView.setAdapter(mAdapter);
@@ -231,7 +230,6 @@ public class PhoneBookFragment extends Fragment {
         new Thread() {
             @Override
             public void run() {
-
                 contactInfos = new ContactDBHelper(getContext()).getContactInfoContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
                 contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
 
@@ -484,9 +482,6 @@ public class PhoneBookFragment extends Fragment {
                         contactInfos = filledData(contactInfos);
                         Collections.sort(contactInfos, mComparator);
                         Log.d("add", contactInfo.getNoteName());
-                        mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
-                        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
-                        recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                     }
                 } else if (requestCode == FAILURE) {
