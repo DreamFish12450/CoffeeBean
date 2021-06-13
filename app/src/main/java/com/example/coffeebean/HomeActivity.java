@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +54,16 @@ public class HomeActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_view1);
         ViewPager viewPager = findViewById(R.id.view_pager);
 
+//1.获取telephone的实例
+        TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//2.注册电话的监听
+        tm.listen(new MyPhoneStateListener(), PhoneStateListener.LISTEN_CALL_STATE);
+
+
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+//        intentFilter.addAction("android.intent.action.PHONE_STATE");
+//        registerReceiver(phoneBroadcastReceiver,intentFilter);
         viewPager.setAdapter(mainViewPagerAdapter);
         viewPager.setOffscreenPageLimit(3);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -92,15 +104,15 @@ public class HomeActivity extends AppCompatActivity {
         });
         viewPager.setCurrentItem(1);
         bottomNavigationView.setSelectedItemId(R.id.home_button);
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),  Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED) {//已有权限
-        } else {//申请权限
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
+        if (checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},0);
         }
-//
+
         phoneBroadcastReceiver=new PhoneBroadcastReceiver();
-//        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
-//        intentFilter.setPriority(Integer.MAX_VALUE);
-//        registerReceiver(phoneBroadcastReceiver,intentFilter);
+        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+        intentFilter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(phoneBroadcastReceiver,intentFilter);
+
     }
 
     @Override
@@ -139,11 +151,40 @@ public class HomeActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(phoneBroadcastReceiver);
+    }
+
     @Override
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(getClass().getName(),"I DO");
+    }
+    private String TAG = getClass().getName();
+    private class MyPhoneStateListener extends PhoneStateListener {
+
+        @Override
+        public void onCallStateChanged(int state, String phoneNumber) {
+            super.onCallStateChanged(state, phoneNumber);
+
+            switch (state) {
+                case TelephonyManager.CALL_STATE_IDLE:
+                    Log.d(TAG, "**********************监测到挂断电话!!!!*******************");
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK://接听状态
+                    Log.d(TAG, "**********************监测到接听电话!!!!************");
+                    break;
+                case TelephonyManager.CALL_STATE_RINGING://电话响铃状态
+                    Log.d(TAG, "**********************监测到电话呼入!!!!*****");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }
