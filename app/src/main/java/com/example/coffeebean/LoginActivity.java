@@ -169,6 +169,7 @@ public class LoginActivity extends Activity {
     public class LoginAsyncTask extends AsyncTask<String, Void, UserInfo> {
         private String username;
         private String password;
+        private int contactId;
         boolean isChecked;
         private WeakReference<Context> contextWeakReference;
 
@@ -176,6 +177,7 @@ public class LoginActivity extends Activity {
             contextWeakReference = new WeakReference<>(context);
             this.username = username;
             this.password = password;
+            this.contactId = contactId;
             isChecked = ischecked;
         }
 
@@ -203,8 +205,8 @@ public class LoginActivity extends Activity {
             if (userInfo != null)
                 if (userInfo.getPassword().equals(password)) {
                     if (isChecked) {
-                        UserManage.getInstance().saveUserInfo(context, null, null);
-                        UserManage.getInstance().saveUserInfo(context, username, password);
+                        UserManage.getInstance().saveUserInfo(context, null, null,0);
+                        UserManage.getInstance().saveUserInfo(context, username, password,userInfo.getId());
 //                        UserManage.getInstance().saveUserInfoList(context, username);
                     }
                     Intent intent = new Intent(context, HomeActivity.class);//跳转到主页
