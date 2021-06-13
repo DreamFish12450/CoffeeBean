@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -69,6 +70,7 @@ public class BaseFragment extends Fragment {
     public void call(String telPhone) {
         phonenum=telPhone;
         if (checkReadPermission(Manifest.permission.CALL_PHONE, REQUEST_CALL_PERMISSION)) {
+            Log.d("电话号码",telPhone);
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+telPhone));
             startActivity(intent);
         }

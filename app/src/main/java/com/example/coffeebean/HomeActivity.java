@@ -96,11 +96,11 @@ public class HomeActivity extends AppCompatActivity {
         } else {//申请权限
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS}, 1);
         }
-//        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+//
+        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
 //        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
 //        intentFilter.setPriority(Integer.MAX_VALUE);
 //        registerReceiver(phoneBroadcastReceiver,intentFilter);
-
     }
 
     @Override
