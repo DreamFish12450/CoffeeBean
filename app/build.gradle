@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.example.coffeebean"
-        minSdkVersion 24
+        minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -91,6 +91,11 @@ dependencies {
     //热门强大的图片加载器
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    implementation 'com.googlecode.libphonenumber:geocoder:2.15'
+    implementation 'com.googlecode.libphonenumber:libphonenumber:6.3'
+    implementation 'com.googlecode.libphonenumber:prefixmapper:2,15'
+    implementation 'com.googlecode.libphonenumber:carrier:1.5'
 
     //Google Material控件,以及迁移到AndroidX下一些控件的依赖
     implementation 'com.google.android.material:material:1.2.0'

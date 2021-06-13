@@ -68,7 +68,7 @@ public class PhoneRecordInfoActivity extends BaseActivity {
             contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoQueryByName(phoneRecord.getNoteName());
 
                 noteNameTextView.setText(phoneRecord.getNoteName());
-                if (contactInfo.getAvaterUri() != null) {
+                if (contactInfo.getAvaterUri() != null&&contactInfo.getAvaterUri().length()>0) {
                     ivHead.setImageURI(Uri.parse(contactInfo.getAvaterUri()));
                 }
             Log.d("个人信息查询", contactInfo.getNoteName());
