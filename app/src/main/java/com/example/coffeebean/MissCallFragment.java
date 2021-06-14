@@ -104,8 +104,9 @@ public class MissCallFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask selectALLContactAsyncTask=new PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask(getContext(),missPhoneRecordAdapter);
-            selectALLContactAsyncTask.execute();
+            PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask selectMissContactAsyncTask=new PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask(getContext(),missPhoneRecordAdapter);
+            selectMissContactAsyncTask.execute();
+            missPhoneRecordAdapter.notifyDataSetChanged();
         }
     };
 }

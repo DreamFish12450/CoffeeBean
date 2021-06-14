@@ -64,7 +64,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
     Intent intent;
     Intent broadIntent;
     Spinner spinnerGroup;
-
+    String oldnoteName;
     boolean isEdit = false;
     private static final int SUCCESS = 1;
     private static final int FAILURE = 0;
@@ -159,6 +159,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
             if (edit.getText().equals("编辑")) {
                 isEdit = false;
                 runOnUiThread(()-> edit.setText("完成"));
+                oldnoteName=noteNameTextView.getText().toString();
                 noteNameTextView.setEnabled(true);
                 nameTextView.setEnabled(true);
                 homeAddressTextView.setEnabled(true);
@@ -168,6 +169,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                 isEdit = false;
             } else if (edit.getText().equals("完成")) {
                 String regex = "^1[3-9]\\d{9}$";
+
                 boolean bool = Pattern.matches(regex, phoneNumberTextView.getText().toString().trim());
                 if (noteNameTextView.getText().toString().length() == 0) {
                     CharSequence cs = "昵称不得为空";
@@ -189,7 +191,7 @@ public class ContactInfoActivity extends BaseActivity implements View.OnClickLis
                         contactInfo.setPhoneNumber(phoneNumberTextView.getText().toString());
                         contactInfo.setAvaterUri(imgPath);
                         contactInfo.setGroup(spinnerGroup.getSelectedItemPosition() + 1);
-                         ContactDBHelper.getInstance(getApplicationContext()).updateContactInfo(id, contactInfo);
+                         ContactDBHelper.getInstance(getApplicationContext()).updateContactInfo(oldnoteName, contactInfo);
                         isEdit = true;
                     }
                 }.start();

@@ -399,15 +399,16 @@ public class ContactDBHelper extends SQLiteOpenHelper {
     /**
      * 根据id修改，根据实际情况更改如根据其他 目前model里没有id值
      *
-     * @param id          update row id （需要更新的ID）
+     * @param oldnoteName          update row id （需要更新的ID）
      * @param ContactInfo update value （去更新数据库的内容）
      * @return the number of rows affected (影响到的行数，如果没更新成功，返回0。所以当return 0时，需要告诉用户更新不成功)
      */
-    public int updateContactInfo(int id, ContactInfo ContactInfo) {
+    public int updateContactInfo(String oldnoteName, ContactInfo ContactInfo) {
 
 
         ContentValues values = new ContentValues();
-        ContactInfo old=getContactInfoContactId(id).get(0);
+        //获取旧值
+        ContactInfo old=getContactInfoBynoteName(oldnoteName);
 
         SQLiteDatabase db = getWritableDatabase();
         values.put(ContactInfo.COLUMN_NOTENAME, ContactInfo.getNoteName());
@@ -418,7 +419,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_AVATERURL, ContactInfo.getAvaterUri());
         values.put(ContactInfo.COLUMN_GROUP, ContactInfo.getGroup());
 
-        int idReturnByUpdate = db.update(ContactInfo.TABLE_NAME, values, "contactId=? and name = ?", new String[]{String.valueOf(ContactInfo.getContactId()), ContactInfo.getName()});
+        int idReturnByUpdate = db.update(ContactInfo.TABLE_NAME, values, "contactId=? and noteName = ?", new String[]{String.valueOf(old.getContactId()), old.getNoteName()});
         if(old.getPhoneNumber().equals(ContactInfo.getPhoneNumber())&&!old.getNoteName().equals(ContactInfo.getNoteName()))
             db.execSQL("UPDATE phoneRecord SET "+ PhoneRecord.COLUMN_NOTENAME+" = '"+ContactInfo.getNoteName()+"' Where phoneNumber ="+ContactInfo.getPhoneNumber());
         if(!old.getPhoneNumber().equals(ContactInfo.getPhoneNumber()))

@@ -153,7 +153,7 @@ public class PhoneBookFragment extends Fragment {
                 Log.d("preInfo", contactInfos.toString());
                 contactInfos = filledData(contactInfos);
                 Collections.sort(contactInfos, mComparator);
-                Log.d("add", contactInfo1.getNoteName());
+                Log.d("change", contactInfo1.getNoteName());
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
                 Intent broadIntent = new Intent("refreshPhonelist");

@@ -86,15 +86,15 @@ public class PhoneRecordInfoActivity extends BaseActivity {
             }
             if (phoneRecord.getStatus()==1){
                 if(phoneRecord.getDuration()/60>60)
-                timeTextView.setText("接通  "+phoneRecord.getDuration()/60/60+"小时"+phoneRecord.getDuration()/60%60+"分钟"+phoneRecord.getDuration()%60 + "秒");
+                timeTextView.setText("接通  "+phoneRecord.getDuration()/3600+"小时"+phoneRecord.getDuration()%3600/60+"分钟"+phoneRecord.getDuration()%60 + "秒");
                 else if(phoneRecord.getDuration()>60)
-                 timeTextView.setText("接通  "+phoneRecord.getDuration()/1000/60+"分钟"+phoneRecord.getDuration() %60 + "秒");
+                 timeTextView.setText("接通  "+phoneRecord.getDuration()/60+"分钟"+phoneRecord.getDuration() %60 + "秒");
                 else
                     timeTextView.setText("接通  "+phoneRecord.getDuration() + "秒");
             }
             if (phoneRecord.getStatus()==2) {
                 if(phoneRecord.getDuration()/60>60)
-                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/60/60+"小时"+phoneRecord.getDuration()/60%60+"分钟"+phoneRecord.getDuration()%60 + "秒");
+                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/3600+"小时"+phoneRecord.getDuration()%3600/60+"分钟"+phoneRecord.getDuration()%60 + "秒");
                 else if(phoneRecord.getDuration()>60)
                     timeTextView.setText("呼出  "+phoneRecord.getDuration()/60+"分钟"+phoneRecord.getDuration() %60 + "秒");
                 else

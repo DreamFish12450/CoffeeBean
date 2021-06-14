@@ -174,6 +174,7 @@ public class AllCallFragment extends Fragment {
 
             PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask selectALLContactAsyncTask=new PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask(getContext(),allPhoneRecordAdapter);
             selectALLContactAsyncTask.execute();
+            allPhoneRecordAdapter.notifyDataSetChanged();
         }
     };
 }
