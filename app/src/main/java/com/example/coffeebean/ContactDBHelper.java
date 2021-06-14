@@ -248,7 +248,53 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         db.close();
         return ContactInfosList;
     }
-
+    /**
+     * @param tel 电话
+     * @return 读取数据库，返回一个 ContactInfo 类型的 ArrayList
+     */
+    public ContactInfo getContactInfoBytel(String tel) {
+        ContactInfo ContactInfo = new ContactInfo();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columnArray = new String[]{
+                ContactInfo.COLUMN_ID,
+                ContactInfo.COLUMN_NAME,
+                ContactInfo.COLUMN_NOTENAME,
+                ContactInfo.COLUMN_HOMEADDRESS,
+                ContactInfo.COLUMN_WORKADDRESS,
+                ContactInfo.COLUMN_CAREER,
+                ContactInfo.COLUMN_PHONENUMBER,
+                ContactInfo.COLUMN_AVATERURL,
+                ContactInfo.COLUMN_GROUP};
+        Cursor cursor = db.query(ContactInfo.TABLE_NAME,
+                columnArray,
+                ContactInfo.COLUMN_PHONENUMBER + "=? ",
+                new String[]{tel},
+                null, null, null);
+        if (cursor != null && cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_NAME));
+            String noteName = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_NOTENAME));
+            String workAddress = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_WORKADDRESS));
+            String telephone = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_PHONENUMBER));
+            String homeAddress = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_HOMEADDRESS));
+            String avaterUrl = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_AVATERURL));
+            String career = cursor.getString(cursor.getColumnIndex(ContactInfo.COLUMN_CAREER));
+            int group = cursor.getInt(cursor.getColumnIndex(ContactInfo.COLUMN_GROUP));
+            ContactInfo.setId(id);
+            ContactInfo.setName(name);
+            ContactInfo.setNoteName(noteName);
+            ContactInfo.setHomeAddress(homeAddress);
+            ContactInfo.setWorkAddress(workAddress);
+            ContactInfo.setCareer(career);
+            ContactInfo.setAvaterUri(avaterUrl);
+            ContactInfo.setPhoneNumber(telephone);
+            ContactInfo.setGroup(group);
+            Log.d("queryResult", ContactInfo.toString());
+            cursor.close();
+            return ContactInfo;
+        }
+        return null;
+    }
 
     /**
      * @param CnoteName 用户名

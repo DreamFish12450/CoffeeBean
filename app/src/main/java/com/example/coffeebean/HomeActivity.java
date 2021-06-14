@@ -1,5 +1,6 @@
 package com.example.coffeebean;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 public class HomeActivity extends AppCompatActivity {
 
     PhoneBroadcastReceiver phoneBroadcastReceiver;
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,7 @@ public class HomeActivity extends AppCompatActivity {
         });
         viewPager.setCurrentItem(1);
         bottomNavigationView.setSelectedItemId(R.id.home_button);
+
         if (checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS)!= PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.PROCESS_OUTGOING_CALLS},0);
         }

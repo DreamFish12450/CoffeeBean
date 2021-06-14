@@ -61,7 +61,35 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
             }
         return instance;
     }
+    /**
+     * @param
+     * @return 返回新插入的行的ID，发生错误，插入不成功，则返回-1
+     */
+    public void insertPhoneRecord(PhoneRecord phoneRecord) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+//        String content=PhoneRecord.COLUMN_NOTENAME+","+PhoneRecord.COLUMN_AVATERURL+","+PhoneRecord.COLUMN_PHONENUMBER+","
+//                +PhoneRecord.COLUMN_STATUS+","+PhoneRecord.COLUMN_RECEIVERID+","+PhoneRecord.COLUMN_DATA+","+PhoneRecord.COLUMN_DURATION;
+//        db.execSQL("INSERT INTO "+ PhoneRecord.TABLE_NAME +" VALUES ("+content+")", new Object[]{
+//                phoneRecord.getNoteName(),phoneRecord.getAvaterUrl(),phoneRecord.getPhoneNumber(),
+//                phoneRecord.getStatus(),phoneRecord.getReceiverId(),
+//                phoneRecord.getDate(),phoneRecord.getDuration()});
 
+        values.put(PhoneRecord.COLUMN_AVATERURL,phoneRecord.getAvaterUrl());
+//        values.put(PhoneRecord.COLUMN_DATA, phoneRecord.getDate());
+        values.put(PhoneRecord.COLUMN_NOTENAME, phoneRecord.getNoteName());
+        values.put(PhoneRecord.COLUMN_DURATION, phoneRecord.getDuration());
+        values.put(PhoneRecord.COLUMN_PHONENUMBER, phoneRecord.getPhoneNumber());
+        values.put(PhoneRecord.COLUMN_RECEIVERID, phoneRecord.getReceiverId());
+        values.put(PhoneRecord.COLUMN_STATUS, phoneRecord.getStatus());
+//        values.put(PhoneRecord.COLUMN_RECORDID, phoneRecord.getRecordId());
+        long cnt=db.insert(PhoneRecord.TABLE_NAME,null,values);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        db.execSQL("UPDATE phoneRecord SET "+PhoneRecord.COLUMN_DATA+" = '"+simpleDateFormat.format(phoneRecord.getDate())+"' Where RecordID ="+cnt);
+
+        db.close();
+    }
     /**
      * @return 读取数据库，返回一个 PhoneRecord 类型的 ArrayList
      */

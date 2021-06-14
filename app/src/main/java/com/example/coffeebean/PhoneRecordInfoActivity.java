@@ -4,6 +4,7 @@ package com.example.coffeebean;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.example.coffeebean.model.PhoneRecord;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class PhoneRecordInfoActivity extends BaseActivity {
@@ -37,6 +40,7 @@ public class PhoneRecordInfoActivity extends BaseActivity {
     LinearLayout returnhome;
     TextView call;
     TextView sendMsg;
+    TextView blackbook;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,7 @@ public class PhoneRecordInfoActivity extends BaseActivity {
         noteNameTextView = findViewById(R.id.phonerecord_info_name_or_phone);
         returnhome = findViewById(R.id.returnhome);
         timeTextView=findViewById(R.id.phonerecord_info_stauts);
+        blackbook=findViewById(R.id.phonerecord_info_blackbook);
 //        sendMsg.findViewById(R.id.sendsms);
         call=findViewById(R.id.phonerecord_info_call);
         dateTextView=findViewById(R.id.phonerecord_info_time);
@@ -109,6 +114,16 @@ public class PhoneRecordInfoActivity extends BaseActivity {
 //        sendMsg.setOnClickListener(v -> {
 //            sendSms(phonenum);
 //        });
+        blackbook.setOnClickListener(v -> {
+            SharedPreferences sp = getApplicationContext().getSharedPreferences("CoffeeBean", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = sp.edit();
+            Set<String> blackPhone=new HashSet<String>();
+            sp.getStringSet("blackbook",blackPhone);
+            blackPhone.add(phonenum);
+            edit.putStringSet("blackbook",blackPhone);
+            edit.apply();
+            Log.d("黑名单", String.valueOf(blackPhone.size()));
+        });
         returnhome.setOnClickListener(v -> {
             finish();
         });

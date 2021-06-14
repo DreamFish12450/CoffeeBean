@@ -1,8 +1,9 @@
 package com.example.coffeebean.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PhoneRecord {
+public class PhoneRecord implements Serializable {
 
     public static final String TABLE_NAME ="phoneRecord" ;
 

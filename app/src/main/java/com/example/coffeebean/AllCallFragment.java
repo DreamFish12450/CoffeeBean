@@ -1,9 +1,14 @@
 package com.example.coffeebean;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -14,7 +19,10 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.daimajia.swipe.util.Attributes;
 import com.example.coffeebean.adapter.AllPhoneRecordAdapter;
+import com.example.coffeebean.adapter.RecyclerViewAdapter;
+import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.Requests;
 import com.example.coffeebean.util.UserManage;
@@ -27,7 +35,10 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,7 +56,7 @@ public class AllCallFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    View root;
     public AllCallFragment() {
         // Required empty public constructor
     }
@@ -75,7 +86,7 @@ public class AllCallFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+        getActivity().registerReceiver(receiver, new IntentFilter("actionRefreshPL"));
 
     }
 
@@ -83,7 +94,7 @@ public class AllCallFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_all_call, container, false);
+        root = inflater.inflate(R.layout.fragment_all_call, container, false);
         allPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.all_phone_record));
         ArrayList<PhoneRecord> phoneRecords = new ArrayList<>();
         String url = Requests.API_GET_ALL_PHONE + "0";
@@ -143,5 +154,20 @@ public class AllCallFragment extends Fragment {
         return root;
     }
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(getClass().getName(), "获取回调");
+            PhoneRecord phoneRecord1 = (PhoneRecord) intent.getSerializableExtra("Info2");
+            Log.d("内容", String.valueOf(phoneRecord1.getStatus()));
+            List<PhoneRecord> items = allPhoneRecordAdapter.getItems();
+            items.add(0,phoneRecord1);
+            allPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.all_phone_record));
+            allPhoneRecordAdapter.setItems(items);
+            allPhoneRecordAdapter.notifyDataSetChanged();
+
+        }
+    };
 }

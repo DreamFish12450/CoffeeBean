@@ -37,8 +37,8 @@ import java.util.Locale;
 
 public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAdapter.RecyclerHolder> {
     List<PhoneRecord> items = new ArrayList<>();
-    private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-    PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
+    private  PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+    private  PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
     String language ="CN";
     Phonenumber.PhoneNumber referencePhonenumber = null;
     private static Context context = null;
@@ -51,6 +51,7 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
         recyclerView.setAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), RecyclerView.VERTICAL, false));
         context = recyclerView.getContext();
+//        phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
     }
 
     public void setItems(List<PhoneRecord> items) {
@@ -106,6 +107,7 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
             } catch (NumberParseException e) {
             e.printStackTrace();
         }
+
         String referenceRegion = phoneNumberOfflineGeocoder.getDescriptionForNumber(referencePhonenumber, Locale.CHINA);
         holder.position.setText(referenceRegion);
 
@@ -131,10 +133,12 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
     }
 
     public void addItem(PhoneRecord item) {
-        items.add(item);
+        items.add(0,item);
         notifyDataSetChanged();
     }
-
+    public List<PhoneRecord> getItems() {
+        return items;
+    }
     @Override
     public int getItemCount() {
         return items.size();
