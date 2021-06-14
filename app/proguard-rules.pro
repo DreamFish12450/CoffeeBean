@@ -30,3 +30,4 @@
 -keep class com.huawei.hms.**{*;}
 
 
+
