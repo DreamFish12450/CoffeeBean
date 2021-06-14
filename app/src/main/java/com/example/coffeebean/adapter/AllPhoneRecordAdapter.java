@@ -125,11 +125,11 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
             holder.status.setImageResource(R.drawable.ic_phone_post);
         }
         holder.more.setOnClickListener(v -> {
-            if (!holder.name.getText().equals("未知来电")) {
+
                 Intent intent = new Intent(context, PhoneRecordInfoActivity.class);
                 intent.putExtra("PhoneRecord", items.get(position).getRecordId());
                 context.startActivity(intent);
-            }
+
         });
         holder.itself.setOnClickListener(v -> {
             if (!holder.name.getText().equals("未知来电")) {

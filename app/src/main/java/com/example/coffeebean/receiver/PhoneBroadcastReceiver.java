@@ -37,14 +37,18 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
     private static String phoneNumber;
     private static Context context;
     private static int cnt=0;
+    private static int lock=0;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context=context;
 // 如果是拨打电话
+
         Log.d("拦截",intent.getAction());
+        if(lock==0)
         if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
+            lock=1;
             start_in = null;
             start_out = new Date(System.currentTimeMillis());
             mIncomingFlag = false;
@@ -54,6 +58,7 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
                     .getSystemService(Service.TELEPHONY_SERVICE);
             tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
         } else {
+            lock=1;
             SharedPreferences sp = context.getSharedPreferences("CoffeeBean", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = sp.edit();
             Set<String> blackPhone=new HashSet<String>();
@@ -217,6 +222,7 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
                         }
                         hang_on=null;
                         cnt=0;
+                        lock=0;
                     }
                     Intent broadIntent = new Intent("actionRefreshPL");
                     broadIntent.putExtra("Info2", phoneRecord);

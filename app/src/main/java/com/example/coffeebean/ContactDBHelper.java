@@ -16,6 +16,7 @@ import com.example.coffeebean.adapter.ContactInfoAdapter;
 import com.example.coffeebean.adapter.PersonPhoneRecordAdapter;
 import com.example.coffeebean.model.ContactInfo;
 import com.example.coffeebean.model.Group;
+import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.UserManage;
 
 
@@ -81,6 +82,8 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_AVATERURL, ContactInfo.getAvaterUri());
         values.put(ContactInfo.COLUMN_GROUP, ContactInfo.getGroup());
         long id = db.insert(ContactInfo.TABLE_NAME, null, values);
+        db.execSQL("UPDATE phoneRecord SET "+ PhoneRecord.COLUMN_NOTENAME+" = '"+ContactInfo.getNoteName()+"' Where phoneNumber ="+ContactInfo.getPhoneNumber());
+
         db.close();
         return id;
     }
@@ -155,8 +158,10 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             ContactInfo.setGroup(group);
             Log.d("queryResult", ContactInfo.toString());
             cursor.close();
+            db.close();
             return ContactInfo;
         }
+        db.close();
         return null;
     }
 
@@ -339,6 +344,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             ContactInfo.setGroup(group);
             Log.d("queryResult", ContactInfo.toString());
             cursor.close();
+            db.close();
             return ContactInfo;
         }
         return null;
@@ -398,11 +404,12 @@ public class ContactDBHelper extends SQLiteOpenHelper {
      * @return the number of rows affected (影响到的行数，如果没更新成功，返回0。所以当return 0时，需要告诉用户更新不成功)
      */
     public int updateContactInfo(int id, ContactInfo ContactInfo) {
-        SQLiteDatabase db = getWritableDatabase();
+
 
         ContentValues values = new ContentValues();
+        ContactInfo old=getContactInfoContactId(id).get(0);
 
-
+        SQLiteDatabase db = getWritableDatabase();
         values.put(ContactInfo.COLUMN_NOTENAME, ContactInfo.getNoteName());
         values.put(ContactInfo.COLUMN_HOMEADDRESS, ContactInfo.getHomeAddress());
         values.put(ContactInfo.COLUMN_WORKADDRESS, ContactInfo.getWorkAddress());
@@ -412,6 +419,10 @@ public class ContactDBHelper extends SQLiteOpenHelper {
         values.put(ContactInfo.COLUMN_GROUP, ContactInfo.getGroup());
 
         int idReturnByUpdate = db.update(ContactInfo.TABLE_NAME, values, "contactId=? and name = ?", new String[]{String.valueOf(ContactInfo.getContactId()), ContactInfo.getName()});
+        if(old.getPhoneNumber().equals(ContactInfo.getPhoneNumber())&&!old.getNoteName().equals(ContactInfo.getNoteName()))
+            db.execSQL("UPDATE phoneRecord SET "+ PhoneRecord.COLUMN_NOTENAME+" = '"+ContactInfo.getNoteName()+"' Where phoneNumber ="+ContactInfo.getPhoneNumber());
+        if(!old.getPhoneNumber().equals(ContactInfo.getPhoneNumber()))
+            db.execSQL("UPDATE phoneRecord SET "+ PhoneRecord.COLUMN_NOTENAME+" = NULL  Where phoneNumber ="+old.getPhoneNumber());
         db.close();
         return idReturnByUpdate;
     }
@@ -419,13 +430,13 @@ public class ContactDBHelper extends SQLiteOpenHelper {
     /**
      * 根据id删除，根据实际情况更改如根据其他 目前model里没有id值
      *
-     * @param id the database table row id need to delete(需要删除的数据库表中行的ID)
+     * @param noteName the database table row id need to delete(需要删除的数据库表中行的ID)
      * @return 返回影响到的行数，如果在 whereClause 有传入条件，返回该条件下影响到的行数，否则返回0。
      * 想要删除所有行，只要在 whereClause 传入 String "1"，并返回删除掉的行数总数（比如：删除了四行就返回4）
      */
-    public int deleteContactInfo(int id) {
+    public int deleteContactInfo(String noteName) {
         SQLiteDatabase db = getWritableDatabase();
-        int idReturnByDelete = db.delete(ContactInfo.TABLE_NAME, ContactInfo.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+        int idReturnByDelete = db.delete(ContactInfo.TABLE_NAME, ContactInfo.COLUMN_NOTENAME + "=? ", new String[]{noteName});
         db.close();
         return idReturnByDelete;
     }

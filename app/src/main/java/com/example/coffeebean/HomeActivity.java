@@ -36,6 +36,8 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.geocoding.PhoneNumberOfflineGeocoder;
 
 import java.util.ArrayList;
 
@@ -47,6 +49,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder=PhoneNumberOfflineGeocoder.getInstance();
         setContentView(R.layout.activity_main);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
@@ -125,6 +129,10 @@ public class HomeActivity extends AppCompatActivity {
 
         super.onResume();
         Log.d("HOMEStatus","resume");
+        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+        intentFilter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(phoneBroadcastReceiver,intentFilter);
     }
 
     @Override

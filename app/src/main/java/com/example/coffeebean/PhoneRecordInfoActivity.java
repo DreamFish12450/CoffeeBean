@@ -68,8 +68,8 @@ public class PhoneRecordInfoActivity extends BaseActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.d("通话信息初始化", phoneRecord.getNoteName());
-        if(phoneRecord.getNoteName().length()>0&&phoneRecord.getNoteName()!=null){
+
+        if(phoneRecord.getNoteName()!=null&&phoneRecord.getNoteName().length()>0){
             contactInfo = new ContactDBHelper(getApplicationContext()).getContactInfoBynoteName(phoneRecord.getNoteName());
 
                 noteNameTextView.setText(phoneRecord.getNoteName());
@@ -85,24 +85,24 @@ public class PhoneRecordInfoActivity extends BaseActivity {
                 timeTextView.setTextColor(Color.RED);
             }
             if (phoneRecord.getStatus()==1){
-                if(phoneRecord.getDuration()/1000/60>60)
-                timeTextView.setText("接通  "+phoneRecord.getDuration()/1000/60/60+"小时"+phoneRecord.getDuration()/1000/60%60+"分钟"+phoneRecord.getDuration() / 1000%60 + "秒");
-                else if(phoneRecord.getDuration()/1000>60)
-                 timeTextView.setText("接通  "+phoneRecord.getDuration()/1000/60+"分钟"+phoneRecord.getDuration() / 1000%60 + "秒");
+                if(phoneRecord.getDuration()/60>60)
+                timeTextView.setText("接通  "+phoneRecord.getDuration()/60/60+"小时"+phoneRecord.getDuration()/60%60+"分钟"+phoneRecord.getDuration()%60 + "秒");
+                else if(phoneRecord.getDuration()>60)
+                 timeTextView.setText("接通  "+phoneRecord.getDuration()/1000/60+"分钟"+phoneRecord.getDuration() %60 + "秒");
                 else
-                    timeTextView.setText("接通  "+phoneRecord.getDuration() / 1000 + "秒");
+                    timeTextView.setText("接通  "+phoneRecord.getDuration() + "秒");
             }
             if (phoneRecord.getStatus()==2) {
-                if(phoneRecord.getDuration()/1000/60>60)
-                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/1000/60/60+"小时"+phoneRecord.getDuration()/1000/60%60+"分钟"+phoneRecord.getDuration() / 1000%60 + "秒");
-                else if(phoneRecord.getDuration()/1000>60)
-                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/1000/60+"分钟"+phoneRecord.getDuration() / 1000%60 + "秒");
+                if(phoneRecord.getDuration()/60>60)
+                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/60/60+"小时"+phoneRecord.getDuration()/60%60+"分钟"+phoneRecord.getDuration()%60 + "秒");
+                else if(phoneRecord.getDuration()>60)
+                    timeTextView.setText("呼出  "+phoneRecord.getDuration()/60+"分钟"+phoneRecord.getDuration() %60 + "秒");
                 else
-                    timeTextView.setText("呼出  "+phoneRecord.getDuration() / 1000 + "秒");
+                    timeTextView.setText("呼出  "+phoneRecord.getDuration()  + "秒");
             }
             String PATTEN_DEFAULT_YMDHMS = "yyyy-MM-dd HH:mm:ss";
             SimpleDateFormat sf_all = new SimpleDateFormat(PATTEN_DEFAULT_YMDHMS);
-            Log.d("日期",sf_all.format(phoneRecord.getDate()));
+
             dateTextView.setText(sf_all.format(phoneRecord.getDate()));
             phoneView.setText(phonenum);
 

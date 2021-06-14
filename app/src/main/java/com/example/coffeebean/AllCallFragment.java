@@ -87,7 +87,7 @@ public class AllCallFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         getActivity().registerReceiver(receiver, new IntentFilter("actionRefreshPL"));
-
+        getActivity().registerReceiver(receiver2, new IntentFilter("refreshPhonelist"));//更新
     }
 
     @Override
@@ -163,10 +163,17 @@ public class AllCallFragment extends Fragment {
             Log.d("内容", String.valueOf(phoneRecord1.getStatus()));
             List<PhoneRecord> items = allPhoneRecordAdapter.getItems();
             items.add(0,phoneRecord1);
-            allPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.all_phone_record));
             allPhoneRecordAdapter.setItems(items);
             allPhoneRecordAdapter.notifyDataSetChanged();
         }
     };
+    private BroadcastReceiver receiver2 = new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+            PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask selectALLContactAsyncTask=new PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask(getContext(),allPhoneRecordAdapter);
+            selectALLContactAsyncTask.execute();
+        }
+    };
 }

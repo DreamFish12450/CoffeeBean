@@ -20,6 +20,7 @@ import com.example.coffeebean.model.PhoneRecord;
 import com.example.coffeebean.util.Requests;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +37,7 @@ public class MissCallFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    View root;
     public MissCallFragment() {
         // Required empty public constructor
     }
@@ -67,13 +68,14 @@ public class MissCallFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         getActivity().registerReceiver(receiver2, new IntentFilter("actionRefreshPL"));
+        getActivity().registerReceiver(receiver, new IntentFilter("refreshPhonelist"));//更新
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_miss_call, container, false);
+        root = inflater.inflate(R.layout.fragment_miss_call, container, false);
         missPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.miss_phone_record));
         ArrayList<PhoneRecord> phoneRecords = new ArrayList<>();
         String url = Requests.API_GET_ALL_PHONE + "0";
@@ -88,8 +90,22 @@ public class MissCallFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.d(getClass().getName(), "获取回调");
             PhoneRecord phoneRecord1 = (PhoneRecord) intent.getSerializableExtra("Info2");
-            if(phoneRecord1.getStatus()==0)
-            missPhoneRecordAdapter.addItem(phoneRecord1);
+            if(phoneRecord1.getStatus()==0){
+                List<PhoneRecord> items = missPhoneRecordAdapter.getItems();
+                items.add(0,phoneRecord1);
+                missPhoneRecordAdapter.setItems(items);
+                missPhoneRecordAdapter.notifyDataSetChanged();
+            }
+
+        }
+    };
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask selectALLContactAsyncTask=new PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask(getContext(),missPhoneRecordAdapter);
+            selectALLContactAsyncTask.execute();
         }
     };
 }

@@ -247,6 +247,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        ContactDBHelper.getInstance(mContext).deleteContactInfo(noteName);
                         CharSequence cs = "您已成功删除" + noteName + "联系人嘛";
                         Toast.makeText(mContext, cs, Toast.LENGTH_SHORT).show();
                     }
@@ -328,6 +329,7 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
             public void onClick(View v) {
                 mDataset.remove(contact);
                 //数据库删除
+                ContactDBHelper.getInstance(mContext).deleteContactInfo(contact.getNoteName());
                 notifyDataSetChanged();
                 popWindow.dismiss();
             }

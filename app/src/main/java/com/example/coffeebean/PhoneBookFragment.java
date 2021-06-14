@@ -156,6 +156,8 @@ public class PhoneBookFragment extends Fragment {
                 Log.d("add", contactInfo1.getNoteName());
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
+                Intent broadIntent = new Intent("refreshPhonelist");
+                getContext().sendBroadcast(broadIntent);
             }
         }
     };
@@ -501,6 +503,8 @@ public class PhoneBookFragment extends Fragment {
                         Collections.sort(contactInfos, mComparator);
                         Log.d("add", contactInfo.getNoteName());
                         mAdapter.notifyDataSetChanged();
+                        Intent broadIntent = new Intent("refreshPhonelist");
+                        getActivity().sendBroadcast(broadIntent);
                     }
                 } else if (requestCode == FAILURE) {
 
@@ -521,6 +525,8 @@ public class PhoneBookFragment extends Fragment {
                         ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                         recyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
+                        Intent broadIntent = new Intent("refreshPhonelist");
+                        getActivity().sendBroadcast(broadIntent);
                     }
 
                 }
