@@ -1,6 +1,8 @@
 package com.example.coffeebean;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ParseException;
 import android.os.Build;
@@ -34,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -122,6 +125,7 @@ public class PersonFragment extends Fragment {
         root.findViewById(R.id.log_out_view).setOnClickListener(v -> {
             UserManage.getInstance().delUserInfo(getActivity());
             Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("status",1);
             startActivity(intent);
         });
         linearLayoutShake.setOnClickListener(v -> {
@@ -176,6 +180,12 @@ public class PersonFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        usernameView.setText(UserManage.getInstance().getUserInfo(getActivity()).getUsername());
+    }
+
     public void showChangePasswordDialog(LayoutInflater inflater, View root) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
@@ -205,16 +215,19 @@ public class PersonFragment extends Fragment {
                         }
                         UserManage.getInstance().delUserInfo(getActivity());
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.putExtra("status",1);
                         intent.putExtra("isChecked", true);
                         intent.putExtra("username", username);
                         intent.putExtra("password", editAfterText.getText().toString());
                         startActivity(intent);
+                        dialog.dismiss();
+
                     }
 //                    UserManage.getInstance().delUserInfo(getActivity());
                 })
                 .setNegativeButton("取消", (dialog, id) -> {
                 });
-        builder.show();
+        final AlertDialog dialog = builder.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -233,9 +246,11 @@ public class PersonFragment extends Fragment {
                 loginDBHelper = LoginDBHelper.getInstance(getActivity());
                 new Thread(() -> {
                     if (UserManage.getInstance().getUserInfoList(getActivity()) != null) {
-                        List<String> usernameList = UserManage.getInstance().getUserInfoList(getActivity());
+                        List<String> List = UserManage.getInstance().getUserInfoList(getActivity());
+                        List<String> usernameList = new ArrayList<String>(new LinkedHashSet<String>(List));
                         usernameList.forEach(item -> {
                             UserInfo temp = loginDBHelper.getUserInfoQueryByName(item);
+                            Log.d("UserInfo",temp.toString());
                             personInfoAdapter.addItem(temp);
                         });
                     }
@@ -276,5 +291,10 @@ public class PersonFragment extends Fragment {
 
     }
 
+    private BroadcastReceiver RefreshUiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+        }
+    };
 }

@@ -79,6 +79,10 @@ public class LoginActivity extends BaseActivity {
             if (bundle.getBoolean("isChecked")) {
                 whether_save_auto.setChecked(true);
             }
+            if(bundle.getInt("status")==1){
+                Intent intent = new Intent("RefreshUiBroadcast");
+                sendBroadcast(intent);
+            }
         }
 
     }
@@ -90,6 +94,11 @@ public class LoginActivity extends BaseActivity {
         findViewById(R.id.btn_login).setOnClickListener(mOnClickListener);
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d("loginDestory","onDestory");
+        super.onDestroy();
+    }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
 
@@ -176,6 +185,7 @@ public class LoginActivity extends BaseActivity {
         private int contactId;
         boolean isChecked;
         private WeakReference<Context> contextWeakReference;
+        private Context mContext;
 
         LoginAsyncTask(Context context, String username, String password, boolean ischecked) {
             contextWeakReference = new WeakReference<>(context);
@@ -183,6 +193,7 @@ public class LoginActivity extends BaseActivity {
             this.password = password;
             this.contactId = contactId;
             isChecked = ischecked;
+            mContext = context;
         }
 
         @Override
@@ -213,11 +224,12 @@ public class LoginActivity extends BaseActivity {
             if (userInfo != null)
                 if (userInfo.getPassword().equals(password)) {
                     if (isChecked) {
-                        UserManage.getInstance().saveUserInfo(context, null, null,0);
+                        Log.d("loginChecked",userInfo.toString());
                         UserManage.getInstance().saveUserInfo(context, username, password,userInfo.getId());
                         UserManage.getInstance().saveUserInfoList(context, username);
                     }
-                    Intent intent = new Intent(context, HomeActivity.class);//跳转到主页
+                    Intent intent = new Intent(mContext, HomeActivity.class);//跳转到主页
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     finish();
                 } else {

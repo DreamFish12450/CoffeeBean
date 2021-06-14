@@ -71,7 +71,7 @@ public class PhoneBookFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerViewAdapter mAdapter;
     private EditText editText;
     private TextView cancelView;
     private TextView addView;
@@ -97,14 +97,15 @@ public class PhoneBookFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ContactInfo contactInfo = new ContactDBHelper(getActivity()).getContactInfoQueryByName(user);
-                            contactInfos.add(contactInfo);
-                            contactInfo.setContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
+                        contactInfos.add(contactInfo);
+                        contactInfo.setContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
 //                        new ContactDBHelper(getActivity()).insertContactInfo(contactInfo);
-                            Log.d("preInfo", contactInfo.toString());
-                            contactInfos = filledData(contactInfos);
-                            Collections.sort(contactInfos, mComparator);
-                            mAdapter.notifyDataSetChanged();
-                            Log.d("add", contactInfo.getNoteName());
+                        Log.d("preInfo", contactInfo.toString());
+                        contactInfos = filledData(contactInfos);
+                        Collections.sort(contactInfos, mComparator);
+
+                        mAdapter.notifyDataSetChanged();
+                        Log.d("add", contactInfo.getNoteName());
                     }
                 });
         normalDialog.setNegativeButton("忽略",
@@ -153,8 +154,6 @@ public class PhoneBookFragment extends Fragment {
                 contactInfos = filledData(contactInfos);
                 Collections.sort(contactInfos, mComparator);
                 Log.d("add", contactInfo1.getNoteName());
-                mAdapter = new RecyclerViewAdapter(getActivity(), contactInfos);
-                ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
             }
@@ -176,6 +175,24 @@ public class PhoneBookFragment extends Fragment {
 //        ((RecyclerViewAdapter) mAdapter).setMode(Attributes.Mode.Single);
 //        recyclerView.setAdapter(mAdapter);
 //        mAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().runOnUiThread(()->{
+            contactInfos = new ContactDBHelper(getContext()).getContactInfoContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
+//                contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
+            contactInfos = filledData(contactInfos);
+            Collections.sort(contactInfos, mComparator);
+            Log.d("startInfo", contactInfos.toString());
+            recyclerView.setAdapter(mAdapter);
+            mAdapter.setItems(contactInfos);
+            mAdapter.notifyDataSetChanged();
+        });
+
+
     }
 
     /**
@@ -231,7 +248,8 @@ public class PhoneBookFragment extends Fragment {
             @Override
             public void run() {
                 contactInfos = new ContactDBHelper(getContext()).getContactInfoContactId(UserManage.getInstance().getUserInfo(getActivity()).getId());
-                contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
+//                contactInfos =ContactDBHelper.getInstance(getContext()).getAllContactInfos();
+
 
             }
         }.start();
@@ -378,7 +396,7 @@ public class PhoneBookFragment extends Fragment {
             @Override
             public void run() {
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-                ArrayList<ContactInfo> ContactInfosList =  ContactDBHelper.getInstance(getContext()).getAllContactInfos();
+                ArrayList<ContactInfo> ContactInfosList = ContactDBHelper.getInstance(getContext()).getAllContactInfos();
                 Log.d("模糊搜索开始", String.valueOf(contactInfos.size()));
                 CharacterParser.search(str, contactInfos, ContactInfosList_searched);
                 for (ContactInfo i : ContactInfosList_searched) {

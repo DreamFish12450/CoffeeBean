@@ -155,7 +155,6 @@ public class AllCallFragment extends Fragment {
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
-
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -167,7 +166,7 @@ public class AllCallFragment extends Fragment {
             allPhoneRecordAdapter = new AllPhoneRecordAdapter(root.findViewById(R.id.all_phone_record));
             allPhoneRecordAdapter.setItems(items);
             allPhoneRecordAdapter.notifyDataSetChanged();
-
         }
     };
+
 }

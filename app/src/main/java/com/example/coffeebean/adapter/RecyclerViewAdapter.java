@@ -42,6 +42,7 @@ import com.example.coffeebean.widget.PopWindowView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapter.SimpleViewHolder> {
     private static final int REQUESTCODE_Info = 2;
@@ -108,7 +109,12 @@ public class RecyclerViewAdapter extends RecyclerSwipeAdapter<RecyclerViewAdapte
         while (groupInfo == null) {
         }
     }
-
+    public void setItems(ArrayList<ContactInfo> items) {
+        Log.d(getClass().getName(),"refreshUi");
+        this.mDataset.clear();
+        this.mDataset = items;
+        notifyDataSetChanged();
+    }
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);

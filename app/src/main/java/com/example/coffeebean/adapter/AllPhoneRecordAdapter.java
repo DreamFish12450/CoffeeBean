@@ -37,9 +37,9 @@ import java.util.Locale;
 
 public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAdapter.RecyclerHolder> {
     List<PhoneRecord> items = new ArrayList<>();
-    private  PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-    private  PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
-    String language ="CN";
+    private PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+    private PhoneNumberOfflineGeocoder phoneNumberOfflineGeocoder;
+    String language = "CN";
     Phonenumber.PhoneNumber referencePhonenumber = null;
     private static Context context = null;
     // 默认的年月日的格式. yyyy-MM-dd
@@ -64,14 +64,15 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
     @Override
     public RecyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.tag_cell, parent, false);
+        phoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance();
         return new RecyclerHolder(view);
     }
 
 
     @Override
     public void onBindViewHolder(RecyclerHolder holder, int position) {
-        Log.d("name",items.get(position).getNoteName()+"123");
-        if(items.get(position).getNoteName()!=null&&!items.get(position).getNoteName().equals(""))
+        Log.d("name", items.get(position).getNoteName() + "123");
+        if (items.get(position).getNoteName() != null && !items.get(position).getNoteName().equals(""))
             holder.name.setText(items.get(position).getNoteName());
         else
             holder.name.setText("未知来电");
@@ -81,34 +82,37 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
         String nowDay = sf.format(now);
         //获取记录的日期
         SimpleDateFormat sf_day = new SimpleDateFormat(PATTEN_DEFAULT_YMD);
-        String day=sf_day.format(items.get(position).getDate());
+        String day = sf_day.format(items.get(position).getDate());
         //获取时间
         SimpleDateFormat sf_time = new SimpleDateFormat(PATTEN_DEFAULT_HMS);
 
         SimpleDateFormat sf_all = new SimpleDateFormat(PATTEN_DEFAULT_YMDHMS);
-        Log.d("all",sf_all.format(items.get(position).getDate()));
-        String times[]=sf_all.format(items.get(position).getDate()).split(" ");
+        Log.d("all", sf_all.format(items.get(position).getDate()));
+        String times[] = sf_all.format(items.get(position).getDate()).split(" ");
 
-        Log.d("now",nowDay);
-        Log.d("this",day);
-        if(times[1]!=null)
-        Log.d("time",times[1]);
-        if(day.equals(nowDay))
-           holder.date.setText(times[1]);
+        Log.d("now", nowDay);
+        Log.d("this", day);
+        if (times[1] != null)
+            Log.d("time", times[1]);
+        if (day.equals(nowDay))
+            holder.date.setText(times[1]);
         else
-           holder.date.setText(day);
+            holder.date.setText(day);
 //        holder.image.setImageURI(Uri.parse(items.get(position).getAvaterUrl()));
         holder.phoneNumber.setText(items.get(position).getPhoneNumber());
         //根据号码判断归属地
-        String phoneNum = items.get(position).getPhoneNumber();
+        String phoneNum = "18969896851";
+        if (items.get(position).getPhoneNumber().length() == 11)
+            phoneNum = items.get(position).getPhoneNumber();
 
         try {
             referencePhonenumber = phoneUtil.parse(phoneNum, language);
-            } catch (NumberParseException e) {
+        } catch (NumberParseException e) {
             e.printStackTrace();
         }
-
-        String referenceRegion = phoneNumberOfflineGeocoder.getDescriptionForNumber(referencePhonenumber, Locale.CHINA);
+        String referenceRegion = "18969896851";
+        if (referencePhonenumber != null)
+            referenceRegion = phoneNumberOfflineGeocoder.getDescriptionForNumber(referencePhonenumber, Locale.CHINA);
         holder.position.setText(referenceRegion);
 
         if (items.get(position).getStatus() == 0) {
@@ -121,24 +125,30 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
             holder.status.setImageResource(R.drawable.ic_phone_post);
         }
         holder.more.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PhoneRecordInfoActivity.class);
-            intent.putExtra("PhoneRecord",items.get(position).getRecordId());
-            context.startActivity(intent);
+            if (!holder.name.getText().equals("未知来电")) {
+                Intent intent = new Intent(context, PhoneRecordInfoActivity.class);
+                intent.putExtra("PhoneRecord", items.get(position).getRecordId());
+                context.startActivity(intent);
+            }
         });
-        holder.itself.setOnClickListener(v->{
-            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"+items.get(position).getPhoneNumber()));
-            context.startActivity(intent);
+        holder.itself.setOnClickListener(v -> {
+            if (!holder.name.getText().equals("未知来电")) {
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + items.get(position).getPhoneNumber()));
+                context.startActivity(intent);
+            }
         });
 //        holder.image.setImageResource(items.get(position).getImage());
     }
 
     public void addItem(PhoneRecord item) {
-        items.add(0,item);
+        items.add(0, item);
         notifyDataSetChanged();
     }
+
     public List<PhoneRecord> getItems() {
         return items;
     }
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -153,6 +163,7 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
         ImageView more;
         TextView position;//归属地
         View itself;
+
         private RecyclerHolder(View itemView) {
             super(itemView);
 
@@ -162,7 +173,7 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
             status = itemView.findViewById(R.id.phone_get_status);
             more = itemView.findViewById(R.id.more);
             position = itemView.findViewById(R.id.tag_cell_phone_position);
-            itself=itemView;
+            itself = itemView;
 //            image.setOnClickListener(v -> {
 //                new AlertDialog.Builder(itemView.getContext())
 //                        .setTitle("温馨小提示")
