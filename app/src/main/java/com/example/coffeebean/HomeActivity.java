@@ -114,7 +114,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-
+//        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+//        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+//        intentFilter.setPriority(Integer.MAX_VALUE);
+//        registerReceiver(phoneBroadcastReceiver,intentFilter);
         Log.d("HOMEStatus","Restart");
     }
 
@@ -122,6 +125,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d("HOMEStatus","start");
+//        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
+//        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
+//        intentFilter.setPriority(Integer.MAX_VALUE);
+//        registerReceiver(phoneBroadcastReceiver,intentFilter);
     }
 
     @Override
@@ -129,10 +136,7 @@ public class HomeActivity extends AppCompatActivity {
 
         super.onResume();
         Log.d("HOMEStatus","resume");
-        phoneBroadcastReceiver=new PhoneBroadcastReceiver();
-        IntentFilter intentFilter=new IntentFilter(Intent.ACTION_NEW_OUTGOING_CALL);
-        intentFilter.setPriority(Integer.MAX_VALUE);
-        registerReceiver(phoneBroadcastReceiver,intentFilter);
+
     }
 
     @Override

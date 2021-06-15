@@ -16,11 +16,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.coffeebean.model.ContactInfo;
 
 import com.example.coffeebean.model.PhoneRecord;
+import com.example.coffeebean.receiver.PhoneBroadcastReceiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +41,7 @@ public class PhoneRecordInfoActivity extends BaseActivity {
     TextView phoneView;
     LinearLayout returnhome;
     TextView call;
-    TextView sendMsg;
+    TextView removeBlackbook;
     TextView blackbook;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,8 @@ public class PhoneRecordInfoActivity extends BaseActivity {
         noteNameTextView = findViewById(R.id.phonerecord_info_name_or_phone);
         returnhome = findViewById(R.id.returnhome);
         timeTextView=findViewById(R.id.phonerecord_info_stauts);
-        blackbook=findViewById(R.id.phonerecord_info_blackbook);
+        blackbook=findViewById(R.id.phonerecord_add_blackbook);
+        removeBlackbook=findViewById(R.id.phonerecord_remove_blackbook);
 //        sendMsg.findViewById(R.id.sendsms);
         call=findViewById(R.id.phonerecord_info_call);
         dateTextView=findViewById(R.id.phonerecord_info_time);
@@ -111,18 +114,56 @@ public class PhoneRecordInfoActivity extends BaseActivity {
             call(phonenum);
         });
 
-//        sendMsg.setOnClickListener(v -> {
-//            sendSms(phonenum);
-//        });
-        blackbook.setOnClickListener(v -> {
-            SharedPreferences sp = getApplicationContext().getSharedPreferences("CoffeeBean", Context.MODE_PRIVATE);
+        removeBlackbook.setOnClickListener(v -> {
+            PhoneBroadcastReceiver.applicationContext=getApplicationContext();
+            boolean flag=true;
+            SharedPreferences sp = getApplicationContext().getSharedPreferences("BlackBook", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = sp.edit();
-            Set<String> blackPhone=new HashSet<String>();
-            sp.getStringSet("blackbook",blackPhone);
-            blackPhone.add(phonenum);
-            edit.putStringSet("blackbook",blackPhone);
-            edit.apply();
-            Log.d("黑名单", String.valueOf(blackPhone.size()));
+            Set<String> blackPhone=sp.getStringSet("blackbook",new HashSet<String>());
+            Set<String> set=new HashSet<String>();
+            set.addAll(blackPhone);
+            for(String i:set){
+                int cnt=0;
+                while(i.charAt(0)==' ') cnt++;
+                if(i.substring(cnt).trim().equals(phonenum)){
+                    flag=false;
+                    set.remove(phonenum);
+                    edit.putStringSet("blackbook",set).commit();
+
+                    Toast.makeText(this, "已移除黑名单", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+            }
+            if(flag){
+                Toast.makeText(this, "不存在于黑名单", Toast.LENGTH_SHORT).show();
+            }
+
+            Log.d("黑名单", String.valueOf(set.size()));
+        });
+        blackbook.setOnClickListener(v -> {
+            PhoneBroadcastReceiver.applicationContext=getApplicationContext();
+            boolean flag=true;
+
+            SharedPreferences sp = getApplicationContext().getSharedPreferences("BlackBook", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = sp.edit();
+            Set<String> blackPhone=sp.getStringSet("blackbook",new HashSet<String>());
+            Set<String> set=new HashSet<String>();
+            set.addAll(blackPhone);
+            for(String i:set){
+                if(i.equals(phonenum)){
+                    flag=false;
+                    Toast.makeText(this, "已存在于黑名单", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+            }
+            if(flag){
+                Toast.makeText(this, "加入黑名单", Toast.LENGTH_SHORT).show();
+                set.add(phonenum);
+                edit.putStringSet("blackbook",set).commit();
+
+            }
+            Log.d("黑名单", String.valueOf(set.size()));
+
         });
         returnhome.setOnClickListener(v -> {
             finish();

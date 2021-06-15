@@ -90,10 +90,10 @@ public class MissCallFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.d(getClass().getName(), "获取回调");
             PhoneRecord phoneRecord1 = (PhoneRecord) intent.getSerializableExtra("Info2");
+            if(phoneRecord1==null)return;
             if(phoneRecord1.getStatus()==0){
-                List<PhoneRecord> items = missPhoneRecordAdapter.getItems();
-                items.add(0,phoneRecord1);
-                missPhoneRecordAdapter.setItems(items);
+                PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask selectMissContactAsyncTask=new PhoneRecordDBHelper.SelectMissPhoneRecordAsyncTask(getContext(),missPhoneRecordAdapter);
+                selectMissContactAsyncTask.execute();
                 missPhoneRecordAdapter.notifyDataSetChanged();
             }
 

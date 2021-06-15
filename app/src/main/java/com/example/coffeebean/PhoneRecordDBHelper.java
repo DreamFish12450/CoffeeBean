@@ -85,7 +85,8 @@ public class PhoneRecordDBHelper extends SQLiteOpenHelper {
 //        values.put(PhoneRecord.COLUMN_RECORDID, phoneRecord.getRecordId());
         long cnt=db.insert(PhoneRecord.TABLE_NAME,null,values);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+        Date now=new Date(System.currentTimeMillis());
+        if(phoneRecord.getDate()==null)phoneRecord.setDate(now);
         db.execSQL("UPDATE phoneRecord SET "+PhoneRecord.COLUMN_DATA+" = '"+simpleDateFormat.format(phoneRecord.getDate())+"' Where RecordID ="+cnt);
 
         db.close();

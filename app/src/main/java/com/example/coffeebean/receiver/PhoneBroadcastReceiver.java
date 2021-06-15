@@ -1,5 +1,6 @@
 package com.example.coffeebean.receiver;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -36,6 +37,7 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
     private static Date end=null;//挂断时刻
     private static String phoneNumber;
     private static Context context;
+    public static Context applicationContext;
     private static int cnt=0;
     private static int lock=0;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -44,9 +46,8 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         this.context=context;
 // 如果是拨打电话
-
         Log.d("拦截",intent.getAction());
-        if(lock==0)
+        if(lock==0){
         if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
             lock=1;
             start_in = null;
@@ -59,18 +60,22 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
             tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
         } else {
             lock=1;
+            start_out = null;
+            start_in = new Date(System.currentTimeMillis());
+            phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+            Log.i(TAG, "call in:" + phoneNumber);
             SharedPreferences sp = context.getSharedPreferences("CoffeeBean", Context.MODE_PRIVATE);
             SharedPreferences.Editor edit = sp.edit();
             Set<String> blackPhone=new HashSet<String>();
             sp.getStringSet("blackbook",blackPhone);
             Log.d("开始拦截", String.valueOf(blackPhone.size()));
-            for(String i:blackPhone){
-                if(i==phoneNumber){
-                    PhoneUtils.getInstance().endCall(phoneNumber);
-                    Log.d("拦截号码",phoneNumber);
-                    break;
-                }
-            }
+//            for(String i:blackPhone){
+//                if(i==phoneNumber){
+//                    PhoneUtils.getInstance().endCall(phoneNumber);
+//                    Log.d("拦截号码",phoneNumber);
+//                    break;
+//                }
+//            }
 // 如果是来电
             TelephonyManager tManager = (TelephonyManager) context
                     .getSystemService(Service.TELEPHONY_SERVICE);
@@ -125,6 +130,7 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
 //                   }
 //                    break;
 //            }
+        }
         }
     }
     PhoneStateListener listener=new PhoneStateListener(){
@@ -237,17 +243,35 @@ public class PhoneBroadcastReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_RINGING:
                     System.out.println("响铃:来电号码"+incomingNumber);
                     Log.d("响铃:来电号码","1");
+                    boolean flag=true;
 //输出来电号码
+                    SharedPreferences sp = applicationContext.getSharedPreferences("BlackBook", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor edit = sp.edit();
+                    Set<String> blackPhone=sp.getStringSet("blackbook",new HashSet<String>());
+                    Set<String> set=new HashSet<String>();
+                    set.addAll(blackPhone);
+                    for(String i:set){
+                        Log.d("判断",i);
+                        if(i.equals(phoneNumber)){
+                            Log.d("拦截号码",phoneNumber);
+                             PhoneUtils.getInstance().endCall(phoneNumber);
+                             hang_on=null;cnt=0;lock=0;
+                             flag=false;
+                             break;
+                        }
+                    }
+                    if(!flag)break;
                     if(start_out==null) {//来电
                         start_in = new Date(System.currentTimeMillis());
                     }
                     break;
             }
         }
+
     };
     private boolean getCallLogState() {
         boolean isLink;
-        ContentResolver cr = context.getContentResolver();
+        ContentResolver cr = applicationContext.getContentResolver();
         final Cursor cursor = cr.query(CallLog.Calls.CONTENT_URI,
                 new String[]{CallLog.Calls.NUMBER,CallLog.Calls.TYPE,CallLog.Calls.DURATION},
                 CallLog.Calls.NUMBER +"=? and "+CallLog.Calls.TYPE +"= ?",

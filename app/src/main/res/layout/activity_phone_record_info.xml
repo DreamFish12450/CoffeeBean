@@ -153,28 +153,7 @@
             tools:ignore="RtlHardcoded" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DDDDDD" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/sendsms"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:gravity="center|left"
-            android:clickable="true"
-            android:text="发送信息"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
@@ -187,7 +166,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/phonerecord_info_blackbook"
+            android:id="@+id/phonerecord_add_blackbook"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
@@ -195,6 +174,28 @@
             android:gravity="center|left"
             android:text="加入黑名单"
             android:clickable="true"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            tools:ignore="RtlHardcoded" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/phonerecord_remove_blackbook"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:gravity="center|left"
+            android:clickable="true"
+            android:text="移除黑名单"
             android:textSize="20sp"
             android:textColor="@color/black"
             tools:ignore="RtlHardcoded" />

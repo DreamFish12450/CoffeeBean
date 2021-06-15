@@ -120,8 +120,14 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
             holder.name.setTextColor(Color.RED);
             holder.phoneNumber.setTextColor(Color.RED);
         } else if (items.get(position).getStatus() == 1) {
+
+            holder.name.setTextColor(Color.BLACK);
+            holder.phoneNumber.setTextColor(Color.BLACK);
             holder.status.setImageResource(R.drawable.ic_phone_get);
         } else if (items.get(position).getStatus() == 2) {
+
+            holder.name.setTextColor(Color.BLACK);
+            holder.phoneNumber.setTextColor(Color.BLACK);
             holder.status.setImageResource(R.drawable.ic_phone_post);
         }
         holder.more.setOnClickListener(v -> {
@@ -132,10 +138,10 @@ public class AllPhoneRecordAdapter extends RecyclerView.Adapter<AllPhoneRecordAd
 
         });
         holder.itself.setOnClickListener(v -> {
-            if (!holder.name.getText().equals("未知来电")) {
+
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + items.get(position).getPhoneNumber()));
                 context.startActivity(intent);
-            }
+
         });
 //        holder.image.setImageResource(items.get(position).getImage());
     }

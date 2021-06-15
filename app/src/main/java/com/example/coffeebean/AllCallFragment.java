@@ -86,8 +86,8 @@ public class AllCallFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        getActivity().registerReceiver(receiver, new IntentFilter("actionRefreshPL"));
-        getActivity().registerReceiver(receiver2, new IntentFilter("refreshPhonelist"));//更新
+        getActivity().registerReceiver(receiver, new IntentFilter("actionRefreshPL"));//通话更新
+        getActivity().registerReceiver(receiver2, new IntentFilter("refreshPhonelist"));//修改信息更新
     }
 
     @Override
@@ -161,9 +161,12 @@ public class AllCallFragment extends Fragment {
             Log.d(getClass().getName(), "获取回调");
             PhoneRecord phoneRecord1 = (PhoneRecord) intent.getSerializableExtra("Info2");
             Log.d("内容", String.valueOf(phoneRecord1.getStatus()));
-            List<PhoneRecord> items = allPhoneRecordAdapter.getItems();
-            items.add(0,phoneRecord1);
-            allPhoneRecordAdapter.setItems(items);
+//            List<PhoneRecord> items = allPhoneRecordAdapter.getItems();
+//            items.add(0,phoneRecord1);
+            if(phoneRecord1==null)return;
+//            allPhoneRecordAdapter.setItems(items);
+            PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask selectALLContactAsyncTask=new PhoneRecordDBHelper.SelectALLPhoneRecordAsyncTask(getContext(),allPhoneRecordAdapter);
+            selectALLContactAsyncTask.execute();
             allPhoneRecordAdapter.notifyDataSetChanged();
         }
     };

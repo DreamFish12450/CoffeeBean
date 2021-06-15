@@ -104,7 +104,13 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.CoffeeBean.NoActionBar"
             tools:ignore="DuplicateActivity" />
-
+<!--        <receiver android:name=".receiver.PhoneBroadcastReceiver">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.PHONE_STATE"/>-->
+<!--                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+<!--        <receiver android:name=".receiver.PhoneBroadcastReceiver"> <intent-filter> <action android:name="android.intent.action.PHONE_STATE"/> <action android:name="android.intent.action.NEW_OUTGOING_CALL" /> </intent-filter> </receiver>-->
     </application>
 
 </manifest>
