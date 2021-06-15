@@ -198,7 +198,6 @@ public class Shake extends AppCompatActivity implements SensorEventListener {
             if ((Math.abs(x) > 17 || Math.abs(y) > 17 || Math
                     .abs(z) > 17) && !isShake) {
                 isShake = true;
-                // TODO: 2016/10/19 实现摇动逻辑, 摇动后进行震动
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
